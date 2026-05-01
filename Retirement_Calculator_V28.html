@@ -1,0 +1,2782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Retirement Calculator V28</title>
+    <style>
+        :root { --primary: #1a252f; --accent: #c0392b; --safe: #27ae60; --bg: #f4f7f6; --header-bg: #2c3e50; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; font-size: 11px; }
+        .container { max-width: 1500px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { border: 1px solid #e1e8ed; padding: 15px; border-radius: 10px; background: #fff; }
+        h2 { margin-top: 0; font-size: 1rem; color: var(--header-bg); border-bottom: 3px solid var(--safe); padding-bottom: 5px; margin-bottom: 12px; }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 6px; white-space: nowrap; }
+        .row label { flex-shrink: 0; white-space: nowrap; }
+        input[type="number"] { width: 55px; padding: 4px; border: 1px solid #ccd6dd; border-radius: 4px; text-align: right; }
+        input.dollar { width: 80px; padding: 4px; border: 1px solid #ccd6dd; border-radius: 4px; text-align: right; }
+        .btn-group { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; min-width: 120px; }
+        .btn-calc { background: var(--safe); color: white; }
+        .btn-save { background: var(--header-bg); color: white; }
+        .btn-sync { background: #3498db; color: white; }
+        .btn-mc   { background: #8e44ad; color: white; }
+        .btn-solve { background: #e67e22; color: white; }
+        #status { text-align: center; font-weight: bold; color: var(--safe); height: 15px; margin-bottom: 10px; }
+        .stat-box { background: #eef7f3; border: 1px solid #c8e6c9; padding: 12px; border-radius: 8px; text-align: center; flex: 1; }
+        .stat-box.warn { background: #fff8e1; border-color: #ffe082; }
+        .stat-box.danger { background: #fce4e4; border-color: #ef9a9a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--header-bg); color: white; padding: 8px; text-align: left; position: sticky; top: 0; font-size: 10px; }
+        td { padding: 6px; border-bottom: 1px solid #edf2f7; }
+        tr.working td { color: #95a5a6; font-style: italic; }
+        tr.gap td { background-color: #e8f4fd !important; color: #2471a3; }
+        tr.survivor td { background-color: #fde8e8 !important; color: #922b21; }
+        tr.slow-go td { background-color: #fffde7 !important; }
+        tr.no-go td { background-color: #f5f5f5 !important; color: #7f8c8d; }
+        tr.meltdown td { border-left: 5px solid #3498db; }
+        tr.out-of-money td { background-color: #fce4e4 !important; color: #c0392b !important; font-weight: bold; }
+        .oas-clawed td { outline: 1px solid #e67e22; }
+        .mc-panel { margin-top: 20px; padding: 15px; background: #f8f4fd; border: 1px solid #d7bde2; border-radius: 10px; display: none; }
+        .mc-panel h3 { color: #6c3483; margin-top: 0; }
+        .mc-bar-wrap { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 10px; }
+        .mc-bar-bg { flex: 1; background: #e0d0f0; border-radius: 4px; height: 14px; overflow: hidden; }
+        .mc-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+        .legend { display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px; margin-top: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        tr.has-nonreg td.nonreg-col { color: #8e44ad; font-weight: bold; }
+        .fix-badge { display: inline-block; font-size: 9px; background: #d5f5e3; color: #1e8449; border: 1px solid #a9dfbf; border-radius: 3px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; }
+        
+        .note { font-size: 9px; color: #7f8c8d; margin-top: 3px; }
+        .tab-bar { display: flex; gap: 0; margin-bottom: 0; border-bottom: 3px solid var(--header-bg); }
+        .tab-btn { padding: 10px 24px; border: 1px solid #ccd6dd; border-bottom: none; border-radius: 8px 8px 0 0; background: #eef2f5; color: #555; font-size: 0.85rem; font-weight: bold; cursor: pointer; margin-bottom: -3px; transition: 0.15s; }
+        .tab-btn:hover { background: #dce4ea; }
+        .tab-btn.active { background: white; color: var(--header-bg); border-color: var(--header-bg); border-bottom: 3px solid white; }
+        .tab-content { display: none; padding-top: 15px; }
+        .tab-content.active { display: block; }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span></h1>
+    <div style="font-size:11px; color:#7f8c8d; margin:-8px 0 10px 0;">Today: <b id="current_date"></b> — System Year: <b id="sys_year_disp"></b> <span id="year_mismatch" style="color:#e74c3c; display:none;">⚠ mismatch</span> — Province: <b id="prov_disp">Manitoba</b></div>
+
+    <div style="background:#fff8e1; border:1px solid #ffe082; border-left:4px solid #f39c12; border-radius:6px; padding:10px 14px; margin-bottom:12px; font-size:11px; color:#555; line-height:1.5;">
+        <b>⚠ Disclaimer:</b> This calculator is for <b>educational and planning purposes only</b> and does not constitute financial, tax, or legal advice. Results are based on assumptions and estimates that may not reflect your specific situation, current legislation, or future changes to tax rules or government benefits. Calculations are approximations — always verify with a qualified financial advisor or tax professional before making retirement decisions. The creator of this tool accepts no liability for any decisions made based on its output.
+        <details style="margin-top:6px;">
+            <summary style="cursor:pointer; color:#e67e22; font-weight:bold; font-size:10px;">Key assumptions & limitations (click to expand)</summary>
+            <div style="margin-top:6px; font-size:10px; color:#666;">
+                Provincial tax brackets are 2025 base values indexed by your inflation rate — they may not match future CRA adjustments exactly.
+                CPP2 benefit is estimated based on contribution years and may differ from your actual entitlement — check your My Service Canada account for your personal projection.
+                OAS deferral bonus, clawback thresholds, and age amounts are based on current rules and may change.
+                Quebec is not supported due to QPP complexity.
+                GIS (Guaranteed Income Supplement), employer pensions (DB/DC), CPP pension sharing, and provincial health premiums are not modelled.
+                RRSP contribution room is not tracked — verify your available room via CRA My Account.
+                Net worth figures mix pre-tax (RRSP) and post-tax (TFSA) dollars — actual spendable wealth is lower than displayed.
+                Monte Carlo simulations assume normally distributed returns — actual market volatility may differ.
+            </div>
+        </details>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-calc" onclick="calculate()">Recalculate Strategy</button>
+        <button class="btn-sync" onclick="syncRates()">Sync to Current Year</button>
+        <button class="btn-save" onclick="saveData()">Save Setup</button>
+    </div>
+    <div id="status_top" style="text-align:center; font-weight:bold; color:#27ae60; height:15px; margin-bottom:5px;"></div>
+    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire_top">$0</b></div>
+        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak_top">$0</b></div>
+        <div class="stat-box" id="final_box_top"><small>Final Portfolio Value (at death)</small><br><b id="sum_final_top">$0</b></div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('setup')">Setup & Projections</button>
+        <button class="tab-btn" onclick="switchTab('chart')">Charts</button>
+        <button class="tab-btn" onclick="switchTab('compare')">Compare</button>
+        <button class="tab-btn" onclick="switchTab('plan')">Action Plan</button>
+        <button class="tab-btn" onclick="switchTab('montecarlo')">Monte Carlo</button>
+        <button class="tab-btn" onclick="switchTab('help')">Help</button>
+    </div>
+
+    <!-- TAB 1: Setup -->
+    <div id="tab_setup" class="tab-content active">
+
+    <div class="grid">
+        <div class="card">
+            <h2><span class="s1_name_disp">Spouse 1</span></h2>
+            <div class="row"><label>Name</label><input type="text" id="s1_name" value="Spouse 1" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
+            <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s1_age" value="50" style="width:45px"> / <input type="number" id="s1_retire" value="65" style="width:45px"></span></div>
+            <div class="row"><label>CPP Age / % Max</label><span><input type="number" id="s1_cpp_age" value="65" style="width:45px"> / <input type="number" id="s1_cpp_pct" value="75" style="width:45px"></span></div>
+            <div class="row"><label>OAS Age</label><input type="number" id="s1_oas_age" value="65" min="65" max="70" style="width:45px"></div>
+            <div class="row"><label>Plan to Age</label><input type="number" id="s1_plan_age" value="90" style="width:45px"></div>
+            <div class="row"><label>RRSP / TFSA Bal</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></span></div>
+            <div class="row"><label>Non-Reg Bal</label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
+            <div class="row"><label>Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></span></div>
+        </div>
+        <div class="card">
+            <h2><span class="s2_name_disp">Spouse 2</span></h2>
+            <div class="row"><label>Name</label><input type="text" id="s2_name" value="Spouse 2" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
+            <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s2_age" value="47" style="width:45px"> / <input type="number" id="s2_retire" value="65" style="width:45px"></span></div>
+            <div class="row"><label>CPP Age / % Max</label><span><input type="number" id="s2_cpp_age" value="65" style="width:45px"> / <input type="number" id="s2_cpp_pct" value="75" style="width:45px"></span></div>
+            <div class="row"><label>OAS Age</label><input type="number" id="s2_oas_age" value="65" min="65" max="70" style="width:45px"></div>
+            <div class="row"><label>Plan to Age</label><input type="number" id="s2_plan_age" value="90" style="width:45px"></div>
+            <div class="row"><label>RRSP / TFSA Bal</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></span></div>
+            <div class="row"><label>Non-Reg Bal</label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
+            <div class="row"><label>Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></span></div>
+        </div>
+        <div class="card">
+            <h2>Life Stages (%)</h2>
+            <div class="row"><label>Slow-Go Age</label><span><input type="number" id="slow_age" value="70" style="width:45px"> @ <input type="number" id="slow_pct" value="90" style="width:45px">%</span></div>
+            <div class="row"><label>No-Go Age</label><span><input type="number" id="no_age" value="80" style="width:45px"> @ <input type="number" id="no_pct" value="80" style="width:45px">%</span></div>
+            <div class="row"><label>Enable Meltdown</label><input type="checkbox" id="melt_on" checked style="width:20px"></div>
+            <div class="row"><label>Melt-to Age</label><input type="number" id="melt_age" value="75" style="width:45px"></div>
+            <div class="row"><label>Equal RRSP Draw Split</label><input type="checkbox" id="equal_draw" checked style="width:20px"></div>
+            <div class="row"><label>Smooth Tax Rates</label><input type="checkbox" id="smooth_tax" checked style="width:20px"></div>
+            <div class="row"><label>TFSA Bracket Opt (0=off)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_bracket_max" value="10000" style="width:80px"></div>
+            <div class="row"><label>Gap Year Target Rate %</label><input type="number" id="gap_target_rate" value="12" step="1" style="width:45px"></div>
+            <div class="row"><label>Survivor Spending %</label><input type="number" id="survivor_pct" value="70" step="5" style="width:45px"></div>
+        </div>
+        <div class="card">
+            <h2>Benefits & Market</h2>
+            <div class="row"><label>Province</label>
+                <select id="province" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px;">
+                    <option value="AB">Alberta</option>
+                    <option value="BC">British Columbia</option>
+                    <option value="MB" selected>Manitoba</option>
+                    <option value="NB">New Brunswick</option>
+                    <option value="NL">Newfoundland & Labrador</option>
+                    <option value="NS">Nova Scotia</option>
+                    <option value="NT">Northwest Territories</option>
+                    <option value="NU">Nunavut</option>
+                    <option value="ON">Ontario</option>
+                    <option value="PE">Prince Edward Island</option>
+                    <option value="SK">Saskatchewan</option>
+                    <option value="YT">Yukon</option>
+                </select>
+            </div>
+            <div class="row"><label id="cpp_label">Max CPP</label><input type="text" inputmode="decimal" class="dollar" id="cpp_max_val" value="18091.80"></div>
+            <div class="row"><label id="cpp2_label">Max CPP2 Annual</label><input type="text" inputmode="decimal" class="dollar" id="cpp2_max_val" value="3466"></div>
+            <div class="row">
+                <label id="oas_label">Max OAS</label>
+                <input type="text" inputmode="decimal" class="dollar" id="oas_max_val" value="8907.72">
+            </div>
+            <div class="row"><label>OAS Clawback Start</label><input type="text" inputmode="decimal" class="dollar" id="oas_clawback" value="90997"></div>
+            <div class="row"><label id="age_amt_label">Fed Age Amount</label><input type="text" inputmode="decimal" class="dollar" id="fed_age_amt" value="9028" style="width:70px"></div>
+            <div class="row"><label>Target Net Goal</label><input type="text" inputmode="decimal" class="dollar" id="goal_go" value="75000"></div>
+            <div class="row"><label>Pre-Ret Return %</label><input type="number" id="r_pre" value="6" step="0.1" style="width:60px"></div>
+            <div class="row"><label>Post-Ret Return %</label><input type="number" id="r_post" value="4.5" step="0.1" style="width:60px"></div>
+            <div class="row"><label>Inflation %</label><input type="number" id="infl" value="2.5"></div>
+            <div class="row"><label>System Year</label><input type="number" id="sys_year" value="2026" style="width:65px"></div>
+            <div class="row"><label>TFSA Room/yr/person</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_yr" value="7000" style="width:70px"></div>
+            <div class="row"><label>Current TFSA Room (total)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_current" value="0" style="width:90px"></div>
+            <div class="row"><label>Cap Gains Inclusion %</label><input type="number" id="capgains_inc" value="50" step="5" style="width:60px"></div>
+        </div>
+        <div class="card">
+            <h2>Lump Sums (Optional)</h2>
+            <div class="row"><label><b>Lump Sum 1</b></label></div>
+            <div class="row"><label>Amount / <span class="s1_name_disp">Spouse 1</span>'s Age</label><span><input type="text" inputmode="decimal" class="dollar" id="ls1_amt" value="0" style="width:70px"> @ <input type="number" id="ls1_age" value="0" style="width:45px"></span></div>
+            <div class="row"><label>Max to RRSP (0=∞)</label><input type="text" inputmode="decimal" class="dollar" id="ls1_rrsp_cap" value="0" style="width:70px"></div>
+            <div class="row"><label><b>Lump Sum 2</b></label></div>
+            <div class="row"><label>Amount / <span class="s1_name_disp">Spouse 1</span>'s Age</label><span><input type="text" inputmode="decimal" class="dollar" id="ls2_amt" value="0" style="width:70px"> @ <input type="number" id="ls2_age" value="0" style="width:45px"></span></div>
+            <div class="row"><label>Max to RRSP (0=∞)</label><input type="text" inputmode="decimal" class="dollar" id="ls2_rrsp_cap" value="0" style="width:70px"></div>
+            <p class="note">Allocation: TFSA (up to room) → RRSP (up to cap) → Non-Reg. Split 50/50 between spouses. RRSP room not tracked — verify externally.</p>
+        </div>
+        <div class="card">
+            <h2>Contribution Boost (Optional)</h2>
+            <div class="row"><label>At <span class="s1_name_disp">Spouse 1</span>'s Age (0=off)</label><input type="number" id="boost_age" value="0" style="width:45px"></div>
+            <div class="row"><label><span class="s1_name_disp">Spouse 1</span> Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_boost" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_boost" value="0" style="width:70px"></span></div>
+            <div class="row"><label><span class="s2_name_disp">Spouse 2</span> Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_boost" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_boost" value="0" style="width:70px"></span></div>
+            <p class="note">Additional monthly amounts added on top of base contributions at the specified age. Useful for mortgage payoff, kids moving out, etc.</p>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-solve" onclick="solveRetireAge()">Solve for Retirement Age</button>
+        <button class="btn-solve" onclick="solveNetGoal()">Solve for Target Net Goal</button>
+        <button class="btn-solve" onclick="solveExtraRRSP()">Solve for Additional Monthly RRSP</button>
+        <button class="btn-solve" onclick="solveCPPOAS()">Solve for Optimal CPP/OAS</button>
+    </div>
+    <div id="solver_result" style="display:none; background:#fff3e0; border:1px solid #ffb74d; border-radius:8px; padding:12px; margin-bottom:15px; font-size:12px;"></div>
+
+    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire">$0</b></div>
+        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak">$0</b></div>
+        <div class="stat-box" id="final_box"><small>Final Portfolio Value (at death)</small><br><b id="sum_final">$0</b></div>
+    </div>
+    <div id="status"></div>
+    <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
+        <b>View:</b>
+        <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="ledger_view" value="combined" checked onchange="rerenderLedger()"> Combined</label>
+        <label style="cursor:pointer;"><input type="radio" name="ledger_view" value="split" onchange="rerenderLedger()"> Split by Spouse</label>
+    </div>
+    <div style="overflow-x:auto;">
+        <table id="ledger">
+            <thead id="ledger_head">
+                <tr>
+                    <th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>TFSA Total</th>
+                    <th>Non-Reg</th>
+                    <th>CPP/OAS</th><th>OAS Clawback</th>
+                    <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
+                    <th>Tax (%)</th>
+                    <th>Pension Credit</th>
+                    <th>RRIF Min</th>
+                    <th>Year-End NW</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    </div><!-- /tab_setup -->
+
+    <!-- TAB: Monte Carlo -->
+    <div id="tab_montecarlo" class="tab-content">
+    <div class="card" style="max-width:400px; margin-bottom:15px;">
+        <h2>Monte Carlo Settings</h2>
+        <div class="row"><label>Simulations</label><input type="number" id="mc_sims" value="1000" style="width:65px"></div>
+        <div class="row"><label>Pre-Ret Std Dev %</label><input type="number" id="mc_sd_pre" value="5"></div>
+        <div class="row"><label>Post-Ret Std Dev %</label><input type="number" id="mc_sd_post" value="5"></div>
+        <p class="note">Std dev applies annual return randomness around your base rates.</p>
+        <button class="btn-mc" onclick="runMonteCarlo()" style="margin-top:10px; width:100%;">Run Monte Carlo</button>
+    </div>
+    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+        <div class="stat-box" id="mc_box" style="display:none"><small>MC Median Final</small><br><b id="mc_median">$0</b></div>
+        <div class="stat-box" id="mc_success_box" style="display:none"><small>MC Success Rate</small><br><b id="mc_success">0%</b></div>
+    </div>
+    <div class="mc-panel" id="mc_panel">
+        <h3>🎲 Monte Carlo Results</h3>
+        <p id="mc_summary"></p>
+        <div id="mc_percentiles"></div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Success (positive final balance)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Ran out of money</div>
+        </div>
+    </div>
+    </div><!-- /tab_montecarlo -->
+
+    <!-- TAB 3: Chart -->
+    <div id="tab_chart" class="tab-content">
+    <div id="chart_section" style="display:none;">
+        <h2 style="color:#2c3e50; border-bottom:3px solid #27ae60; padding-bottom:5px;">Retirement Income Breakdown</h2>
+        <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
+            <b>View:</b>
+            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="income_chart_view" value="combined" checked onchange="reRenderIncomeChart()"> Combined</label>
+            <label style="cursor:pointer;"><input type="radio" name="income_chart_view" value="split" onchange="reRenderIncomeChart()"> Split by Spouse</label>
+        </div>
+        <div id="income_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>CPP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#27ae60;vertical-align:middle;margin-right:3px;"></span>OAS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e74c3c;vertical-align:middle;margin-right:3px;"></span>Shortfall</span>
+            <span>- - - Net Spending Goal</span>
+            <span style="color:#888;">(Bars show net income after tax; hover for details)</span>
+        </div>
+        <div id="income_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#85c1e9;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#76d7c4;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> CPP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f5b041;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> CPP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#27ae60;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> OAS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#82e0aa;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> OAS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e74c3c;vertical-align:middle;margin-right:3px;"></span>Shortfall</span>
+            <span>- - - Net Spending Goal</span>
+        </div>
+        <canvas id="income_chart" width="1400" height="420" style="width:100%; max-width:1400px;"></canvas>
+
+        <h2 style="color:#2c3e50; border-bottom:3px solid #3498db; padding-bottom:5px; margin-top:30px;">Net Worth Over Time</h2>
+        <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
+            <b>View:</b>
+            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="nw_chart_view" value="combined" checked onchange="reRenderNWChart()"> Combined</label>
+            <label style="cursor:pointer;"><input type="radio" name="nw_chart_view" value="split" onchange="reRenderNWChart()"> Split by Spouse</label>
+        </div>
+        <div id="nw_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
+        </div>
+        <div id="nw_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#85c1e9;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#76d7c4;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> TFSA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> Non-Reg</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#c39bd3;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> Non-Reg</span>
+        </div>
+        <canvas id="nw_chart" width="1400" height="420" style="width:100%; max-width:1400px;"></canvas>
+    </div>
+    <p id="chart_placeholder" style="color:#999; text-align:center; padding:40px 0;">Click "Recalculate Strategy" to generate the charts.</p>
+    </div><!-- /tab_chart -->
+
+    <!-- TAB: Compare -->
+    <div id="tab_compare" class="tab-content">
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <button class="btn-sync" onclick="saveScenario('A')" style="flex:1;">Save Current as Scenario A</button>
+        <button class="btn-mc" onclick="saveScenario('B')" style="flex:1;">Save Current as Scenario B</button>
+    </div>
+    <div id="compare_result" style="display:none;"></div>
+    <p id="compare_placeholder" style="color:#999; text-align:center; padding:40px 0;">Save two scenarios to compare them side by side.</p>
+    </div><!-- /tab_compare -->
+
+    <!-- TAB: Action Plan -->
+    <div id="tab_plan" class="tab-content">
+    <p id="plan_placeholder" style="color:#999; text-align:center; padding:40px 0;">Click "Recalculate Strategy" to generate the action plan.</p>
+    <div id="plan_section" style="display:none; overflow-x:auto;">
+        <table id="plan_table" style="font-size:11px;">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Ages</th>
+                    <th>Stage</th>
+                    <th id="plan_s1_rrsp_h">S1 RRSP</th>
+                    <th id="plan_s2_rrsp_h">S2 RRSP</th>
+                    <th id="plan_s1_tfsa_h">S1 TFSA</th>
+                    <th id="plan_s2_tfsa_h">S2 TFSA</th>
+                    <th id="plan_s1_nr_h">S1 Non-Reg</th>
+                    <th id="plan_s2_nr_h">S2 Non-Reg</th>
+                    <th id="plan_s1_cpp_h">S1 CPP</th>
+                    <th id="plan_s2_cpp_h">S2 CPP</th>
+                    <th id="plan_s1_oas_h">S1 OAS</th>
+                    <th id="plan_s2_oas_h">S2 OAS</th>
+                    <th>Total Tax</th>
+                    <th>Net Spend</th>
+                    <th>→ TFSA</th>
+                    <th>→ Non-Reg</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    </div><!-- /tab_plan -->
+
+    <!-- TAB 4: Help -->
+    <div id="tab_help" class="tab-content">
+    <div style="font-size:11px; color:#444;">
+
+        <details style="margin-bottom:10px;" open>
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Spouse Cards</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Name</b> — Display name, used in labels and chart. Cosmetic only.<br>
+                <b>Age / Retire Age</b> — Current age and planned retirement age. Contributions stop at retirement. Spouse 1's age drives the projection timeline.<br>
+                <b>CPP Age / % Max</b> — Age to start collecting CPP (60–70) and estimated percentage of the maximum CPP benefit you'll receive. 100% = full career of maximum contributions. Check your My Service Canada statement for your actual estimate. Early CPP (before 65) is reduced by 0.6%/month; late CPP (after 65) is increased by 0.7%/month.<br>
+                <b>OAS Age</b> — Age to start collecting Old Age Security (65–70). Deferring increases the benefit by 0.6%/month (up to 36% at age 70).<br>
+                <b>RRSP / TFSA Bal</b> — Current combined RRSP and TFSA balances for this spouse.<br>
+                <b>Non-Reg Bal</b> — Current non-registered investment balance. Tracks cost basis for capital gains.<br>
+                <b>Monthly: R/T</b> — Monthly RRSP and TFSA contributions during working years. Inflation-adjusted automatically.<br>
+                <b>Plan to Age</b> — Per-spouse target age for the projection. The timeline runs until the later spouse reaches their plan age. Set higher for the spouse expected to live longer.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Life Stages</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Slow-Go Age / %</b> — Age when spending decreases (less travel, activity). Spending goal is multiplied by this percentage.<br>
+                <b>No-Go Age / %</b> — Age when spending decreases further (limited mobility). A second spending reduction multiplier.<br>
+                <b>Enable Meltdown / Melt-to Age</b> — RRSP meltdown strategy: forces larger RRSP withdrawals to deplete the RRSP by the target age. Excess (after tax) is swept into TFSA (up to room) then non-registered. Purpose: avoid large forced RRIF withdrawals at high tax rates in later years.<br>
+                <b>Equal RRSP Draw Split</b> — RRSP draws are split 50/50 between spouses to keep both in lower tax brackets. Falls back to proportional when one spouse's RRSP is depleted.<br>
+                <b>Smooth Tax Rates</b> — Multi-pass optimization to equalize the effective tax rate across all RRSP-draw years. In low-rate years, pulls extra from the RRSP and shelters it in TFSA. Minimizes total lifetime tax.<br>
+                <b>TFSA Bracket Opt</b> — Maximum annual TFSA substitution for bracket optimization. If the RRSP draw puts you just above a tax bracket threshold, this much RRSP draw is replaced with a tax-free TFSA draw to avoid the higher marginal rate. Set to $0 to disable.<br>
+                <b>Gap Year Target Rate %</b> — Maximum effective tax rate Spouse 2 should pay during gap years (when Spouse 2 is retired but Spouse 1 is still working). The engine draws from Spouse 2's RRSP up to this rate, sweeping the net into TFSA. Set higher to pull more during gap years. The sweet spot is typically your smoothed meltdown rate (~13%). Only applies when meltdown is enabled.<br>
+                <b>Survivor Spending %</b> — Percentage of the couple's spending goal the surviving spouse needs after the other passes. Default 70% — fixed costs like housing remain but many variable costs drop. Applied on top of Slow-Go/No-Go multipliers.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Benefits & Market</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Province</b> — Determines provincial tax brackets, basic personal amount, age credit, and pension credit. Quebec excluded.<br>
+                <b>Max CPP</b> — Maximum annual CPP retirement benefit at age 65 (current year).<br>
+                <b>Max CPP2 Annual</b> — Estimated maximum annual CPP2 (enhanced) benefit at full 40-year maturity. Prorated by years of contribution.<br>
+                <b>Max OAS</b> — Maximum annual OAS benefit. Full OAS requires 40 years of Canadian residence after age 18.<br>
+                <b>OAS Clawback Start</b> — Net income threshold above which OAS is clawed back at 15%.<br>
+                <b>Fed Age Amount</b> — Federal age amount tax credit (CRA line 30100). Available at 65+. Clawed back at 15% above ~$45,522 income. Updated via Sync button.<br>
+                <b>Target Net Goal</b> — Desired annual after-tax spending in retirement (today's dollars). Inflation-adjusted and stage-adjusted.<br>
+                <b>Pre/Post-Ret Return %</b> — Expected annual investment return before/after retirement. Compounded monthly.<br>
+                <b>Inflation %</b> — Annual inflation rate. Indexes spending, benefits, brackets, contributions, TFSA room.<br>
+                <b>System Year</b> — Base year for calculations. Tax values are 2025 base, indexed forward.<br>
+                <b>TFSA Room/yr/person</b> — Annual TFSA contribution room per person. Inflation-indexed. Overflow goes to non-registered.<br>
+                <b>Current TFSA Room (total)</b> — Combined unused TFSA contribution room for both spouses right now. Prevents early overflow to non-reg.<br>
+                <b>Cap Gains Inclusion %</b> — Percentage of capital gains taxable on non-registered withdrawals.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Lump Sums & Contribution Boost</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Lump Sums</b> — One-time additions (inheritance, property sale) at a specified age. Allocation: TFSA (up to room) → RRSP (up to cap) → Non-Reg. Split 50/50. Set to 0 to disable.<br>
+                <b>Contribution Boost</b> — Additional monthly RRSP/TFSA amounts added ON TOP of base contributions at the specified age. Both spouses activate together. Useful for mortgage payoff, kids leaving home.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Solver Buttons</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Solve for Retirement Age</b> — Tests both spouses' retirement age combinations. Shows top 10 earliest viable options.<br>
+                <b>Solve for Target Net Goal</b> — Finds the maximum sustainable annual spending.<br>
+                <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra monthly RRSP contribution needed.<br>
+                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 age permutations for both spouses to maximize the final portfolio.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Assumptions & Calculation Rules</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Tax</b> — Federal + provincial progressive brackets, indexed by inflation. Federal lowest rate 14.5% (2025+). CPP/OAS taxable. TFSA withdrawals tax-free. Ontario surtax modelled. 2025 base values. Federal age amount configurable via input field.<br><br>
+                <b>Income Splitting</b> — Spouse 65+ can transfer up to 50% of RRIF draw. Both 65+: all income pooled 50/50. CPP sharing not modelled.<br><br>
+                <b>Withdrawal Order</b> — RRSP first → TFSA when depleted → Non-Reg last. TFSA bracket opt can pull small amounts earlier.<br><br>
+                <b>Meltdown</b> — Forces RRSP depletion by target age. Floor = RRSP ÷ remaining years. Excess swept to TFSA/Non-Reg. $10 minimum threshold.<br><br>
+                <b>Gap Years</b> — When Spouse 2 retires before Spouse 1, Spouse 2 draws from RRSP up to the Gap Year Target Rate to pre-meltdown at a lower rate. Net is swept to TFSA. Spouse 1 continues contributing. Only active when meltdown is enabled.<br><br>
+                <b>RRIF Minimums</b> — Mandatory at 72+ (5.28% rising to 20% at 95+). Enforced above spending need.<br><br>
+                <b>CPP2</b> — Auto-calculated from contribution years (2024 to retirement or 70). Partial = years÷40 × max. Same early/late adjustment as CPP.<br><br>
+                <b>Growth</b> — Monthly compounding. Contributions inflation-adjusted. TFSA room tracked with overflow to non-reg.<br><br>
+                <b>Smoothing</b> — Three-pass: baseline rates → target average → re-run with adjusted draws. Cannot reduce pre-65 rates below spending minimum.<br><br>
+                <b>Not Modelled</b> — Employment income, provincial health premiums (ON/BC), GIS, employer pensions (DB/DC), CPP pension sharing. Net worth mixes pre-tax (RRSP) and post-tax (TFSA) dollars. Solvers run without smoothing for speed.
+            </div>
+        </details>
+
+    </div>
+    </div><!-- /tab_help -->
+
+</div>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────────────
+// Base year: 2025 CRA values. Inflation indexing scales these forward.
+const DATA_2026 = { cpp: 18091.80, oas: 8907.72, cpp2: 3466, fedAgeAmt: 9028 };
+const formatMoney = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString();
+const formatPct   = n => n.toFixed(1) + "%";
+let FED_AGE_AMT = 9028; // Updated from buildParams before each projection
+
+// ─── Tab switching ──────────────────────────────────────────────────────────
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab_' + tabId).classList.add('active');
+    // Highlight the clicked tab button
+    const btns = document.querySelectorAll('.tab-btn');
+    const tabNames = ['setup','chart','compare','plan','montecarlo','help'];
+    const idx = tabNames.indexOf(tabId);
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+    // Re-render chart when switching to chart tab (canvas needs to be visible for sizing)
+    if (tabId === 'chart') {
+        const params = buildParams();
+        try {
+            const rows = projectYears(params, null);
+            renderChart(rows);
+            renderNWChart(rows);
+        } catch(e) {}
+    }
+    if (tabId === 'montecarlo') {
+        runMonteCarlo();
+    }
+}
+
+// ─── Dynamic name updates ───────────────────────────────────────────────────
+function updateNames() {
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    document.querySelectorAll('.s1_name_disp').forEach(el => el.textContent = s1);
+    document.querySelectorAll('.s2_name_disp').forEach(el => el.textContent = s2);
+    document.getElementById('title_s1').textContent = s1;
+    document.getElementById('title_s2').textContent = s2;
+    document.title = `${s1} & ${s2}: Retirement Calculator V28`;
+}
+
+// ─── Dollar field formatting ────────────────────────────────────────────────
+function parseDollar(str) {
+    if (typeof str !== 'string') str = String(str);
+    return parseFloat(str.replace(/[$,\s]/g, '')) || 0;
+}
+
+function formatDollarValue(num) {
+    if (num === 0) return '$0';
+    // Keep decimals only if present in original (for CPP/OAS values)
+    const rounded = Math.round(num * 100) / 100;
+    if (rounded === Math.floor(rounded)) {
+        return '$' + Math.floor(rounded).toLocaleString();
+    }
+    return '$' + rounded.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function initDollarFields() {
+    document.querySelectorAll('input.dollar').forEach(el => {
+        // Format initial value
+        const raw = parseDollar(el.value);
+        el.value = formatDollarValue(raw);
+
+        el.addEventListener('focus', function() {
+            const raw = parseDollar(this.value);
+            this.value = raw === 0 ? '' : String(raw);
+            this.select();
+        });
+
+        el.addEventListener('blur', function() {
+            const raw = parseDollar(this.value);
+            this.value = formatDollarValue(raw);
+        });
+    });
+}
+
+// ─── RRIF Mandatory Minimum Rates (age → %) ─────────────────────────────────
+// Source: CRA RRIF minimum withdrawal schedule.
+// Applies from the year the holder turns 72 (must convert RRSP→RRIF by end of year turning 71).
+const RRIF_MIN_RATES = {
+    72: 0.0528, 73: 0.0540, 74: 0.0553, 75: 0.0567, 76: 0.0582,
+    77: 0.0598, 78: 0.0617, 79: 0.0636, 80: 0.0658, 81: 0.0682,
+    82: 0.0708, 83: 0.0738, 84: 0.0771, 85: 0.0808, 86: 0.0851,
+    87: 0.0899, 88: 0.0955, 89: 0.1021, 90: 0.1099, 91: 0.1192,
+    92: 0.1306, 93: 0.1449, 94: 0.1634
+};
+function getRRIFRate(age) {
+    if (age < 72) return 0;
+    if (age >= 95) return 0.2000;
+    return RRIF_MIN_RATES[age] || 0.2000;
+}
+
+// ─── Provincial Tax Data (2025 base values, indexed forward) ────────────────
+// Each province: brackets [[threshold, rate]...], bpa, age, ageClawThresh, pensionCredit, lowestRate
+// Quebec excluded (QPP complexity). All values are 2025 base; inflation indexing scales forward.
+const PROV_TAX = {
+    AB: {
+        name: "Alberta",
+        brackets: [[148269,0.10],[177922,0.12],[237230,0.13],[355845,0.14],[Infinity,0.15]],
+        bpa: 22323, age: 6221, ageClawThresh: 46308, pensionCredit: 1000, lowestRate: 0.10
+    },
+    BC: {
+        name: "British Columbia",
+        brackets: [[49279,0.0506],[98560,0.077],[113158,0.105],[154906,0.1229],[227091,0.147],[259829,0.168],[Infinity,0.205]],
+        bpa: 12932, age: 5799, ageClawThresh: 43169, pensionCredit: 1000, lowestRate: 0.0506
+    },
+    MB: {
+        name: "Manitoba",
+        brackets: [[47000,0.108],[100000,0.1275],[Infinity,0.174]],
+        bpa: 15780, age: 3728, ageClawThresh: 27749, pensionCredit: 1000, lowestRate: 0.108
+    },
+    NB: {
+        name: "New Brunswick",
+        brackets: [[49958,0.094],[99916,0.1482],[185064,0.1652],[Infinity,0.1784]],
+        bpa: 13396, age: 5859, ageClawThresh: 43169, pensionCredit: 1000, lowestRate: 0.094
+    },
+    NL: {
+        name: "Newfoundland & Labrador",
+        brackets: [[44192,0.087],[88382,0.145],[157792,0.158],[220910,0.178],[282214,0.198],[564429,0.208],[1128858,0.213],[Infinity,0.218]],
+        bpa: 11067, age: 7779, ageClawThresh: 43169, pensionCredit: 1000, lowestRate: 0.087
+    },
+    NS: {
+        name: "Nova Scotia",
+        brackets: [[29590,0.0879],[59180,0.1495],[93000,0.1667],[150000,0.175],[Infinity,0.21]],
+        bpa: 11744, age: 4898, ageClawThresh: 36894, pensionCredit: 1000, lowestRate: 0.0879
+    },
+    NT: {
+        name: "Northwest Territories",
+        brackets: [[50597,0.059],[101198,0.086],[164525,0.122],[Infinity,0.1405]],
+        bpa: 17842, age: 8160, ageClawThresh: 46604, pensionCredit: 1000, lowestRate: 0.059
+    },
+    NU: {
+        name: "Nunavut",
+        brackets: [[53268,0.04],[106537,0.07],[173205,0.09],[Infinity,0.115]],
+        bpa: 19274, age: 9361, ageClawThresh: 46604, pensionCredit: 1000, lowestRate: 0.04
+    },
+    ON: {
+        name: "Ontario",
+        brackets: [[52886,0.0505],[105775,0.0915],[150000,0.1116],[220000,0.1216],[Infinity,0.1316]],
+        bpa: 12747, age: 5779, ageClawThresh: 43140, pensionCredit: 1624, lowestRate: 0.0505,
+        // Ontario surtax: 20% of basic prov tax > $5,315 + 36% of basic prov tax > $6,802
+        surtax: { thresh1: 5315, rate1: 0.20, thresh2: 6802, rate2: 0.36 }
+    },
+    PE: {
+        name: "Prince Edward Island",
+        brackets: [[32656,0.0965],[64313,0.1363],[105000,0.1665],[140000,0.18],[Infinity,0.1875]],
+        bpa: 14650, age: 5059, ageClawThresh: 36894, pensionCredit: 1000, lowestRate: 0.0965
+    },
+    SK: {
+        name: "Saskatchewan",
+        brackets: [[52057,0.105],[148734,0.125],[Infinity,0.145]],
+        bpa: 19491, age: 5453, ageClawThresh: 43169, pensionCredit: 1000, lowestRate: 0.105
+    },
+    YT: {
+        name: "Yukon",
+        brackets: [[57375,0.064],[114750,0.09],[177882,0.109],[500000,0.128],[Infinity,0.15]],
+        bpa: 16129, age: 9028, ageClawThresh: 45522, pensionCredit: 1000, lowestRate: 0.064
+    }
+};
+
+// ─── Tax Engine (per-person) ────────────────────────────────────────────────
+// Returns total federal + provincial tax for ONE person's taxable income.
+// prov = province code (e.g. "MB"). inf = cumulative inflation multiplier.
+function getProvTax(income, age, inf, prov) {
+    if (income <= 0) return 0;
+    const p = PROV_TAX[prov] || PROV_TAX.MB;
+
+    // Federal brackets (2025 base, indexed)
+    const fedBrackets = [
+        [58523 * inf, 0.145],
+        [117045 * inf, 0.205],
+        [181440 * inf, 0.26],
+        [258482 * inf, 0.29],
+        [Infinity,     0.33]
+    ];
+    // Provincial brackets (indexed)
+    const provBrackets = p.brackets.map(([t, r]) => [t === Infinity ? Infinity : t * inf, r]);
+
+    function bracketTax(inc, brackets) {
+        let tax = 0, prev = 0;
+        for (const [top, rate] of brackets) {
+            if (inc <= prev) break;
+            tax += (Math.min(inc, top) - prev) * rate;
+            prev = top;
+        }
+        return tax;
+    }
+
+    const fedTax = bracketTax(income, fedBrackets);
+    let provTax = bracketTax(income, provBrackets);
+
+    // Ontario surtax
+    if (p.surtax) {
+        const s = p.surtax;
+        let surtax = 0;
+        if (provTax > s.thresh1 * inf) surtax += (provTax - s.thresh1 * inf) * s.rate1;
+        if (provTax > s.thresh2 * inf) surtax += (provTax - s.thresh2 * inf) * s.rate2;
+        provTax += surtax;
+    }
+
+    let tax = fedTax + provTax;
+
+    // ── Non-refundable credits ──
+    const fedBPA  = 16452 * inf;
+    const provBPA = p.bpa * inf;
+    let credits = (fedBPA * 0.145) + (provBPA * p.lowestRate);
+
+    // ── Age credit with income-based clawback ──
+    if (age >= 65) {
+        const fedAgeClawThresh = 45522 * inf;
+        const fedAgeBase = FED_AGE_AMT * inf;
+        const fedAgeReduction = Math.max(0, (income - fedAgeClawThresh) * 0.15);
+        const fedAgeAmount = Math.max(0, fedAgeBase - fedAgeReduction);
+
+        const provAgeClawThresh = p.ageClawThresh * inf;
+        const provAgeBase = p.age * inf;
+        const provAgeReduction = Math.max(0, (income - provAgeClawThresh) * 0.15);
+        const provAgeAmount = Math.max(0, provAgeBase - provAgeReduction);
+
+        credits += (fedAgeAmount * 0.145) + (provAgeAmount * p.lowestRate);
+    }
+
+    // ── Pension income credit (eligible at 65+ with RRIF income) ──
+    if (age >= 65) {
+        credits += (2000 * inf * 0.145) + (p.pensionCredit * inf * p.lowestRate);
+    }
+
+    return Math.max(0, tax - credits);
+}
+
+// ───: Combined tax calculator for both spouses ──────────────────────────
+// Pension income splitting: a spouse aged 65+ can transfer up to 50% of their
+// RRIF/RRSP draw to the other spouse for tax purposes, regardless of the
+// recipient's age. Optimally transfers enough to equalize incomes.
+function calcCombinedTax(rrspDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, inf, prov, singleFiler) {
+    const r_rrspDraw = rrspDraw * r_drawRatio;
+    const m_rrspDraw = rrspDraw * (1 - r_drawRatio);
+
+    let r_income = r_rrspDraw + r_cpp + r_oas;
+    let m_income = m_rrspDraw + m_cpp + m_oas;
+
+    if (!singleFiler) {
+        if (age1 >= 65 && age2 >= 65) {
+            const total = r_income + m_income;
+            r_income = total / 2;
+            m_income = total / 2;
+        } else if (age1 >= 65) {
+            const maxTransfer = r_rrspDraw * 0.5;
+            const diff = r_income - m_income;
+            if (diff > 0) {
+                const transfer = Math.min(maxTransfer, diff / 2);
+                r_income -= transfer;
+                m_income += transfer;
+            }
+        } else if (age2 >= 65) {
+            const maxTransfer = m_rrspDraw * 0.5;
+            const diff = m_income - r_income;
+            if (diff > 0) {
+                const transfer = Math.min(maxTransfer, diff / 2);
+                m_income -= transfer;
+                r_income += transfer;
+            }
+        }
+    }
+    // Single filer: tax only the survivor's total income
+    // age1==age2==survivor age, so use age1
+    if (singleFiler) {
+        const totalIncome = r_income + m_income;
+        return getProvTax(totalIncome, age1, inf, prov);
+    }
+
+    return getProvTax(r_income, age1, inf, prov) + getProvTax(m_income, age2, inf, prov);
+}
+
+// ─── OAS Clawback ───────────────────────────────────────────────────────────
+// Returns clawback for one person. Net income includes ALL income sources.
+function calcOASClawback(netIncome, oasReceived, clawbackThreshold, inf) {
+    if (oasReceived <= 0) return 0;
+    const threshold = clawbackThreshold * inf;
+    if (netIncome <= threshold) return 0;
+    return Math.min(oasReceived, (netIncome - threshold) * 0.15);
+}
+
+// ───: Iterative OAS clawback for both spouses ──────────────────────────
+function calcOASClawbackBoth(rrspDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, OAS_CLAWBACK, inf, singleFiler) {
+    const r_rrspDraw = rrspDraw * r_drawRatio;
+    const m_rrspDraw = rrspDraw * (1 - r_drawRatio);
+
+    let r_netIncome = r_rrspDraw + r_cpp + r_oas;
+    let m_netIncome = m_rrspDraw + m_cpp + m_oas;
+
+    if (singleFiler) {
+        const totalIncome = r_netIncome + m_netIncome;
+        const totalOAS = r_oas + m_oas;
+        return calcOASClawback(totalIncome, totalOAS, OAS_CLAWBACK, inf);
+    }
+
+    if (age1 >= 65 && age2 >= 65) {
+        const total = r_netIncome + m_netIncome;
+        r_netIncome = total / 2;
+        m_netIncome = total / 2;
+    } else if (age1 >= 65) {
+        const maxTransfer = r_rrspDraw * 0.5;
+        const diff = r_netIncome - m_netIncome;
+        if (diff > 0) {
+            const transfer = Math.min(maxTransfer, diff / 2);
+            r_netIncome -= transfer;
+            m_netIncome += transfer;
+        }
+    } else if (age2 >= 65) {
+        const maxTransfer = m_rrspDraw * 0.5;
+        const diff = m_netIncome - r_netIncome;
+        if (diff > 0) {
+            const transfer = Math.min(maxTransfer, diff / 2);
+            m_netIncome -= transfer;
+            r_netIncome += transfer;
+        }
+    }
+
+    const r_claw = calcOASClawback(r_netIncome, r_oas, OAS_CLAWBACK, inf);
+    const m_claw = calcOASClawback(m_netIncome, m_oas, OAS_CLAWBACK, inf);
+    return r_claw + m_claw;
+}
+
+// ─── CPP calculation ─────────────────────────────────────────────────────────
+function calcCPP(takeAge, pct, MAX_CPP, inf) {
+    const base   = (pct / 100) * MAX_CPP;
+    const months = (takeAge - 65) * 12;
+    const adj    = months < 0 ? 0.006 : 0.007;
+    const factor = 1 + months * adj;
+    return base * factor * inf;
+}
+
+// ───: OAS calculation with deferral ─────────────────────────────────────
+// OAS can be deferred from 65 to 70: +0.6% per month deferred.
+function calcOAS(currentAge, oasStartAge, MAX_OAS, inf) {
+    if (currentAge < oasStartAge) return 0;
+    const deferMonths = Math.min(Math.max(0, (oasStartAge - 65) * 12), 60);
+    const factor = 1 + deferMonths * 0.006;
+    // OAS increases by 10% at age 75 (permanent, enacted July 2022)
+    const age75Bonus = currentAge >= 75 ? 1.10 : 1.0;
+    return MAX_OAS * factor * age75Bonus * inf;
+}
+
+// ───: CPP2 calculation ──────────────────────────────────────────────────
+// CPP2 provides additional benefit for earnings between YMPE and YAMPE.
+// Full benefit requires 40 years of contributions (started 2024).
+// Partial benefit = (contributionYears / 40) × maxCPP2Annual.
+// Same early/late adjustment as base CPP applies.
+function calcCPP2(currentAge, cppTakeAge, cpp2Yrs, MAX_CPP2, inf) {
+    if (currentAge < cppTakeAge || cpp2Yrs <= 0) return 0;
+    const fraction = Math.min(cpp2Yrs, 40) / 40;
+    const baseBenefit = fraction * MAX_CPP2;
+    // Apply same early/late adjustment as regular CPP
+    const months = (cppTakeAge - 65) * 12;
+    const adj = months < 0 ? 0.006 : 0.007;
+    const factor = 1 + months * adj;
+    return baseBenefit * factor * inf;
+}
+
+// ───: Main solver — find RRSP draw for target net spending ──────────────
+// Solves: rrspDraw + pensions - tax(rrspDraw + pensions) - oasClawback = netGoal
+// Includes iterative OAS clawback convergence.
+// Returns { rrspDraw, tax, oasClawback }
+function solveRetirementDraw(netGoal, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, inf, minRRSPDraw, OAS_CLAWBACK, prov, singleFiler) {
+    const totalPensions = r_cpp + r_oas + m_cpp + m_oas;
+
+    let oasClawback = 0;
+    let rrspDraw = 0;
+    let tax = 0;
+
+    for (let clawIter = 0; clawIter < 8; clawIter++) {
+        const adjustedGoal = netGoal + oasClawback;
+        const targetFromDraw = adjustedGoal - totalPensions;
+
+        if (targetFromDraw <= 0 && minRRSPDraw <= 0) {
+            tax = calcCombinedTax(0, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, inf, prov, singleFiler);
+            const netPensions = totalPensions - tax;
+            if (netPensions >= adjustedGoal) {
+                rrspDraw = 0;
+                break;
+            }
+        }
+
+        rrspDraw = Math.max(targetFromDraw > 0 ? targetFromDraw / 0.68 : 0, minRRSPDraw);
+        for (let i = 0; i < 15; i++) {
+            tax = calcCombinedTax(rrspDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, inf, prov, singleFiler);
+            const net = rrspDraw + totalPensions - tax;
+            const error = adjustedGoal - net;
+            if (Math.abs(error) < 1) break;
+            rrspDraw = Math.max(rrspDraw + error / 0.65, minRRSPDraw, 0);
+        }
+
+        const newClawback = calcOASClawbackBoth(rrspDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, OAS_CLAWBACK, inf, singleFiler);
+        if (Math.abs(newClawback - oasClawback) < 1) {
+            oasClawback = newClawback;
+            break;
+        }
+        oasClawback = newClawback;
+    }
+
+    tax = calcCombinedTax(rrspDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, age1, age2, inf, prov, singleFiler);
+
+    return { rrspDraw, tax, oasClawback };
+}
+
+// ─── Main projection engine ─────────────────────────────────────────────────
+function projectYears(params, returnOverride) {
+    const {
+        s1_age, s1_retire, s1_rrsp, s1_tfsa, s1_rrsp_c, s1_tfsa_c, s1_cpp_age, s1_cpp_pct, s1_oas_age, s1_cpp2_yrs,
+        s2_age, s2_retire, s2_rrsp, s2_tfsa, s2_rrsp_c, s2_tfsa_c, s2_cpp_age, s2_cpp_pct, s2_oas_age, s2_cpp2_yrs,
+        s1_nonreg, s2_nonreg,
+        infl, rPre, rPost, isMelt, equalDraw, smoothTax, meltAge, MAX_CPP, MAX_CPP2, MAX_OAS, OAS_CLAWBACK,
+        slowAge, slowPct, noAge, noPct, netGoalBase, maxYrs,
+        tfsaRoomPerYr, tfsaRoomCurrent, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
+        ls1_amt, ls1_age, ls1_rrsp_cap, ls2_amt, ls2_age, ls2_rrsp_cap,
+        boostAge, s1_rrsp_boost, s1_tfsa_boost, s2_rrsp_boost, s2_tfsa_boost,
+        prov, targetTaxRate,
+        s1PlanAge, s2PlanAge
+    } = params;
+
+    FED_AGE_AMT = params.fedAgeAmt || 9028;
+
+    let r = { rrsp: s1_rrsp, tfsa: s1_tfsa, nonreg: s1_nonreg, nonregCost: s1_nonreg };
+    let m = { rrsp: s2_rrsp, tfsa: s2_tfsa, nonreg: s2_nonreg, nonregCost: s2_nonreg };
+    let shortfall = 0;
+    const rows = [];
+
+    let tfsaAvailableRoom = tfsaRoomCurrent || 0;
+
+    let s1Alive = true, s2Alive = true;
+
+    for (let yr = 0; yr <= maxYrs; yr++) {
+        const a1  = s1_age + yr;
+        const a2  = s2_age + yr;
+        const inf_mult = Math.pow(1 + infl, yr);
+
+        // ── Survivor logic: roll assets on death ──
+        if (s1Alive && a1 > s1PlanAge) {
+            s1Alive = false;
+            // Roll S1 assets to S2 (tax-free spousal rollover)
+            m.rrsp += r.rrsp; r.rrsp = 0;
+            m.tfsa += r.tfsa; r.tfsa = 0;
+            m.nonreg += r.nonreg; m.nonregCost += r.nonregCost;
+            r.nonreg = 0; r.nonregCost = 0;
+        }
+        if (s2Alive && a2 > s2PlanAge) {
+            s2Alive = false;
+            r.rrsp += m.rrsp; m.rrsp = 0;
+            r.tfsa += m.tfsa; m.tfsa = 0;
+            r.nonreg += m.nonreg; r.nonregCost += m.nonregCost;
+            m.nonreg = 0; m.nonregCost = 0;
+        }
+
+        // New TFSA room (1 person if survivor)
+        const livingSpouses = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0);
+        tfsaAvailableRoom += tfsaRoomPerYr * livingSpouses * inf_mult;
+
+        // ── Lump sum allocations (start of year, before growth) ──
+        const lumpSums = [
+            { amt: ls1_amt, age: ls1_age, cap: ls1_rrsp_cap },
+            { amt: ls2_amt, age: ls2_age, cap: ls2_rrsp_cap }
+        ];
+        for (const ls of lumpSums) {
+            if (ls.amt > 0 && ls.age > 0 && a1 === ls.age) {
+                let remaining = ls.amt;
+                // Phase 1: TFSA (up to available room, split 50/50)
+                const toTFSA = Math.min(remaining, Math.max(0, tfsaAvailableRoom));
+                r.tfsa += toTFSA / 2;
+                m.tfsa += toTFSA / 2;
+                tfsaAvailableRoom -= toTFSA;
+                remaining -= toTFSA;
+                // Phase 2: RRSP (up to cap if specified, split 50/50)
+                if (remaining > 0) {
+                    const rrspLimit = (ls.cap > 0) ? ls.cap : remaining;
+                    const toRRSP = Math.min(remaining, rrspLimit);
+                    r.rrsp += toRRSP / 2;
+                    m.rrsp += toRRSP / 2;
+                    remaining -= toRRSP;
+                }
+                // Phase 3: Non-Reg (remainder, split 50/50)
+                if (remaining > 0) {
+                    r.nonreg += remaining / 2;
+                    m.nonreg += remaining / 2;
+                    r.nonregCost += remaining / 2;
+                    m.nonregCost += remaining / 2;
+                }
+            }
+        }
+
+        // Determine return for this year
+        let annualReturn;
+        if (returnOverride) {
+            annualReturn = returnOverride[yr] ?? rPost;
+        } else {
+            annualReturn = (a1 < s1_retire && a2 < s2_retire) ? rPre : rPost;
+        }
+        const mROI = Math.pow(1 + annualReturn, 1/12) - 1;
+
+        // ── Contribution amounts (apply boost if active) ──
+        const useBoosted = (boostAge > 0 && a1 >= boostAge);
+        const r_rrsp_mo  = s1_rrsp_c + (useBoosted ? s1_rrsp_boost : 0);
+        const r_tfsa_mo  = s1_tfsa_c + (useBoosted ? s1_tfsa_boost : 0);
+        const m_rrsp_mo  = s2_rrsp_c + (useBoosted ? s2_rrsp_boost : 0);
+        const m_tfsa_mo  = s2_tfsa_c + (useBoosted ? s2_tfsa_boost : 0);
+
+        // Monthly contributions + compounding
+        for (let mon = 0; mon < 12; mon++) {
+            if (s1Alive && a1 < s1_retire) {
+                r.rrsp += r_rrsp_mo * inf_mult;
+                const tfsaAdd = Math.min(r_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoom));
+                const nonregAdd = (r_tfsa_mo * inf_mult) - tfsaAdd;
+                r.tfsa += tfsaAdd;
+                tfsaAvailableRoom -= tfsaAdd;
+                r.nonreg += nonregAdd;
+                r.nonregCost += nonregAdd;
+            }
+            if (s2Alive && a2 < s2_retire) {
+                m.rrsp += m_rrsp_mo * inf_mult;
+                const tfsaAdd = Math.min(m_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoom));
+                const nonregAdd = (m_tfsa_mo * inf_mult) - tfsaAdd;
+                m.tfsa += tfsaAdd;
+                tfsaAvailableRoom -= tfsaAdd;
+                m.nonreg += nonregAdd;
+                m.nonregCost += nonregAdd;
+            }
+            r.rrsp   *= (1 + mROI); m.rrsp   *= (1 + mROI);
+            r.tfsa   *= (1 + mROI); m.tfsa   *= (1 + mROI);
+            r.nonreg *= (1 + mROI); m.nonreg *= (1 + mROI);
+        }
+
+        // ── Government benefits ──
+        let r_cpp = 0, m_cpp = 0, r_oas = 0, m_oas = 0;
+        if (s1Alive && a1 >= s1_cpp_age) r_cpp = calcCPP(s1_cpp_age, s1_cpp_pct, MAX_CPP, inf_mult);
+        if (s2Alive && a2 >= s2_cpp_age) m_cpp = calcCPP(s2_cpp_age, s2_cpp_pct, MAX_CPP, inf_mult);
+        if (s1Alive) r_cpp += calcCPP2(a1, s1_cpp_age, s1_cpp2_yrs, MAX_CPP2, inf_mult);
+        if (s2Alive) m_cpp += calcCPP2(a2, s2_cpp_age, s2_cpp2_yrs, MAX_CPP2, inf_mult);
+        if (s1Alive) r_oas = calcOAS(a1, s1_oas_age, MAX_OAS, inf_mult);
+        if (s2Alive) m_oas = calcOAS(a2, s2_oas_age, MAX_OAS, inf_mult);
+
+        let annualPensions = r_cpp + r_oas + m_cpp + m_oas;
+
+        // ── Life stage ──
+        const bothAlive = s1Alive && s2Alive;
+        const isFullyRetired = s1Alive ? (a1 >= s1_retire) : true;
+        const isGapYear = bothAlive && (a2 >= s2_retire && a1 < s1_retire);
+        let stage = (!bothAlive) ? "Survivor" : (isFullyRetired ? "Go-Go" : (isGapYear ? "Gap" : "Working"));
+        let multiplier = 1.0;
+        if (isFullyRetired || !bothAlive) {
+            if      (a1 >= noAge)   { stage = !bothAlive ? "Survivor" : "No-Go";   multiplier = noPct; }
+            else if (a1 >= slowAge) { stage = !bothAlive ? "Survivor" : "Slow-Go";  multiplier = slowPct; }
+        }
+
+        let annualTax = 0, oasClawback = 0, pensionCredit = 0;
+        let rrspDrawAmt = 0, tfsaDrawAmt = 0, nonRegDrawAmt = 0, nonRegCapGainsTax = 0;
+        let rrifMinDisplay = 0;
+        let yearShortfall = 0;
+        // Per-spouse tracking for action plan
+        let r_rrspDraw = 0, m_rrspDraw = 0;
+        let r_tfsaDraw = 0, m_tfsaDraw = 0;
+        let r_nonregDraw = 0, m_nonregDraw = 0;
+        let sweepToTFSA = 0, sweepToNonReg = 0;
+
+        // ── Gap year: Spouse 2 retired, Spouse 1 still working ──
+        // Draw from Spouse 2's RRSP until effective tax rate hits target
+        if (isGapYear && m.rrsp > 0 && isMelt) {
+            const p = PROV_TAX[prov] || PROV_TAX.MB;
+            // Binary search for max draw where effective rate <= target
+            let lo = 0, hi = Math.min(m.rrsp, 80000);
+            for (let i = 0; i < 25; i++) {
+                const mid = (lo + hi) / 2;
+                const tax = getProvTax(mid, a2, inf_mult, prov);
+                const effectiveRate = mid > 0 ? tax / mid : 0;
+                if (effectiveRate <= gapTargetRate) lo = mid; else hi = mid;
+                if (hi - lo < 100) break;
+            }
+            const gapDraw = Math.floor(lo / 100) * 100; // round down to $100
+            if (gapDraw > 0) {
+                m.rrsp -= gapDraw;
+                rrspDrawAmt = gapDraw;
+                m_rrspDraw = gapDraw;
+                annualTax = getProvTax(gapDraw, a2, inf_mult, prov);
+                // Sweep net to TFSA
+                const netSweep = gapDraw - annualTax;
+                if (netSweep > 10) {
+                    sweepToTFSA = Math.min(netSweep, Math.max(0, tfsaAvailableRoom));
+                    m.tfsa += sweepToTFSA;
+                    tfsaAvailableRoom -= sweepToTFSA;
+                    sweepToNonReg = netSweep - sweepToTFSA;
+                    if (sweepToNonReg > 0) {
+                        m.nonreg += sweepToNonReg;
+                        m.nonregCost += sweepToNonReg;
+                    }
+                }
+            }
+        }
+
+        if (isFullyRetired || !bothAlive) {
+            const spendMultiplier = !bothAlive ? survivorPct * multiplier : multiplier;
+            const netGoal = netGoalBase * inf_mult * spendMultiplier;
+
+            // ── RRIF mandatory minimums  ──
+            const rrifMin_r = (s1Alive && a1 >= 72 && r.rrsp > 0) ? r.rrsp * getRRIFRate(a1) : 0;
+            const rrifMin_m = (s2Alive && a2 >= 72 && m.rrsp > 0) ? m.rrsp * getRRIFRate(a2) : 0;
+            const rrifMin = rrifMin_r + rrifMin_m;
+            rrifMinDisplay = rrifMin;
+
+            // ── Meltdown floor ──
+            const meltdownFloor = (isMelt && a1 <= meltAge && (r.rrsp + m.rrsp) > 0)
+                ? (r.rrsp + m.rrsp) / ((meltAge - a1) + 1)
+                : 0;
+
+            // Minimum RRSP draw = larger of RRIF min and meltdown floor
+            let minRRSPDraw = Math.max(rrifMin, meltdownFloor);
+
+            // Draw ratio: 50/50 when equal draw enabled and both have balance, else by balance proportion
+            const totalRRSP = r.rrsp + m.rrsp;
+            const r_drawRatio = (!s1Alive) ? 0          // S1 dead — all RRSP on S2
+                : (!s2Alive) ? 1                         // S2 dead — all RRSP on S1
+                : (equalDraw && r.rrsp > 0 && m.rrsp > 0) ? 0.5
+                : (totalRRSP > 0 ? r.rrsp / totalRRSP : 0.5);
+
+            // For tax purposes: survivor uses only their own age, no splitting
+            const tax_a1 = s1Alive ? a1 : a2;  // use survivor's age for credits
+            const tax_a2 = s2Alive ? a2 : a1;  // same — single filer uses one age
+            const singleFiler = !s1Alive || !s2Alive;
+
+            // ── Tax rate smoothing: increase draw in low-rate years ──
+            if (targetTaxRate && totalRRSP > 0 && minRRSPDraw > 0) {
+                const testTax = calcCombinedTax(minRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler);
+                const testGross = minRRSPDraw + annualPensions;
+                const testRate = testGross > 0 ? testTax / testGross : 0;
+
+                if (testRate < targetTaxRate - 0.005) {
+                    // Binary search for draw that achieves target rate
+                    let lo = minRRSPDraw, hi = Math.min(totalRRSP, minRRSPDraw * 5);
+                    for (let i = 0; i < 25; i++) {
+                        const mid = (lo + hi) / 2;
+                        const tax = calcCombinedTax(mid, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler);
+                        const gross = mid + annualPensions;
+                        const rate = gross > 0 ? tax / gross : 0;
+                        if (rate < targetTaxRate) lo = mid; else hi = mid;
+                        if (hi - lo < 100) break;
+                    }
+                    minRRSPDraw = Math.max(minRRSPDraw, lo);
+                }
+            }
+
+            // ── Solve for needed RRSP draw (includes pensions in tax) ──
+            const result = solveRetirementDraw(
+                netGoal, r_cpp, r_oas, m_cpp, m_oas,
+                r_drawRatio, tax_a1, tax_a2, inf_mult,
+                minRRSPDraw, OAS_CLAWBACK, prov, singleFiler
+            );
+
+            rrspDrawAmt = result.rrspDraw;
+            annualTax   = result.tax;
+            oasClawback = result.oasClawback;
+
+            // ── TFSA bracket optimization: substitute TFSA for RRSP near bracket boundaries ──
+            // Only apply when RRSP draw exceeds the meltdown/RRIF minimum — don't undermine meltdown
+            const bracketOptHeadroom = rrspDrawAmt - minRRSPDraw;
+            if (tfsaBracketMax > 0 && bracketOptHeadroom > 0 && (r.tfsa + m.tfsa) > 0 && rrspDrawAmt > 0) {
+                const availTFSA = r.tfsa + m.tfsa;
+                const maxSwap = Math.min(tfsaBracketMax, availTFSA, bracketOptHeadroom);
+                const baseTax = annualTax;
+
+                // Try $500 increments, find where marginal savings rate drops (bracket crossed)
+                let bestSwap = 0, prevMarginalRate = 0;
+                for (let swap = 500; swap <= maxSwap; swap += 500) {
+                    const newTax = calcCombinedTax(rrspDrawAmt - swap, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler);
+                    const thisSavings = baseTax - newTax;
+                    // Marginal savings rate for this $500 chunk
+                    const prevTax = swap > 500
+                        ? calcCombinedTax(rrspDrawAmt - swap + 500, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler)
+                        : baseTax;
+                    const marginalSavings = prevTax - newTax;
+                    const marginalRate = marginalSavings / 500;
+
+                    if (swap > 500 && marginalRate < prevMarginalRate * 0.65) {
+                        // Rate dropped sharply — we crossed into a lower bracket
+                        // Use previous amount (just below the old bracket)
+                        bestSwap = swap - 500;
+                        break;
+                    }
+                    bestSwap = swap;
+                    prevMarginalRate = marginalRate;
+                }
+
+                if (bestSwap > 0) {
+                    const newTax = calcCombinedTax(rrspDrawAmt - bestSwap, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler);
+                    const savings = baseTax - newTax;
+                    if (savings > 25) {
+                        rrspDrawAmt -= bestSwap;
+                        tfsaDrawAmt += bestSwap;
+                        annualTax = newTax;
+                    }
+                }
+            }
+
+            // Pension credit value for display (65+ and alive)
+            if (s1Alive && a1 >= 65) pensionCredit += (2000 * inf_mult * 0.145 + (PROV_TAX[prov] || PROV_TAX.MB).pensionCredit * inf_mult * (PROV_TAX[prov] || PROV_TAX.MB).lowestRate);
+            if (s2Alive && a2 >= 65) pensionCredit += (2000 * inf_mult * 0.145 + (PROV_TAX[prov] || PROV_TAX.MB).pensionCredit * inf_mult * (PROV_TAX[prov] || PROV_TAX.MB).lowestRate);
+
+            // ── Draw from accounts ──
+            // Phase 1: RRSP draw (taxable)
+            const availRRSP = r.rrsp + m.rrsp;
+            const solverRequestedDraw = rrspDrawAmt; // preserve solver's request for comparison
+            const actualRRSPDraw = Math.min(rrspDrawAmt, availRRSP);
+            if (availRRSP > 0) {
+                if (equalDraw && r.rrsp > 0 && m.rrsp > 0) {
+                    const halfDraw = actualRRSPDraw / 2;
+                    const r_draw = Math.min(halfDraw, r.rrsp);
+                    const m_draw = Math.min(halfDraw, m.rrsp);
+                    const r_extra = halfDraw - r_draw;
+                    const m_extra = halfDraw - m_draw;
+                    r_rrspDraw = r_draw + m_extra;
+                    m_rrspDraw = m_draw + r_extra;
+                    r.rrsp -= r_rrspDraw;
+                    m.rrsp -= m_rrspDraw;
+                } else {
+                    const rat = r.rrsp / availRRSP;
+                    r_rrspDraw = actualRRSPDraw * rat;
+                    m_rrspDraw = actualRRSPDraw * (1 - rat);
+                    r.rrsp -= r_rrspDraw;
+                    m.rrsp -= m_rrspDraw;
+                }
+            }
+
+            // Phase 2: If RRSP couldn't cover the full draw, take from TFSA (tax-free)
+            // FIX: TFSA draws don't need gross-up — recalculate tax on actual RRSP draw only
+            if (actualRRSPDraw < solverRequestedDraw) {
+                // RRSP depleted — bracket opt is moot, recalculate everything
+                tfsaDrawAmt = 0;
+                // Recalculate tax on the actual (lower) RRSP draw + pensions
+                annualTax = calcCombinedTax(actualRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler);
+                // Recalculate OAS clawback on lower income
+                oasClawback = calcOASClawbackBoth(actualRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, OAS_CLAWBACK, inf_mult, singleFiler);
+
+                // Net from taxable sources
+                const netFromTaxable = actualRRSPDraw + annualPensions - annualTax - oasClawback;
+                // Remaining net needed from TFSA (1:1 since tax-free)
+                const tfsaNeeded = Math.max(0, netGoal - netFromTaxable);
+                const availTFSA = r.tfsa + m.tfsa;
+                tfsaDrawAmt = Math.min(tfsaNeeded, availTFSA);
+                if (availTFSA > 0) {
+                    const rat = r.tfsa / availTFSA;
+                    r_tfsaDraw = tfsaDrawAmt * rat;
+                    m_tfsaDraw = tfsaDrawAmt * (1 - rat);
+                    r.tfsa -= r_tfsaDraw;
+                    m.tfsa -= m_tfsaDraw;
+                }
+                tfsaAvailableRoom += tfsaDrawAmt;
+
+                // Phase 3: Non-reg if still short
+                const remainingNet = tfsaNeeded - tfsaDrawAmt;
+                if (remainingNet > 0) {
+                    const totalNR = r.nonreg + m.nonreg;
+                    const totalCost = r.nonregCost + m.nonregCost;
+                    nonRegDrawAmt = Math.min(remainingNet * 1.1, totalNR); // slight gross-up for cap gains
+                    if (totalNR > 0) {
+                        const gainFrac = Math.max(0, (totalNR - totalCost) / totalNR);
+                        const capGain = nonRegDrawAmt * gainFrac;
+                        const taxableGain = capGain * (capGainsInclusion / 100);
+                        nonRegCapGainsTax = getProvTax(taxableGain / 2, a1, inf_mult, prov) * 2;
+                        annualTax += nonRegCapGainsTax;
+                        const withdrawFrac = nonRegDrawAmt / totalNR;
+                        const rat = r.nonreg / totalNR;
+                        r_nonregDraw = nonRegDrawAmt * rat;
+                        m_nonregDraw = nonRegDrawAmt * (1 - rat);
+                        r.nonreg -= r_nonregDraw;
+                        m.nonreg -= m_nonregDraw;
+                        r.nonregCost -= totalCost * withdrawFrac * rat;
+                        m.nonregCost -= totalCost * withdrawFrac * (1 - rat);
+                        r.nonregCost = Math.max(0, r.nonregCost);
+                        m.nonregCost = Math.max(0, m.nonregCost);
+                    }
+                }
+
+                // Track shortfall
+                const totalWithdrawn = actualRRSPDraw + tfsaDrawAmt + nonRegDrawAmt;
+                const totalNet = totalWithdrawn + annualPensions - annualTax - oasClawback;
+                if (totalNet < netGoal) {
+                    yearShortfall = netGoal - totalNet;
+                    shortfall += yearShortfall;
+                }
+
+            } else {
+                // ── Bracket opt: withdraw TFSA substitution amount ──
+                if (tfsaDrawAmt > 0) {
+                    const availTFSA = r.tfsa + m.tfsa;
+                    const actualTFSAOpt = Math.min(tfsaDrawAmt, availTFSA);
+                    if (availTFSA > 0) {
+                        const rat = r.tfsa / availTFSA;
+                        r_tfsaDraw = actualTFSAOpt * rat;
+                        m_tfsaDraw = actualTFSAOpt * (1 - rat);
+                        r.tfsa -= r_tfsaDraw;
+                        m.tfsa -= m_tfsaDraw;
+                    }
+                    tfsaAvailableRoom += actualTFSAOpt;
+                    tfsaDrawAmt = actualTFSAOpt;
+                }
+
+                // RRSP covered everything — check for meltdown sweep
+                const netAfterTax = actualRRSPDraw + annualPensions - annualTax - oasClawback;
+                if (netAfterTax > netGoal + 10) {
+                    const sweep = netAfterTax - netGoal;
+                    sweepToTFSA = Math.min(sweep, Math.max(0, tfsaAvailableRoom));
+                    sweepToNonReg = sweep - sweepToTFSA;
+                    r.tfsa += sweepToTFSA / 2; m.tfsa += sweepToTFSA / 2;
+                    tfsaAvailableRoom -= sweepToTFSA;
+                    r.nonreg += sweepToNonReg / 2; m.nonreg += sweepToNonReg / 2;
+                    r.nonregCost += sweepToNonReg / 2; m.nonregCost += sweepToNonReg / 2;
+                }
+            }
+            // Update rrspDrawAmt to actual draw for display/chart
+            rrspDrawAmt = actualRRSPDraw;
+        }
+
+        const totalNonReg = r.nonreg + m.nonreg;
+        const nw = r.rrsp + m.rrsp + r.tfsa + m.tfsa + totalNonReg - shortfall;
+        rows.push({
+            a1, a2, stage,
+            r_rrsp: r.rrsp, m_rrsp: m.rrsp,
+            r_tfsa: r.tfsa, m_tfsa: m.tfsa,
+            totalNonReg, nonRegCapGainsTax,
+            annualPensions, oasClawback,
+            totalCPP: r_cpp + m_cpp, totalOAS: r_oas + m_oas,
+            r_cpp, m_cpp, r_oas, m_oas,
+            rrspDrawAmt, tfsaDrawAmt, nonRegDrawAmt, yearShortfall,
+            r_rrspDraw, m_rrspDraw, r_tfsaDraw, m_tfsaDraw, r_nonregDraw, m_nonregDraw,
+            sweepToTFSA, sweepToNonReg,
+            annualTax, pensionCredit, rrifMinDisplay,
+            nw,
+            netGoalDisp: (isFullyRetired || !bothAlive) ? netGoalBase * inf_mult * (!bothAlive ? survivorPct * multiplier : multiplier) : 0,
+            isSomeoneRetired: isFullyRetired || !bothAlive,
+            isMeltRow: isMelt && (isFullyRetired || !bothAlive) && a1 <= meltAge,
+            s1Alive, s2Alive
+        });
+    }
+    return rows;
+}
+
+// ─── UI: Render ledger ──────────────────────────────────────────────────────
+let lastRows = null; // stored for re-render on toggle
+
+function getLedgerMode() {
+    const radio = document.querySelector('input[name="ledger_view"]:checked');
+    return radio ? radio.value : 'combined';
+}
+
+function rerenderLedger() {
+    if (lastRows) renderLedger(lastRows);
+}
+
+function renderLedger(rows) {
+    lastRows = rows;
+    const tbody = document.querySelector("#ledger tbody");
+    const thead = document.getElementById("ledger_head");
+    tbody.innerHTML = "";
+    let peak = 0;
+
+    const mode = getLedgerMode();
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+
+    // Dynamic header
+    if (mode === 'split') {
+        thead.innerHTML = `<tr>
+            <th>Age</th><th>Stage</th>
+            <th>${s1} RRSP</th><th>${s2} RRSP</th>
+            <th>${s1} TFSA</th><th>${s2} TFSA</th>
+            <th>Non-Reg</th>
+            <th>CPP/OAS</th><th>OAS Clawback</th>
+            <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
+            <th>Tax (%)</th><th>Pension Credit</th><th>RRIF Min</th>
+            <th>Year-End NW</th>
+        </tr>`;
+    } else {
+        thead.innerHTML = `<tr>
+            <th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>TFSA Total</th>
+            <th>Non-Reg</th>
+            <th>CPP/OAS</th><th>OAS Clawback</th>
+            <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
+            <th>Tax (%)</th><th>Pension Credit</th><th>RRIF Min</th>
+            <th>Year-End NW</th>
+        </tr>`;
+    }
+
+    for (const d of rows) {
+        if (d.nw > peak) peak = d.nw;
+        const row = tbody.insertRow();
+
+        if      (d.nw < 0)             row.className = "out-of-money";
+        else if (d.stage === "Working") row.className = "working";
+        else if (d.stage === "Gap")     row.className = "gap";
+        else if (d.stage === "Survivor") row.className = "survivor";
+        else if (d.stage === "Slow-Go") row.className = "slow-go";
+        else if (d.stage === "No-Go")  row.className = "no-go";
+        if (d.isMeltRow)               row.classList.add("meltdown");
+        if (d.oasClawback > 0)         row.classList.add("oas-clawed");
+
+        const taxableIncome = d.rrspDrawAmt + d.nonRegDrawAmt + d.annualPensions;
+        const taxPct = taxableIncome > 0 ? ((d.annualTax / taxableIncome) * 100).toFixed(1) + "%" : "—";
+        const taxDisp = d.annualTax > 0 ? `${formatMoney(d.annualTax)} (${taxPct})` : "$0";
+        const clawDisp = d.oasClawback > 0 ? `<span style="color:#e67e22;font-weight:bold">${formatMoney(d.oasClawback)}</span>` : "—";
+        const pcDisp = d.pensionCredit > 0 ? formatMoney(d.pensionCredit) : "—";
+        const nonregDisp = d.totalNonReg > 0
+            ? `<span style="color:#8e44ad;font-weight:bold">${formatMoney(d.totalNonReg)}</span>`
+            : "—";
+        const rrifDisp = d.rrifMinDisplay > 0 ? formatMoney(d.rrifMinDisplay) : "—";
+        const tfsaDrawDisp = d.tfsaDrawAmt > 0
+            ? `<span style="color:#16a085;font-weight:bold">${formatMoney(d.tfsaDrawAmt)}</span>`
+            : "—";
+
+        if (d.totalNonReg > 0) row.classList.add("has-nonreg");
+
+        if (mode === 'split') {
+            row.innerHTML = `
+                <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
+                <td>${d.stage}</td>
+                <td>${formatMoney(d.r_rrsp)}</td>
+                <td>${formatMoney(d.m_rrsp)}</td>
+                <td>${formatMoney(d.r_tfsa)}</td>
+                <td>${formatMoney(d.m_tfsa)}</td>
+                <td class="nonreg-col">${nonregDisp}</td>
+                <td>${formatMoney(d.annualPensions)}</td>
+                <td>${clawDisp}</td>
+                <td>${formatMoney(d.netGoalDisp)}</td>
+                <td>${formatMoney(d.rrspDrawAmt)}</td>
+                <td>${tfsaDrawDisp}</td>
+                <td>${taxDisp}</td>
+                <td>${pcDisp}</td>
+                <td>${rrifDisp}</td>
+                <td>${formatMoney(d.nw)}</td>
+            `;
+        } else {
+            const totalRRSP = d.r_rrsp + d.m_rrsp;
+            const totalTFSA = d.r_tfsa + d.m_tfsa;
+            row.innerHTML = `
+                <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
+                <td>${d.stage}</td>
+                <td>${formatMoney(totalRRSP)}</td>
+                <td>${formatMoney(totalTFSA)}</td>
+                <td class="nonreg-col">${nonregDisp}</td>
+                <td>${formatMoney(d.annualPensions)}</td>
+                <td>${clawDisp}</td>
+                <td>${formatMoney(d.netGoalDisp)}</td>
+                <td>${formatMoney(d.rrspDrawAmt)}</td>
+                <td>${tfsaDrawDisp}</td>
+                <td>${taxDisp}</td>
+                <td>${pcDisp}</td>
+                <td>${rrifDisp}</td>
+                <td>${formatMoney(d.nw)}</td>
+            `;
+        }
+    }
+    return peak;
+}
+
+// ─── Build params from inputs ───────────────────────────────────────────────
+function buildParams() {
+    const v = id => parseDollar(document.getElementById(id).value);
+    const isMelt = document.getElementById('melt_on').checked;
+    const equalDraw = document.getElementById('equal_draw').checked;
+    const smoothTax = document.getElementById('smooth_tax').checked;
+    const s1_age = v('s1_age');
+    const s1PlanAge = v('s1_plan_age') || 90;
+    const s2PlanAge = v('s2_plan_age') || 90;
+    const s2_age = v('s2_age');
+    const maxYrs = Math.max(s1PlanAge - s1_age, s2PlanAge - s2_age);
+    return {
+        s1_age,       s1_retire: v('s1_retire'),
+        s1_rrsp: v('s1_rrsp_b'), s1_tfsa: v('s1_tfsa_b'), s1_nonreg: v('s1_nonreg_b'),
+        s1_rrsp_c: v('s1_rrsp_c'),
+        s1_tfsa_c: v('s1_tfsa_c'),
+        s1_oas_age: Math.min(70, Math.max(65, v('s1_oas_age'))),
+        s1_cpp2_yrs: Math.max(0, Math.min(40, Math.min(v('s1_retire'), 70) - (s1_age - (v('sys_year') - 2024)))),
+        s2_age: v('s2_age'), s2_retire: v('s2_retire'),
+        s2_rrsp: v('s2_rrsp_b'), s2_tfsa: v('s2_tfsa_b'), s2_nonreg: v('s2_nonreg_b'),
+        s2_rrsp_c: v('s2_rrsp_c'),
+        s2_tfsa_c: v('s2_tfsa_c'),
+        s2_oas_age: Math.min(70, Math.max(65, v('s2_oas_age'))),
+        s2_cpp2_yrs: Math.max(0, Math.min(40, Math.min(v('s2_retire'), 70) - (v('s2_age') - (v('sys_year') - 2024)))),
+        s1_cpp_age: v('s1_cpp_age'), s1_cpp_pct: v('s1_cpp_pct'),
+        s2_cpp_age: v('s2_cpp_age'), s2_cpp_pct: v('s2_cpp_pct'),
+        infl: v('infl') / 100,
+        rPre: v('r_pre') / 100, rPost: v('r_post') / 100,
+        isMelt, equalDraw, smoothTax, meltAge: v('melt_age'),
+        MAX_CPP: v('cpp_max_val'), MAX_CPP2: v('cpp2_max_val'), MAX_OAS: v('oas_max_val'),
+        OAS_CLAWBACK: v('oas_clawback'),
+        fedAgeAmt: v('fed_age_amt'),
+        slowAge: v('slow_age'), slowPct: v('slow_pct') / 100,
+        noAge: v('no_age'), noPct: v('no_pct') / 100,
+        netGoalBase: v('goal_go'),
+        tfsaRoomPerYr: v('tfsa_room_yr'),
+        tfsaRoomCurrent: v('tfsa_room_current'),
+        capGainsInclusion: v('capgains_inc') || 50,
+        tfsaBracketMax: v('tfsa_bracket_max'),
+        gapTargetRate: (parseFloat(document.getElementById('gap_target_rate').value) || 12) / 100,
+        survivorPct: (parseFloat(document.getElementById('survivor_pct').value) || 70) / 100,
+        maxYrs: maxYrs,
+        s1PlanAge: s1PlanAge, s2PlanAge: s2PlanAge,
+        // Lump sums
+        ls1_amt: v('ls1_amt'), ls1_age: v('ls1_age'), ls1_rrsp_cap: v('ls1_rrsp_cap'),
+        ls2_amt: v('ls2_amt'), ls2_age: v('ls2_age'), ls2_rrsp_cap: v('ls2_rrsp_cap'),
+        // Contribution boost
+        boostAge: v('boost_age'),
+        s1_rrsp_boost: v('s1_rrsp_boost'), s1_tfsa_boost: v('s1_tfsa_boost'),
+        s2_rrsp_boost: v('s2_rrsp_boost'), s2_tfsa_boost: v('s2_tfsa_boost'),
+        prov: document.getElementById('province').value || 'MB',
+        targetTaxRate: null
+    };
+}
+
+// ─── Base calculation ────────────────────────────────────────────────────────
+// ─── Retirement Income Chart ────────────────────────────────────────────────
+let lastIncomeRows = null;
+
+function getIncomeChartMode() {
+    const radio = document.querySelector('input[name="income_chart_view"]:checked');
+    return radio ? radio.value : 'combined';
+}
+
+function reRenderIncomeChart() {
+    if (lastIncomeRows) renderChart(lastIncomeRows);
+}
+
+function renderChart(rows) {
+    lastIncomeRows = rows;
+    const retRows = rows.filter(r => r.isSomeoneRetired);
+    const section = document.getElementById('chart_section');
+    if (retRows.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    const canvas = document.getElementById('income_chart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const dispW = canvas.parentElement.offsetWidth || 1400;
+    const dispH = 420;
+    canvas.style.width  = dispW + 'px';
+    canvas.style.height = dispH + 'px';
+    canvas.width  = dispW * dpr;
+    canvas.height = dispH * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, dispW, dispH);
+
+    const PAD_L = 70, PAD_R = 20, PAD_T = 20, PAD_B = 50;
+    const plotW = dispW - PAD_L - PAD_R;
+    const plotH = dispH - PAD_T - PAD_B;
+
+    const mode = getIncomeChartMode();
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+
+    // Toggle legends
+    document.getElementById('income_legend_combined').style.display = mode === 'combined' ? 'flex' : 'none';
+    document.getElementById('income_legend_split').style.display = mode === 'split' ? 'flex' : 'none';
+
+    let stackOrder, colorMap;
+
+    if (mode === 'split') {
+        stackOrder = ['r_rrsp','m_rrsp','r_tfsa','m_tfsa','r_cpp','m_cpp','r_oas','m_oas'];
+        colorMap = {
+            r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
+            r_tfsa: '#16a085', m_tfsa: '#76d7c4',
+            r_cpp: '#e67e22', m_cpp: '#f5b041',
+            r_oas: '#27ae60', m_oas: '#82e0aa'
+        };
+    } else {
+        stackOrder = ['rrsp','tfsa','nonreg','cpp','oas'];
+        colorMap = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad', cpp: '#e67e22', oas: '#27ae60' };
+    }
+
+    // Build bar data
+    const bars = retRows.map(d => {
+        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS;
+        const deductions = d.annualTax + d.oasClawback;
+        const netIncome = Math.max(0, gross - deductions);
+        const ratio = gross > 0 ? netIncome / gross : 0;
+
+        if (mode === 'split') {
+            return {
+                age: d.a1,
+                r_rrsp: d.r_rrspDraw * ratio, m_rrsp: d.m_rrspDraw * ratio,
+                r_tfsa: d.r_tfsaDraw * ratio, m_tfsa: d.m_tfsaDraw * ratio,
+                r_cpp: d.r_cpp * ratio, m_cpp: d.m_cpp * ratio,
+                r_oas: d.r_oas * ratio, m_oas: d.m_oas * ratio,
+                netIncome,
+                shortfall: Math.max(0, d.netGoalDisp - netIncome),
+                netGoal: d.netGoalDisp,
+                _d: d, _tax: deductions, _gross: gross
+            };
+        } else {
+            return {
+                age: d.a1,
+                rrsp: d.rrspDrawAmt * ratio, tfsa: d.tfsaDrawAmt * ratio,
+                nonreg: d.nonRegDrawAmt * ratio,
+                cpp: d.totalCPP * ratio, oas: d.totalOAS * ratio,
+                netIncome,
+                shortfall: Math.max(0, d.netGoalDisp - netIncome),
+                netGoal: d.netGoalDisp,
+                _d: d, _tax: deductions, _gross: gross
+            };
+        }
+    });
+
+    let maxVal = 0;
+    for (const b of bars) {
+        const barTotal = b.netIncome + b.shortfall;
+        if (barTotal > maxVal) maxVal = barTotal;
+        if (b.netGoal > maxVal) maxVal = b.netGoal;
+    }
+    if (maxVal === 0) maxVal = 1;
+    maxVal *= 1.10;
+
+    const n = bars.length;
+    const barW = Math.max(2, Math.min(24, (plotW / n) * 0.75));
+    const gap  = plotW / n;
+    const yScale = v => plotH - (v / maxVal) * plotH;
+
+    // ── Y-axis grid ──
+    ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 0.5;
+    ctx.font = '10px Segoe UI, sans-serif'; ctx.fillStyle = '#888'; ctx.textAlign = 'right';
+    for (let i = 0; i <= 6; i++) {
+        const val = (maxVal / 6) * i;
+        const y = PAD_T + yScale(val);
+        ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(PAD_L + plotW, y); ctx.stroke();
+        ctx.fillText('$' + Math.round(val / 1000) + 'k', PAD_L - 6, y + 3);
+    }
+
+    // ── Stacked bars ──
+    for (let i = 0; i < n; i++) {
+        const b = bars[i];
+        const x = PAD_L + i * gap + (gap - barW) / 2;
+        let cumY = 0;
+
+        for (const key of stackOrder) {
+            const val = b[key];
+            if (val <= 0) continue;
+            const h = (val / maxVal) * plotH;
+            const y = PAD_T + plotH - cumY - h;
+            ctx.fillStyle = colorMap[key];
+            ctx.fillRect(x, y, barW, h);
+            cumY += h;
+        }
+
+        if (b.shortfall > 0) {
+            const h = (b.shortfall / maxVal) * plotH;
+            const y = PAD_T + plotH - cumY - h;
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(x, y, barW, h);
+            ctx.save();
+            ctx.beginPath(); ctx.rect(x, y, barW, h); ctx.clip();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.7; ctx.globalAlpha = 0.5;
+            for (let s = -h; s < barW + h; s += 5) {
+                ctx.beginPath(); ctx.moveTo(x + s, y + h); ctx.lineTo(x + s + h, y); ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+
+    // ── Net goal dashed line ──
+    ctx.setLineDash([6, 4]); ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+        const x = PAD_L + i * gap + gap / 2;
+        const y = PAD_T + yScale(bars[i].netGoal);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // ── X-axis labels ──
+    ctx.fillStyle = '#555'; ctx.textAlign = 'center'; ctx.font = '10px Segoe UI, sans-serif';
+    const labelEvery = n > 30 ? 5 : n > 15 ? 3 : n > 8 ? 2 : 1;
+    for (let i = 0; i < n; i++) {
+        if (i % labelEvery === 0 || i === n - 1) {
+            ctx.fillText(bars[i].age, PAD_L + i * gap + gap / 2, PAD_T + plotH + 15);
+        }
+    }
+    ctx.fillStyle = '#888'; ctx.font = '11px Segoe UI, sans-serif';
+    ctx.fillText('Age (' + s1 + ')', PAD_L + plotW / 2, PAD_T + plotH + 38);
+
+    // ── Tooltip ──
+    canvas.onmousemove = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const idx = Math.floor((mx - PAD_L) / gap);
+        if (idx >= 0 && idx < n) {
+            const b = bars[idx];
+            const d = b._d;
+            if (mode === 'split') {
+                canvas.title = `Age ${b.age}: Net ${formatMoney(b.netIncome)} | Goal ${formatMoney(b.netGoal)}` +
+                    `\n${s1}: RRSP ${formatMoney(d.r_rrspDraw)} | TFSA ${formatMoney(d.r_tfsaDraw)} | CPP ${formatMoney(d.r_cpp)} | OAS ${formatMoney(d.r_oas)}` +
+                    `\n${s2}: RRSP ${formatMoney(d.m_rrspDraw)} | TFSA ${formatMoney(d.m_tfsaDraw)} | CPP ${formatMoney(d.m_cpp)} | OAS ${formatMoney(d.m_oas)}` +
+                    ` | Tax+Claw ${formatMoney(b._tax)}`;
+            } else {
+                canvas.title = `Age ${b.age}: Net Income ${formatMoney(b.netIncome)} | Goal ${formatMoney(b.netGoal)}` +
+                    (b.shortfall > 0 ? ` | SHORTFALL ${formatMoney(b.shortfall)}` : '') +
+                    `\nGross: RRSP ${formatMoney(d.rrspDrawAmt)} | TFSA ${formatMoney(d.tfsaDrawAmt)} | Non-Reg ${formatMoney(d.nonRegDrawAmt)} | CPP ${formatMoney(d.totalCPP)} | OAS ${formatMoney(d.totalOAS)}` +
+                    ` | Tax+Claw ${formatMoney(b._tax)}`;
+            }
+        } else {
+            canvas.title = '';
+        }
+    };
+}
+
+// ─── Solvers ────────────────────────────────────────────────────────────────
+// Each solver binary-searches one variable to land final NW as close to $0
+// as possible while staying ≥ 0.
+
+function showSolverResult(html) {
+    const el = document.getElementById('solver_result');
+    el.innerHTML = html;
+    el.style.display = 'block';
+}
+
+function applyValues(vals) {
+    for (const [id, val] of Object.entries(vals)) {
+        const el = document.getElementById(id);
+        if (el) {
+            if (el.classList.contains('dollar')) {
+                el.value = formatDollarValue(val);
+            } else {
+                el.value = val;
+            }
+        }
+    }
+    document.getElementById('solver_result').style.display = 'none';
+    calculate();
+}
+
+function getFinalNW(params) {
+    const rows = projectYears(params, null);
+    return rows[rows.length - 1].nw;
+}
+
+function getSmoothedFinalNW(params) {
+    const p = Object.assign({}, params);
+    p.targetTaxRate = null;
+    const pass1 = projectYears(p, null);
+    if (p.smoothTax) {
+        const drawRows = pass1.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+        if (drawRows.length > 0) {
+            const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+            const totalGross = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+            p.targetTaxRate = totalGross > 0 ? totalTax / totalGross : 0;
+            const pass2 = projectYears(p, null);
+            // Pass 3: refine target from pass 2
+            const drawRows2 = pass2.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+            if (drawRows2.length > 0) {
+                const totalTax2 = drawRows2.reduce((s, r) => s + r.annualTax, 0);
+                const totalGross2 = drawRows2.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+                p.targetTaxRate = totalGross2 > 0 ? totalTax2 / totalGross2 : 0;
+                const pass3 = projectYears(p, null);
+                return pass3[pass3.length - 1].nw;
+            }
+            return pass2[pass2.length - 1].nw;
+        }
+    }
+    return pass1[pass1.length - 1].nw;
+}
+
+function solveRetireAge() {
+    const base = buildParams();
+    const s1Name = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2Name = document.getElementById('s2_name').value || 'Spouse 2';
+    const sysYear = parseDollar(document.getElementById('sys_year').value);
+
+    showSolverResult(`<b>Solve for Retirement Age:</b> Testing combinations… please wait.`);
+
+    setTimeout(() => {
+        const s1Lo = base.s1_age + 1, s1Hi = 75;
+        const s2Lo = base.s2_age + 1, s2Hi = 75;
+        const results = [];
+
+        for (let s1r = s1Lo; s1r <= s1Hi; s1r++) {
+            for (let s2r = s2Lo; s2r <= s2Hi; s2r++) {
+                const p = Object.assign({}, base);
+                p.s1_retire = s1r;
+                p.s2_retire = s2r;
+                p.s1_cpp2_yrs = Math.max(0, Math.min(40, Math.min(s1r, 70) - (base.s1_age - (sysYear - 2024))));
+                p.s2_cpp2_yrs = Math.max(0, Math.min(40, Math.min(s2r, 70) - (base.s2_age - (sysYear - 2024))));
+                const nw = getFinalNW(p);
+                if (nw >= 0) {
+                    results.push({ s1r, s2r, nw, sum: s1r + s2r });
+                }
+            }
+        }
+
+        if (results.length === 0) {
+            showSolverResult(
+                `<b>Solve for Retirement Age:</b> Could not find a combination up to age 75 for either spouse that avoids running out of money. ` +
+                `Consider increasing contributions or reducing the spending goal.`
+            );
+            return;
+        }
+
+        // Sort by lowest combined age, then by lowest S1 age as tiebreaker
+        results.sort((a, b) => a.sum - b.sum || a.s1r - b.s1r);
+        const top5 = results.slice(0, 10);
+
+        // Refine top 10 with tax smoothing for accurate display
+        if (base.smoothTax) {
+            for (const r of top5) {
+                const p = Object.assign({}, base);
+                p.s1_retire = r.s1r;
+                p.s2_retire = r.s2r;
+                p.s1_cpp2_yrs = Math.max(0, Math.min(40, Math.min(r.s1r, 70) - (base.s1_age - (sysYear - 2024))));
+                p.s2_cpp2_yrs = Math.max(0, Math.min(40, Math.min(r.s2r, 70) - (base.s2_age - (sysYear - 2024))));
+                r.nw = getSmoothedFinalNW(p);
+            }
+        }
+
+        let html = `<b>Solve for Retirement Age:</b> Found <b>${results.length.toLocaleString()}</b> viable combinations. ` +
+            `Showing earliest options (sorted by lowest combined retirement age).<br><br>`;
+
+        html += `<table style="font-size:11px; border-collapse:collapse; margin-top:4px;">`;
+        html += `<tr style="background:#f5f5f5;">` +
+            `<th style="padding:3px 8px;text-align:left;">#</th>` +
+            `<th style="padding:3px 8px;">${s1Name} Retires</th>` +
+            `<th style="padding:3px 8px;">${s2Name} Retires</th>` +
+            `<th style="padding:3px 8px;text-align:right;">Final NW</th>` +
+            `<th style="padding:3px 8px;"></th></tr>`;
+        top5.forEach((r, i) => {
+            const applyObj = `{s1_retire:${r.s1r},s2_retire:${r.s2r}}`;
+            html += `<tr><td style="padding:2px 8px;">${i + 1}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s1r}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s2r}</td>` +
+                `<td style="padding:2px 8px;text-align:right;font-weight:bold;">${formatMoney(r.nw)}</td>` +
+                `<td style="padding:2px 8px;"><button class="btn-solve" style="padding:2px 10px; min-width:auto; flex:none; font-size:10px;" ` +
+                `onclick="applyValues(${applyObj})">Apply</button></td></tr>`;
+        });
+        html += `</table><br>`;
+        html += `<span style="color:#888;">Current: ${s1Name} at ${base.s1_retire}, ${s2Name} at ${base.s2_retire}</span>`;
+
+        showSolverResult(html);
+    }, 50);
+}
+
+function solveNetGoal() {
+    const base = buildParams();
+
+    // Search: highest net goal where final NW ≥ 0
+    // Binary search between $0 and $500,000
+    let lo = 0, hi = 500000, bestGoal = 0;
+
+    for (let i = 0; i < 40; i++) {
+        const mid = Math.round((lo + hi) / 2);
+        const p = Object.assign({}, base);
+        p.netGoalBase = mid;
+        const nw = getFinalNW(p);
+        if (nw >= 0) {
+            bestGoal = mid;
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+        if (hi - lo < 500) break;
+    }
+
+    // Fine-tune to nearest $1,000
+    bestGoal = Math.floor(bestGoal / 1000) * 1000;
+    const p = Object.assign({}, base);
+    p.netGoalBase = bestGoal;
+    const finalNW = getSmoothedFinalNW(p);
+
+    showSolverResult(
+        `<b>Solve for Target Net Goal:</b> Maximum sustainable annual spending is approximately <b>${formatMoney(bestGoal)}</b>/yr ` +
+        `(final portfolio: ${formatMoney(finalNW)}). ` +
+        `(Current setting: ${formatMoney(base.netGoalBase)}) ` +
+        `<button class="btn-solve" style="padding:4px 12px; min-width:auto; flex:none; font-size:11px;" ` +
+        `onclick="applyValues({goal_go:${bestGoal}})">Apply</button>`
+    );
+}
+
+function solveExtraRRSP() {
+    const base = buildParams();
+    const s1Name = document.getElementById('s1_name').value || 'Spouse 1';
+
+    // First check: does the current plan already work?
+    const currentNW = getSmoothedFinalNW(base);
+    if (currentNW >= 0) {
+        showSolverResult(
+            `<b>Solve for Additional Monthly RRSP:</b> No additional RRSP contributions needed — ` +
+            `the current plan already ends with ${formatMoney(currentNW)}. ` +
+            `(Current ${s1Name} RRSP: ${formatMoney(base.s1_rrsp_c)}/mo)`
+        );
+        return;
+    }
+
+    // Search: lowest additional monthly RRSP (for Spouse 1) where final NW ≥ 0
+    let lo = 0, hi = 20000, bestExtra = null;
+
+    for (let i = 0; i < 40; i++) {
+        const mid = Math.round((lo + hi) / 2);
+        const p = Object.assign({}, base);
+        p.s1_rrsp_c = base.s1_rrsp_c + mid;
+        const nw = getFinalNW(p);
+        if (nw >= 0) {
+            bestExtra = mid;
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;
+        }
+        if (hi - lo < 25) break;
+    }
+
+    // Fine-tune to nearest $50
+    if (bestExtra !== null) {
+        bestExtra = Math.ceil(bestExtra / 50) * 50;
+        const p = Object.assign({}, base);
+        p.s1_rrsp_c = base.s1_rrsp_c + bestExtra;
+        const finalNW = getSmoothedFinalNW(p);
+
+        showSolverResult(
+            `<b>Solve for Additional Monthly RRSP:</b> ${s1Name} needs an additional <b>${formatMoney(bestExtra)}/mo</b> ` +
+            `in RRSP contributions (total: ${formatMoney(base.s1_rrsp_c + bestExtra)}/mo) ` +
+            `to end with ${formatMoney(finalNW)}. ` +
+            `(Current: ${formatMoney(base.s1_rrsp_c)}/mo) ` +
+            `<button class="btn-solve" style="padding:4px 12px; min-width:auto; flex:none; font-size:11px;" ` +
+            `onclick="applyValues({s1_rrsp_c:${base.s1_rrsp_c + bestExtra}})">Apply</button>`
+        );
+    } else {
+        showSolverResult(
+            `<b>Solve for Additional Monthly RRSP:</b> Could not solve — even $20,000/mo additional RRSP is not enough. ` +
+            `Consider delaying retirement or reducing spending.`
+        );
+    }
+}
+
+function solveCPPOAS() {
+    const base = buildParams();
+    const s1Name = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2Name = document.getElementById('s2_name').value || 'Spouse 2';
+    const sysYear = parseDollar(document.getElementById('sys_year').value);
+
+    showSolverResult(`<b>Solve for Optimal CPP/OAS:</b> Testing all permutations… please wait.`);
+
+    // Run async so the UI updates with the "please wait" message
+    setTimeout(() => {
+        // CPP: age 60–70, OAS: age 65–70
+        const cppAges = [];
+        for (let a = 60; a <= 70; a++) cppAges.push(a);
+        const oasAges = [];
+        for (let a = 65; a <= 70; a++) oasAges.push(a);
+
+        const allResults = [];
+
+        for (const s1cpp of cppAges) {
+            for (const s1oas of oasAges) {
+                for (const s2cpp of cppAges) {
+                    for (const s2oas of oasAges) {
+                        const p = Object.assign({}, base);
+                        p.s1_cpp_age = s1cpp;
+                        p.s1_oas_age = s1oas;
+                        p.s2_cpp_age = s2cpp;
+                        p.s2_oas_age = s2oas;
+                        p.s1_cpp2_yrs = Math.max(0, Math.min(40, Math.min(base.s1_retire, 70) - (base.s1_age - (sysYear - 2024))));
+                        p.s2_cpp2_yrs = Math.max(0, Math.min(40, Math.min(base.s2_retire, 70) - (base.s2_age - (sysYear - 2024))));
+                        allResults.push({ s1cpp, s1oas, s2cpp, s2oas, nw: getFinalNW(p) });
+                    }
+                }
+            }
+        }
+
+        allResults.sort((a, b) => b.nw - a.nw);
+        const best = allResults[0];
+        const top5 = allResults.slice(0, 10);
+
+        // Refine top 10 with tax smoothing for accurate display
+        if (base.smoothTax) {
+            for (const r of top5) {
+                const p = Object.assign({}, base);
+                p.s1_cpp_age = r.s1cpp;
+                p.s1_oas_age = r.s1oas;
+                p.s2_cpp_age = r.s2cpp;
+                p.s2_oas_age = r.s2oas;
+                p.s1_cpp2_yrs = Math.max(0, Math.min(40, Math.min(base.s1_retire, 70) - (base.s1_age - (sysYear - 2024))));
+                p.s2_cpp2_yrs = Math.max(0, Math.min(40, Math.min(base.s2_retire, 70) - (base.s2_age - (sysYear - 2024))));
+                r.nw = getSmoothedFinalNW(p);
+            }
+            top5.sort((a, b) => b.nw - a.nw);
+        }
+
+        const refinedBest = top5[0];
+
+        const currentLabel = `${s1Name} CPP ${base.s1_cpp_age} / OAS ${Math.min(70, Math.max(65, parseDollar(document.getElementById('s1_oas_age').value)))} | ` +
+            `${s2Name} CPP ${base.s2_cpp_age} / OAS ${Math.min(70, Math.max(65, parseDollar(document.getElementById('s2_oas_age').value)))}`;
+
+        let html = `<b>Solve for Optimal CPP/OAS:</b> Tested <b>${allResults.length.toLocaleString()}</b> combinations.<br><br>`;
+        html += `<b>Best:</b> ${s1Name} CPP at <b>${refinedBest.s1cpp}</b>, OAS at <b>${refinedBest.s1oas}</b> | `;
+        html += `${s2Name} CPP at <b>${refinedBest.s2cpp}</b>, OAS at <b>${refinedBest.s2oas}</b> → `;
+        html += `Final portfolio: <b>${formatMoney(refinedBest.nw)}</b><br><br>`;
+
+        html += `<b>Top 10:</b><br>`;
+        html += `<table style="font-size:11px; border-collapse:collapse; margin-top:4px;">`;
+        html += `<tr style="background:#f5f5f5;"><th style="padding:3px 8px;text-align:left;">#</th>` +
+            `<th style="padding:3px 8px;">${s1Name} CPP</th><th style="padding:3px 8px;">${s1Name} OAS</th>` +
+            `<th style="padding:3px 8px;">${s2Name} CPP</th><th style="padding:3px 8px;">${s2Name} OAS</th>` +
+            `<th style="padding:3px 8px;text-align:right;">Final NW</th><th style="padding:3px 8px;"></th></tr>`;
+        top5.forEach((r, i) => {
+            const applyObj = `{s1_cpp_age:${r.s1cpp},s1_oas_age:${r.s1oas},s2_cpp_age:${r.s2cpp},s2_oas_age:${r.s2oas}}`;
+            html += `<tr><td style="padding:2px 8px;">${i + 1}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s1cpp}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s1oas}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s2cpp}</td>` +
+                `<td style="padding:2px 8px;text-align:center;">${r.s2oas}</td>` +
+                `<td style="padding:2px 8px;text-align:right;font-weight:bold;">${formatMoney(r.nw)}</td>` +
+                `<td style="padding:2px 8px;"><button class="btn-solve" style="padding:2px 10px; min-width:auto; flex:none; font-size:10px;" ` +
+                `onclick="applyValues(${applyObj})">Apply</button></td></tr>`;
+        });
+        html += `</table><br>`;
+        html += `<span style="color:#888;">Current: ${currentLabel}</span>`;
+
+        showSolverResult(html);
+    }, 50);
+}
+
+// ─── Net Worth Over Time Chart ──────────────────────────────────────────────
+let lastNWRows = null;
+
+function getNWChartMode() {
+    const radio = document.querySelector('input[name="nw_chart_view"]:checked');
+    return radio ? radio.value : 'combined';
+}
+
+function reRenderNWChart() {
+    if (lastNWRows) renderNWChart(lastNWRows);
+}
+
+function renderNWChart(rows) {
+    lastNWRows = rows;
+    const canvas = document.getElementById('nw_chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const dispW = canvas.parentElement.offsetWidth || 1400;
+    const dispH = 420;
+    canvas.style.width  = dispW + 'px';
+    canvas.style.height = dispH + 'px';
+    canvas.width  = dispW * dpr;
+    canvas.height = dispH * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, dispW, dispH);
+
+    const PAD_L = 80, PAD_R = 20, PAD_T = 20, PAD_B = 50;
+    const plotW = dispW - PAD_L - PAD_R;
+    const plotH = dispH - PAD_T - PAD_B;
+
+    const mode = getNWChartMode();
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+
+    // Toggle legends
+    document.getElementById('nw_legend_combined').style.display = mode === 'combined' ? 'flex' : 'none';
+    document.getElementById('nw_legend_split').style.display = mode === 'split' ? 'flex' : 'none';
+
+    let stackOrder, colors, data;
+
+    if (mode === 'split') {
+        stackOrder = ['r_rrsp', 'm_rrsp', 'r_tfsa', 'm_tfsa', 'r_nonreg', 'm_nonreg'];
+        colors = {
+            r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
+            r_tfsa: '#16a085', m_tfsa: '#76d7c4',
+            r_nonreg: '#8e44ad', m_nonreg: '#c39bd3'
+        };
+        data = rows.map(d => ({
+            age: d.a1,
+            r_rrsp: Math.max(0, d.r_rrsp), m_rrsp: Math.max(0, d.m_rrsp),
+            r_tfsa: Math.max(0, d.r_tfsa), m_tfsa: Math.max(0, d.m_tfsa),
+            r_nonreg: Math.max(0, d.totalNonReg / 2), m_nonreg: Math.max(0, d.totalNonReg / 2)
+        }));
+    } else {
+        stackOrder = ['rrsp', 'tfsa', 'nonreg'];
+        colors = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad' };
+        data = rows.map(d => ({
+            age: d.a1,
+            rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
+            tfsa: Math.max(0, d.r_tfsa + d.m_tfsa),
+            nonreg: Math.max(0, d.totalNonReg)
+        }));
+    }
+
+    let maxVal = 0;
+    for (const d of data) {
+        let total = 0;
+        for (const key of stackOrder) total += d[key];
+        if (total > maxVal) maxVal = total;
+    }
+    if (maxVal === 0) maxVal = 1;
+    maxVal *= 1.08;
+
+    const n = data.length;
+    const gap = plotW / Math.max(n - 1, 1);
+
+    // ── Y-axis grid lines ──
+    ctx.strokeStyle = '#e8e8e8';
+    ctx.lineWidth = 0.5;
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'right';
+    const yTicks = 6;
+    for (let i = 0; i <= yTicks; i++) {
+        const val = (maxVal / yTicks) * i;
+        const y = PAD_T + plotH - (val / maxVal) * plotH;
+        ctx.beginPath();
+        ctx.moveTo(PAD_L, y);
+        ctx.lineTo(PAD_L + plotW, y);
+        ctx.stroke();
+        if (val >= 1000000) {
+            ctx.fillText('$' + (val / 1000000).toFixed(1) + 'M', PAD_L - 6, y + 3);
+        } else {
+            ctx.fillText('$' + Math.round(val / 1000) + 'k', PAD_L - 6, y + 3);
+        }
+    }
+
+    // ── Draw stacked areas ──
+    const cumData = data.map(() => 0);
+
+    for (const key of stackOrder) {
+        ctx.fillStyle = colors[key];
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+
+        for (let i = 0; i < n; i++) {
+            const x = PAD_L + i * gap;
+            const val = cumData[i] + data[i][key];
+            const y = PAD_T + plotH - (val / maxVal) * plotH;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        for (let i = n - 1; i >= 0; i--) {
+            const x = PAD_L + i * gap;
+            const y = PAD_T + plotH - (cumData[i] / maxVal) * plotH;
+            ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        for (let i = 0; i < n; i++) {
+            cumData[i] += data[i][key];
+        }
+    }
+    ctx.globalAlpha = 1;
+
+    // ── Top line (total NW) ──
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+        const x = PAD_L + i * gap;
+        const y = PAD_T + plotH - (cumData[i] / maxVal) * plotH;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // ── X-axis labels ──
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'center';
+    ctx.font = '10px Segoe UI, sans-serif';
+    const labelEvery = n > 30 ? 5 : n > 15 ? 3 : 2;
+    for (let i = 0; i < n; i++) {
+        if (i % labelEvery === 0 || i === n - 1) {
+            const x = PAD_L + i * gap;
+            ctx.fillText(data[i].age, x, PAD_T + plotH + 15);
+        }
+    }
+    ctx.fillStyle = '#888';
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.fillText('Age (' + s1 + ')', PAD_L + plotW / 2, PAD_T + plotH + 38);
+
+    // ── Tooltip ──
+    canvas.onmousemove = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const idx = Math.round((mx - PAD_L) / gap);
+        if (idx >= 0 && idx < n) {
+            const d = data[idx];
+            const r = rows[idx];
+            if (mode === 'split') {
+                canvas.title = `Age ${d.age}: Total ${formatMoney(d.r_rrsp + d.m_rrsp + d.r_tfsa + d.m_tfsa + d.r_nonreg + d.m_nonreg)}\n` +
+                    `${s1}: RRSP ${formatMoney(d.r_rrsp)} | TFSA ${formatMoney(d.r_tfsa)} | Non-Reg ${formatMoney(d.r_nonreg)}\n` +
+                    `${s2}: RRSP ${formatMoney(d.m_rrsp)} | TFSA ${formatMoney(d.m_tfsa)} | Non-Reg ${formatMoney(d.m_nonreg)}`;
+            } else {
+                const total = d.rrsp + d.tfsa + d.nonreg;
+                canvas.title = `Age ${d.age}: Total ${formatMoney(total)}\nRRSP ${formatMoney(d.rrsp)} | TFSA ${formatMoney(d.tfsa)} | Non-Reg ${formatMoney(d.nonreg)}`;
+            }
+        } else {
+            canvas.title = '';
+        }
+    };
+}
+
+// ─── Scenario Comparison ────────────────────────────────────────────────────
+let scenarioA = null, scenarioB = null;
+
+function getScenarioMetrics(rows, params) {
+    const last = rows[rows.length - 1];
+    const retireRow = rows.find(r => r.isSomeoneRetired);
+    const preRetireRows = rows.filter(r => !r.isSomeoneRetired);
+    const preRetirePeak = preRetireRows.length > 0 ? preRetireRows.reduce((best, r) => r.nw > best.nw ? r : best, preRetireRows[0]) : null;
+    const drawRows = rows.filter(r => r.isSomeoneRetired && (r.rrspDrawAmt > 0 || r.annualPensions > 0));
+    const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+    const totalClawback = drawRows.reduce((s, r) => s + r.oasClawback, 0);
+    const taxableIncome = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+    const avgTaxRate = taxableIncome > 0 ? (totalTax / taxableIncome * 100).toFixed(1) : '0';
+    const peakRow = rows.reduce((best, r) => r.nw > best.nw ? r : best, rows[0]);
+    const sysYear = parseInt(document.getElementById('sys_year').value) || 2026;
+
+    return {
+        label: '',
+        province: (PROV_TAX[params.prov] || {}).name || params.prov,
+        s1Retire: params.s1_retire,
+        s2Retire: params.s2_retire,
+        s1CppAge: params.s1_cpp_age,
+        s2CppAge: params.s2_cpp_age,
+        netGoal: params.netGoalBase,
+        preRetireNW: preRetirePeak ? preRetirePeak.nw : 0,
+        preRetireYear: preRetirePeak ? sysYear + (preRetirePeak.a1 - params.s1_age) : '',
+        peakNW: peakRow.nw,
+        peakYear: sysYear + (peakRow.a1 - params.s1_age),
+        finalNW: last.nw,
+        finalYear: sysYear + (last.a1 - params.s1_age),
+        totalTax,
+        totalClawback,
+        avgTaxRate,
+        rows
+    };
+}
+
+function saveScenario(which) {
+    const params = buildParams();
+    let rows = projectYears(params, null);
+    if (params.smoothTax) {
+        const drawRows = rows.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+        if (drawRows.length > 0) {
+            const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+            const totalGross = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+            params.targetTaxRate = totalGross > 0 ? totalTax / totalGross : 0;
+            rows = projectYears(params, null);
+            const drawRows2 = rows.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+            if (drawRows2.length > 0) {
+                const totalTax2 = drawRows2.reduce((s, r) => s + r.annualTax, 0);
+                const totalGross2 = drawRows2.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+                params.targetTaxRate = totalGross2 > 0 ? totalTax2 / totalGross2 : 0;
+                rows = projectYears(params, null);
+            }
+        }
+    }
+
+    const metrics = getScenarioMetrics(rows, params);
+    const label = prompt(`Name for Scenario ${which}:`, `Scenario ${which}`);
+    metrics.label = label || `Scenario ${which}`;
+
+    if (which === 'A') scenarioA = metrics;
+    else scenarioB = metrics;
+
+    document.getElementById('status_top').innerText = `✓ Saved "${metrics.label}" as Scenario ${which}`;
+    setTimeout(() => document.getElementById('status_top').innerText = '', 3000);
+
+    if (scenarioA && scenarioB) renderComparison();
+}
+
+function renderComparison() {
+    const a = scenarioA, b = scenarioB;
+    const el = document.getElementById('compare_result');
+    document.getElementById('compare_placeholder').style.display = 'none';
+    el.style.display = 'block';
+
+    function diffColor(valA, valB, higherIsBetter) {
+        if (valA === valB) return '';
+        const better = higherIsBetter ? valB > valA : valB < valA;
+        return better ? 'color:#27ae60;font-weight:bold;' : 'color:#e74c3c;font-weight:bold;';
+    }
+
+    function row(label, aVal, bVal, fmt, higherIsBetter) {
+        const aDisp = fmt(aVal);
+        const bDisp = fmt(bVal);
+        const diff = typeof aVal === 'number' && typeof bVal === 'number' ? fmt(bVal - aVal) : '';
+        const diffStyle = typeof aVal === 'number' ? diffColor(aVal, bVal, higherIsBetter) : '';
+        return `<tr><td style="padding:4px 10px;font-weight:bold;">${label}</td>` +
+            `<td style="padding:4px 10px;text-align:right;">${aDisp}</td>` +
+            `<td style="padding:4px 10px;text-align:right;">${bDisp}</td>` +
+            `<td style="padding:4px 10px;text-align:right;${diffStyle}">${diff}</td></tr>`;
+    }
+
+    const fm = v => formatMoney(v);
+    const fp = v => v + '%';
+    const fn = v => String(v);
+
+    let html = `<table style="font-size:12px; border-collapse:collapse; width:100%; max-width:700px; margin-bottom:20px;">`;
+    html += `<tr style="background:#2c3e50; color:white;"><th style="padding:6px 10px;text-align:left;">Metric</th>` +
+        `<th style="padding:6px 10px;text-align:right;">${a.label}</th>` +
+        `<th style="padding:6px 10px;text-align:right;">${b.label}</th>` +
+        `<th style="padding:6px 10px;text-align:right;">Difference</th></tr>`;
+
+    html += row('Province', a.province, b.province, fn, true);
+    html += row('Spouse 1 Retires', a.s1Retire, b.s1Retire, fn, false);
+    html += row('Spouse 2 Retires', a.s2Retire, b.s2Retire, fn, false);
+    html += row('Target Net Goal', a.netGoal, b.netGoal, fm, true);
+    html += row('Pre-Retirement Peak', a.preRetireNW, b.preRetireNW, fm, true);
+    html += row('Peak Net Worth', a.peakNW, b.peakNW, fm, true);
+    html += row('Final Portfolio', a.finalNW, b.finalNW, fm, true);
+    html += row('Total Lifetime Tax', a.totalTax, b.totalTax, fm, false);
+    html += row('Total OAS Clawback', a.totalClawback, b.totalClawback, fm, false);
+    html += row('Avg Effective Tax Rate', a.avgTaxRate, b.avgTaxRate, fp, false);
+
+    html += `</table>`;
+
+    // ── Overlay NW chart ──
+    html += `<h3 style="color:#2c3e50; margin-top:20px;">Net Worth Comparison</h3>`;
+    html += `<canvas id="compare_nw_chart" width="1400" height="420" style="width:100%; max-width:1400px;"></canvas>`;
+
+    el.innerHTML = html;
+
+    // Draw overlay chart
+    setTimeout(() => renderCompareNWChart(a, b), 50);
+}
+
+function renderCompareNWChart(a, b) {
+    const canvas = document.getElementById('compare_nw_chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const dispW = canvas.parentElement.offsetWidth || 1400;
+    const dispH = 420;
+    canvas.style.width  = dispW + 'px';
+    canvas.style.height = dispH + 'px';
+    canvas.width  = dispW * dpr;
+    canvas.height = dispH * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, dispW, dispH);
+
+    const PAD_L = 80, PAD_R = 20, PAD_T = 20, PAD_B = 50;
+    const plotW = dispW - PAD_L - PAD_R;
+    const plotH = dispH - PAD_T - PAD_B;
+
+    const nwA = a.rows.map(r => r.nw);
+    const nwB = b.rows.map(r => r.nw);
+    const agesA = a.rows.map(r => r.a1);
+    const agesB = b.rows.map(r => r.a1);
+    const allAges = Array.from(new Set([...agesA, ...agesB])).sort((x, y) => x - y);
+
+    let maxVal = Math.max(...nwA, ...nwB, 1) * 1.08;
+    let minVal = Math.min(...nwA, ...nwB, 0);
+    if (minVal > 0) minVal = 0;
+    const range = maxVal - minVal;
+
+    const n = allAges.length;
+    const gap = plotW / Math.max(n - 1, 1);
+    const yPos = v => PAD_T + plotH - ((v - minVal) / range) * plotH;
+
+    // ── Grid ──
+    ctx.strokeStyle = '#e8e8e8';
+    ctx.lineWidth = 0.5;
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'right';
+    const yTicks = 6;
+    for (let i = 0; i <= yTicks; i++) {
+        const val = minVal + (range / yTicks) * i;
+        const y = yPos(val);
+        ctx.beginPath();
+        ctx.moveTo(PAD_L, y);
+        ctx.lineTo(PAD_L + plotW, y);
+        ctx.stroke();
+        if (Math.abs(val) >= 1000000) {
+            ctx.fillText('$' + (val / 1000000).toFixed(1) + 'M', PAD_L - 6, y + 3);
+        } else {
+            ctx.fillText('$' + Math.round(val / 1000) + 'k', PAD_L - 6, y + 3);
+        }
+    }
+
+    // ── Zero line ──
+    if (minVal < 0) {
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        const zeroY = yPos(0);
+        ctx.moveTo(PAD_L, zeroY);
+        ctx.lineTo(PAD_L + plotW, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function drawLine(ages, nwArr, color, dashed) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        if (dashed) ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        let started = false;
+        for (let i = 0; i < allAges.length; i++) {
+            const idx = ages.indexOf(allAges[i]);
+            if (idx === -1) continue;
+            const x = PAD_L + i * gap;
+            const y = yPos(nwArr[idx]);
+            if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    drawLine(agesA, nwA, '#2980b9', false);
+    drawLine(agesB, nwB, '#e67e22', true);
+
+    // ── Legend ──
+    ctx.font = '11px Segoe UI, sans-serif';
+    const legY = PAD_T + 15;
+    ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 2.5; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(PAD_L + 10, legY); ctx.lineTo(PAD_L + 35, legY); ctx.stroke();
+    ctx.fillStyle = '#2980b9'; ctx.textAlign = 'left';
+    ctx.fillText(a.label, PAD_L + 40, legY + 4);
+
+    ctx.strokeStyle = '#e67e22'; ctx.setLineDash([8, 4]);
+    ctx.beginPath(); ctx.moveTo(PAD_L + 10, legY + 18); ctx.lineTo(PAD_L + 35, legY + 18); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#e67e22';
+    ctx.fillText(b.label, PAD_L + 40, legY + 22);
+
+    // ── X-axis ──
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'center';
+    ctx.font = '10px Segoe UI, sans-serif';
+    const labelEvery = n > 30 ? 5 : n > 15 ? 3 : 2;
+    for (let i = 0; i < n; i++) {
+        if (i % labelEvery === 0 || i === n - 1) {
+            ctx.fillText(allAges[i], PAD_L + i * gap, PAD_T + plotH + 15);
+        }
+    }
+    ctx.fillStyle = '#888';
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.fillText('Age (Spouse 1)', PAD_L + plotW / 2, PAD_T + plotH + 38);
+
+    // ── Tooltip ──
+    canvas.onmousemove = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const idx = Math.round((mx - PAD_L) / gap);
+        if (idx >= 0 && idx < n) {
+            const age = allAges[idx];
+            const idxA = agesA.indexOf(age);
+            const idxB = agesB.indexOf(age);
+            const vA = idxA >= 0 ? formatMoney(nwA[idxA]) : 'N/A';
+            const vB = idxB >= 0 ? formatMoney(nwB[idxB]) : 'N/A';
+            canvas.title = `Age ${age}: ${a.label} ${vA} | ${b.label} ${vB}`;
+        } else {
+            canvas.title = '';
+        }
+    };
+}
+
+// ─── Action Plan ────────────────────────────────────────────────────────────
+function renderActionPlan(rows) {
+    const tbody = document.querySelector("#plan_table tbody");
+    tbody.innerHTML = "";
+    const section = document.getElementById('plan_section');
+    const placeholder = document.getElementById('plan_placeholder');
+    if (!rows || rows.length === 0) { section.style.display = 'none'; placeholder.style.display = 'block'; return; }
+    section.style.display = 'block';
+    placeholder.style.display = 'none';
+
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const sysYear = parseInt(document.getElementById('sys_year').value) || 2026;
+    const s1Age = parseInt(document.getElementById('s1_age').value) || 50;
+
+    // Update column headers with names
+    document.getElementById('plan_s1_rrsp_h').textContent = s1 + ' RRSP';
+    document.getElementById('plan_s2_rrsp_h').textContent = s2 + ' RRSP';
+    document.getElementById('plan_s1_tfsa_h').textContent = s1 + ' TFSA';
+    document.getElementById('plan_s2_tfsa_h').textContent = s2 + ' TFSA';
+    document.getElementById('plan_s1_nr_h').textContent = s1 + ' Non-Reg';
+    document.getElementById('plan_s2_nr_h').textContent = s2 + ' Non-Reg';
+    document.getElementById('plan_s1_cpp_h').textContent = s1 + ' CPP';
+    document.getElementById('plan_s2_cpp_h').textContent = s2 + ' CPP';
+    document.getElementById('plan_s1_oas_h').textContent = s1 + ' OAS';
+    document.getElementById('plan_s2_oas_h').textContent = s2 + ' OAS';
+
+    for (const d of rows) {
+        // Skip working years with no activity
+        if (d.stage === "Working" && d.rrspDrawAmt === 0 && d.tfsaDrawAmt === 0) continue;
+
+        const row = tbody.insertRow();
+        const yr = sysYear + (d.a1 - s1Age);
+
+        // Determine action description
+        let action = '';
+        if (d.stage === 'Working') {
+            action = 'Contributing';
+        } else if (d.stage === 'Gap') {
+            const gapDraw = d.rrspDrawAmt;
+            const gapTax = d.annualTax;
+            const gapNet = gapDraw - gapTax;
+            action = `Draw ${formatMoney(gapDraw)} from ${s2} RRSP`;
+            action += ` → Pay ${formatMoney(gapTax)} tax`;
+            if (d.sweepToTFSA > 0) action += ` → ${formatMoney(d.sweepToTFSA)} to TFSA`;
+            if (d.sweepToNonReg > 0) action += ` + ${formatMoney(d.sweepToNonReg)} to Non-Reg`;
+        } else {
+            const parts = [];
+
+            // RRSP draw details
+            if (d.rrspDrawAmt > 0) {
+                let rrspLine = `Draw ${formatMoney(d.rrspDrawAmt)} from RRSP`;
+                if (d.sweepToTFSA > 0 || d.sweepToNonReg > 0) {
+                    rrspLine += ` (${formatMoney(d.netGoalDisp)} to spend`;
+                    if (d.sweepToTFSA > 0) rrspLine += `, ${formatMoney(d.sweepToTFSA)} → TFSA`;
+                    if (d.sweepToNonReg > 0) rrspLine += `, ${formatMoney(d.sweepToNonReg)} → Non-Reg`;
+                    rrspLine += ')';
+                }
+                parts.push(rrspLine);
+            }
+
+            // TFSA draw
+            if (d.tfsaDrawAmt > 0) {
+                parts.push(`Draw ${formatMoney(d.tfsaDrawAmt)} from TFSA (tax-free)`);
+            }
+
+            // Non-reg draw
+            if (d.nonRegDrawAmt > 0) {
+                parts.push(`Draw ${formatMoney(d.nonRegDrawAmt)} from Non-Reg`);
+            }
+
+            // Government income
+            const govIncome = [];
+            if (d.r_cpp > 0) govIncome.push(`${s1} CPP ${formatMoney(d.r_cpp)}`);
+            if (d.m_cpp > 0) govIncome.push(`${s2} CPP ${formatMoney(d.m_cpp)}`);
+            if (d.r_oas > 0) govIncome.push(`${s1} OAS ${formatMoney(d.r_oas)}`);
+            if (d.m_oas > 0) govIncome.push(`${s2} OAS ${formatMoney(d.m_oas)}`);
+            if (govIncome.length > 0) parts.push(govIncome.join(', '));
+
+            // Tax summary
+            if (d.annualTax > 0) parts.push(`Pay ${formatMoney(d.annualTax)} tax`);
+
+            action = parts.join(' · ');
+        }
+
+        const netSpend = d.netGoalDisp;
+
+        const cell = v => v > 0 ? formatMoney(Math.round(v)) : '<span style="color:#ccc;">—</span>';
+        const sweepCell = v => v > 0 ? `<span style="color:#16a085;font-weight:bold;">${formatMoney(Math.round(v))}</span>` : '<span style="color:#ccc;">—</span>';
+
+        if (d.stage === 'Gap') row.className = 'gap';
+        else if (d.stage === 'Slow-Go') row.className = 'slow-go';
+        else if (d.stage === 'No-Go') row.className = 'no-go';
+
+        row.innerHTML = `
+            <td>${yr}</td>
+            <td>${d.s1Alive !== false ? d.a1 : "--"}/${d.s2Alive !== false ? d.a2 : "--"}</td>
+            <td>${d.stage}</td>
+            <td>${cell(d.r_rrspDraw)}</td>
+            <td>${cell(d.m_rrspDraw)}</td>
+            <td>${cell(d.r_tfsaDraw)}</td>
+            <td>${cell(d.m_tfsaDraw)}</td>
+            <td>${cell(d.r_nonregDraw)}</td>
+            <td>${cell(d.m_nonregDraw)}</td>
+            <td>${cell(d.r_cpp)}</td>
+            <td>${cell(d.m_cpp)}</td>
+            <td>${cell(d.r_oas)}</td>
+            <td>${cell(d.m_oas)}</td>
+            <td>${d.annualTax > 0 ? formatMoney(d.annualTax) : '<span style="color:#ccc;">—</span>'}</td>
+            <td style="font-weight:bold;">${netSpend > 0 ? formatMoney(netSpend) : '<span style="color:#ccc;">—</span>'}</td>
+            <td>${sweepCell(d.sweepToTFSA)}</td>
+            <td>${sweepCell(d.sweepToNonReg)}</td>
+            <td style="font-size:10px; color:#555;">${action}</td>
+        `;
+    }
+}
+
+function calculate() {
+    const params = buildParams();
+
+    // Pass 1: baseline projection
+    let rows = projectYears(params, null);
+
+    // Tax rate smoothing: compute target rate from pass 1, re-run with target
+    if (params.smoothTax) {
+        const drawRows = rows.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+        if (drawRows.length > 0) {
+            const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+            const totalGross = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+            const targetRate = totalGross > 0 ? totalTax / totalGross : 0;
+            params.targetTaxRate = targetRate;
+
+            // Pass 2: smoothed projection
+            rows = projectYears(params, null);
+
+            // Pass 3: refine target from pass 2 results
+            const drawRows2 = rows.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+            if (drawRows2.length > 0) {
+                const totalTax2 = drawRows2.reduce((s, r) => s + r.annualTax, 0);
+                const totalGross2 = drawRows2.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+                params.targetTaxRate = totalGross2 > 0 ? totalTax2 / totalGross2 : 0;
+                rows = projectYears(params, null);
+            }
+        }
+    }
+
+    const peak = renderLedger(rows);
+    const last = rows[rows.length - 1];
+    const preRetireRows = rows.filter(r => !r.isSomeoneRetired);
+    const preRetirePeak = preRetireRows.length > 0 ? preRetireRows.reduce((best, r) => r.nw > best.nw ? r : best, preRetireRows[0]) : null;
+    const retireNW = preRetirePeak ? preRetirePeak.nw : 0;
+    const sysYear = parseInt(document.getElementById('sys_year').value) || 2026;
+    const retireYear = preRetirePeak ? sysYear + (preRetirePeak.a1 - params.s1_age) : '';
+    const retireLabel = preRetirePeak ? `${formatMoney(retireNW)} (${retireYear})` : '$0';
+
+    document.getElementById('sum_retire').innerHTML = retireLabel;
+    document.getElementById('sum_retire_top').innerHTML = retireLabel;
+
+    const peakRow = rows.reduce((best, r) => r.nw > best.nw ? r : best, rows[0]);
+    const peakYear = sysYear + (peakRow.a1 - params.s1_age);
+    const peakLabel = `${formatMoney(peak)} (${peakYear})`;
+    const lastYear = sysYear + (last.a1 - params.s1_age);
+    const finalLabel = `${formatMoney(last.nw)} (${lastYear})`;
+
+    document.getElementById('sum_peak').innerHTML = peakLabel;
+    document.getElementById('sum_peak_top').innerHTML = peakLabel;
+    document.getElementById('sum_final').innerHTML = finalLabel;
+    document.getElementById('sum_final_top').innerHTML = finalLabel;
+
+    const finalBox = document.getElementById('final_box');
+    finalBox.className = "stat-box" + (last.nw < 0 ? " danger" : last.nw < 200000 ? " warn" : "");
+    const finalBoxTop = document.getElementById('final_box_top');
+    finalBoxTop.className = "stat-box" + (last.nw < 0 ? " danger" : last.nw < 200000 ? " warn" : "");
+
+    renderChart(rows);
+    renderNWChart(rows);
+    renderActionPlan(rows);
+    updateDateDisplay();
+    const cp = document.getElementById('chart_placeholder');
+    if (cp) cp.style.display = 'none';
+}
+
+// ─── Monte Carlo ─────────────────────────────────────────────────────────────
+function randn(mean, sd) {
+    let u, v;
+    do { u = Math.random(); } while (u === 0);
+    do { v = Math.random(); } while (v === 0);
+    return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function runMonteCarlo() {
+    const params  = buildParams();
+    const nSims   = parseInt(document.getElementById('mc_sims').value) || 1000;
+    const sdPre   = (parseFloat(document.getElementById('mc_sd_pre').value) || 5) / 100;
+    const sdPost  = (parseFloat(document.getElementById('mc_sd_post').value) || 5) / 100;
+    const maxYrs  = params.maxYrs;
+
+    document.getElementById('status').innerText = `Running ${nSims} simulations${params.smoothTax ? ' (with tax smoothing)' : ''}…`;
+
+    setTimeout(() => {
+        const finalValues = [];
+        let successCount  = 0;
+        let failYear      = [];
+
+        for (let sim = 0; sim < nSims; sim++) {
+            const returns = [];
+            for (let yr = 0; yr <= maxYrs; yr++) {
+                const a1 = params.s1_age + yr;
+                const isPreRetire = (a1 < params.s1_retire && (params.s2_age + yr) < params.s2_retire);
+                const mean = isPreRetire ? params.rPre : params.rPost;
+                const sd   = isPreRetire ? sdPre : sdPost;
+                returns.push(randn(mean, sd));
+            }
+
+            // Apply tax smoothing if enabled (2-pass for speed)
+            let rows;
+            if (params.smoothTax) {
+                params.targetTaxRate = null;
+                const pass1 = projectYears(params, returns);
+                const drawRows = pass1.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+                if (drawRows.length > 0) {
+                    const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+                    const totalGross = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+                    params.targetTaxRate = totalGross > 0 ? totalTax / totalGross : 0;
+                }
+                rows = projectYears(params, returns);
+            } else {
+                rows = projectYears(params, returns);
+            }
+            const last = rows[rows.length - 1];
+            finalValues.push(last.nw);
+
+            if (last.nw >= 0) {
+                successCount++;
+            } else {
+                const failRow = rows.find(r => r.nw < 0);
+                if (failRow) failYear.push(failRow.a1);
+            }
+        }
+
+        finalValues.sort((a, b) => a - b);
+        const pct = p => finalValues[Math.floor(p * nSims / 100)];
+
+        const successRate = (successCount / nSims * 100).toFixed(1);
+        const median      = pct(50);
+
+        document.getElementById('mc_panel').style.display = 'block';
+        document.getElementById('mc_box').style.display   = 'block';
+        document.getElementById('mc_success_box').style.display = 'block';
+        document.getElementById('mc_median').innerText  = formatMoney(median);
+        document.getElementById('mc_success').innerText = successRate + "%";
+
+        const successBox = document.getElementById('mc_success_box');
+        successBox.className = "stat-box" + (parseFloat(successRate) >= 85 ? "" : parseFloat(successRate) >= 70 ? " warn" : " danger");
+
+        const avgFailAge = failYear.length > 0 ? Math.round(failYear.reduce((a,b)=>a+b,0)/failYear.length) : null;
+
+        document.getElementById('mc_summary').innerHTML =
+            `<b>${nSims} simulations</b> completed. ` +
+            `<b>${successRate}%</b> ended with money remaining. ` +
+            (avgFailAge ? `Failed simulations ran out at average age <b>${avgFailAge}</b>. ` : "") +
+            `Median final balance: <b>${formatMoney(median)}</b>.`;
+
+        const pctData = [
+            { label: "10th percentile (pessimistic)",  val: pct(10),  color: "#e74c3c" },
+            { label: "25th percentile",                 val: pct(25),  color: "#e67e22" },
+            { label: "50th percentile (median)",        val: pct(50),  color: "#27ae60" },
+            { label: "75th percentile",                 val: pct(75),  color: "#2980b9" },
+            { label: "90th percentile (optimistic)",    val: pct(90),  color: "#8e44ad" },
+        ];
+
+        const maxAbs = Math.max(...pctData.map(p => Math.abs(p.val)));
+        const pDiv   = document.getElementById('mc_percentiles');
+        pDiv.innerHTML = pctData.map(p => {
+            const barPct  = Math.round((Math.abs(p.val) / maxAbs) * 100);
+            const barCol  = p.val < 0 ? "#e74c3c" : p.color;
+            return `<div class="mc-bar-wrap">
+                <span style="width:220px;display:inline-block">${p.label}</span>
+                <div class="mc-bar-bg"><div class="mc-bar-fill" style="width:${barPct}%;background:${barCol}"></div></div>
+                <span style="width:110px;text-align:right;font-weight:bold;color:${p.val<0?'#e74c3c':'inherit'}">${formatMoney(p.val)}</span>
+            </div>`;
+        }).join('');
+
+        document.getElementById('status').innerText = `✓ Monte Carlo complete (${nSims} runs).`;
+        params.targetTaxRate = null; // reset so next calculate() works normally
+        setTimeout(() => document.getElementById('status').innerText = "", 4000);
+    }, 50);
+}
+
+// ─── Sync rates ──────────────────────────────────────────────────────────────
+function syncRates() {
+    const yr = new Date().getFullYear();
+    document.getElementById('sys_year').value = yr;
+    if (yr === 2026) {
+        document.getElementById('cpp_max_val').value = formatDollarValue(DATA_2026.cpp);
+        document.getElementById('oas_max_val').value = formatDollarValue(DATA_2026.oas);
+        document.getElementById('cpp2_max_val').value = formatDollarValue(DATA_2026.cpp2);
+        document.getElementById('fed_age_amt').value = formatDollarValue(DATA_2026.fedAgeAmt);
+    } else {
+        const newCpp = prompt(`Enter Max ANNUAL CPP for ${yr}:`, DATA_2026.cpp);
+        const newOas = prompt(`Enter Max ANNUAL OAS for ${yr}:`, DATA_2026.oas);
+        const newCpp2 = prompt(`Enter Max ANNUAL CPP2 benefit (at 40yr maturity) for ${yr}:`, DATA_2026.cpp2);
+        const newAgeAmt = prompt(`Enter Federal Age Amount for ${yr} (CRA line 30100):`, DATA_2026.fedAgeAmt);
+        if (newCpp && newOas) {
+            document.getElementById('cpp_max_val').value = formatDollarValue(parseFloat(newCpp));
+            document.getElementById('oas_max_val').value = formatDollarValue(parseFloat(newOas));
+        }
+        if (newCpp2) {
+            document.getElementById('cpp2_max_val').value = formatDollarValue(parseFloat(newCpp2));
+        }
+        if (newAgeAmt) {
+            document.getElementById('fed_age_amt').value = formatDollarValue(parseFloat(newAgeAmt));
+        }
+    }
+    document.getElementById('cpp_label').innerText = `Max CPP (${yr})`;
+    document.getElementById('oas_label').innerText = `Max OAS (${yr})`;
+    document.getElementById('cpp2_label').innerHTML = `Max CPP2 (${yr})`;
+    document.getElementById('age_amt_label').innerText = `Fed Age Amt (${yr})`;
+
+    const provCode = document.getElementById('province').value;
+    const provName = PROV_TAX[provCode] ? PROV_TAX[provCode].name : provCode;
+    document.getElementById('status').innerText = `✓ Synced to ${yr}. Tax rules: ${provName}.`;
+    document.getElementById('status_top').innerText = `✓ Synced to ${yr}. Tax rules: ${provName}.`;
+    setTimeout(() => {
+        document.getElementById('status').innerText = "";
+        document.getElementById('status_top').innerText = "";
+    }, 4000);
+
+    calculate();
+}
+
+// ─── Date/year display ──────────────────────────────────────────────────────
+function updateDateDisplay() {
+    const now = new Date();
+    const calendarYear = now.getFullYear();
+    document.getElementById('current_date').textContent = now.toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' });
+    const sysYear = parseInt(document.getElementById('sys_year').value) || calendarYear;
+    document.getElementById('sys_year_disp').textContent = sysYear;
+    const mismatchEl = document.getElementById('year_mismatch');
+    mismatchEl.style.display = (sysYear !== calendarYear) ? 'inline' : 'none';
+    const provCode = document.getElementById('province').value;
+    document.getElementById('prov_disp').textContent = PROV_TAX[provCode] ? PROV_TAX[provCode].name : provCode;
+}
+
+// ─── Persist ─────────────────────────────────────────────────────────────────
+function saveData() {
+    const d = {};
+    document.querySelectorAll('input').forEach(i => d[i.id] = i.type === 'checkbox' ? i.checked : i.value);
+    document.querySelectorAll('select').forEach(s => d[s.id] = s.value);
+    localStorage.setItem('retirement_calc_v28', JSON.stringify(d));
+    document.getElementById('status').innerText = "✓ Configuration Saved.";
+    document.getElementById('status_top').innerText = "✓ Configuration Saved.";
+    setTimeout(() => {
+        document.getElementById('status').innerText = "";
+        document.getElementById('status_top').innerText = "";
+    }, 3000);
+}
+
+window.onload = () => {
+    const s = localStorage.getItem('retirement_calc_v28');
+    if (s) {
+        const d = JSON.parse(s);
+        Object.keys(d).forEach(id => {
+            const e = document.getElementById(id);
+            if (e) { if (e.type === 'checkbox') e.checked = d[id]; else e.value = d[id]; }
+        });
+        initDollarFields();
+        updateNames();
+        updateDateDisplay();
+        calculate();
+    } else {
+        initDollarFields();
+        updateNames();
+        updateDateDisplay();
+    }
+};
+</script>
+</body>
+</html>
