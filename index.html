@@ -100,9 +100,7 @@
 <div class="container">
     <h1 style="display:flex; justify-content:space-between; align-items:center;">
         <span><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span></span>
-        <span style="font-size:11px; color:#999; font-weight:normal; white-space:nowrap; margin-left:10px;">
-            👁 Visits: <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fwww.freecanadianretirementcalculator.ca&count_bg=%2327AE60&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visits&edge_flat=true" alt="visitor count" style="height:16px; vertical-align:middle;">
-        </span>
+        <span style="font-size:11px; color:#999; font-weight:normal; white-space:nowrap; margin-left:10px;">👁 Visits: <span id="visit_count">...</span></span>
     </h1>
     <div style="font-size:11px; color:#7f8c8d; margin:-8px 0 10px 0;">Today: <b id="current_date"></b> — System Year: <b id="sys_year_disp"></b> <span id="year_mismatch" style="color:#e74c3c; display:none;">⚠ mismatch</span> — Province: <b id="prov_disp">Manitoba</b></div>
 
@@ -2814,6 +2812,18 @@ function saveData() {
 }
 
 window.onload = () => {
+    // Visit counter via counterapi.dev
+    fetch('https://counterapi.dev/api/freecanadianretirementcalculator/visits/hit')
+        .then(r => r.json())
+        .then(d => {
+            const el = document.getElementById('visit_count');
+            if (el && d.value) el.textContent = Number(d.value).toLocaleString();
+        })
+        .catch(() => {
+            const el = document.getElementById('visit_count');
+            if (el) el.textContent = '';
+        });
+
     const s = localStorage.getItem('retirement_calc_v28');
     if (s) {
         const d = JSON.parse(s);
