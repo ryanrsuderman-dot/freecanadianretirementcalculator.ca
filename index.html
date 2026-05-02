@@ -143,8 +143,9 @@
     <div id="tab_setup" class="tab-content active">
 
     <div class="grid">
-        <div class="card">
-            <h2><span class="s1_name_disp">Spouse 1</span></h2>
+        <div class="card" id="s1_card">
+            <h2 style="display:flex; justify-content:space-between; align-items:center;"><span class="s1_name_disp">Spouse 1</span> <label style="font-size:11px; font-weight:normal; color:#555; cursor:pointer;"><input type="checkbox" id="s1_active" checked onchange="toggleSpouse(1)" style="width:14px; margin-right:3px;">Active</label></h2>
+            <div id="s1_fields">
             <div class="row"><label>Name</label><input type="text" id="s1_name" value="Spouse 1" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
             <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s1_age" value="50" style="width:45px"> / <input type="number" id="s1_retire" value="65" style="width:45px"></span></div>
             <div class="row"><label>CPP Age / % Max</label><span><input type="number" id="s1_cpp_age" value="65" style="width:45px"> / <input type="number" id="s1_cpp_pct" value="75" style="width:45px"></span></div>
@@ -153,9 +154,11 @@
             <div class="row"><label>RRSP / TFSA Bal</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></span></div>
             <div class="row"><label>Non-Reg Bal</label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
             <div class="row"><label>Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></span></div>
+            </div>
         </div>
-        <div class="card">
-            <h2><span class="s2_name_disp">Spouse 2</span></h2>
+        <div class="card" id="s2_card">
+            <h2 style="display:flex; justify-content:space-between; align-items:center;"><span class="s2_name_disp">Spouse 2</span> <label style="font-size:11px; font-weight:normal; color:#555; cursor:pointer;"><input type="checkbox" id="s2_active" checked onchange="toggleSpouse(2)" style="width:14px; margin-right:3px;">Active</label></h2>
+            <div id="s2_fields">
             <div class="row"><label>Name</label><input type="text" id="s2_name" value="Spouse 2" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
             <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s2_age" value="47" style="width:45px"> / <input type="number" id="s2_retire" value="65" style="width:45px"></span></div>
             <div class="row"><label>CPP Age / % Max</label><span><input type="number" id="s2_cpp_age" value="65" style="width:45px"> / <input type="number" id="s2_cpp_pct" value="75" style="width:45px"></span></div>
@@ -164,6 +167,7 @@
             <div class="row"><label>RRSP / TFSA Bal</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></span></div>
             <div class="row"><label>Non-Reg Bal</label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
             <div class="row"><label>Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></span></div>
+            </div>
         </div>
         <div class="card">
             <h2>Life Stages (%)</h2>
@@ -228,6 +232,22 @@
             <div class="row"><label><span class="s1_name_disp">Spouse 1</span> Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_boost" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_boost" value="0" style="width:70px"></span></div>
             <div class="row"><label><span class="s2_name_disp">Spouse 2</span> Monthly: R/T</label><span><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_boost" value="0" style="width:70px"> <input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_boost" value="0" style="width:70px"></span></div>
             <p class="note">Additional monthly amounts added on top of base contributions at the specified age. Useful for mortgage payoff, kids moving out, etc.</p>
+        </div>
+
+        <div class="card">
+            <h2>Home Equity (Optional)</h2>
+            <div class="row"><label>Current Home Value</label><input type="text" inputmode="decimal" class="dollar" id="home_value" value="0"></div>
+            <p class="note">Value grows annually by your inflation rate.</p>
+            <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
+            <b style="font-size:11px;">Option A — Sell</b>
+            <div class="row"><label>Sell at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Annual Rent After (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
+            <p class="note">Full home value added as lump sum. Annual rent reduces net spending goal from sell age onward.</p>
+            <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
+            <b style="font-size:11px;">Option B — Downsize</b>
+            <div class="row"><label>Downsize at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Net Proceeds</label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
+            <p class="note">Net proceeds (old home minus new home cost) added as lump sum. No rent required — still owning.</p>
         </div>
     </div>
 
@@ -328,15 +348,19 @@
         <canvas id="income_chart" width="1400" height="420" style="width:100%; max-width:1400px;"></canvas>
 
         <h2 style="color:#2c3e50; border-bottom:3px solid #3498db; padding-bottom:5px; margin-top:30px;">Net Worth Over Time</h2>
-        <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:6px;">
+        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
             <b>View:</b>
             <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="nw_chart_view" value="combined" checked onchange="reRenderNWChart()"> Combined</label>
             <label style="cursor:pointer;"><input type="radio" name="nw_chart_view" value="split" onchange="reRenderNWChart()"> Split by Spouse</label>
+        </div>
+        <label style="font-size:12px; cursor:pointer; padding:6px 10px; background:#f0f4f8; border-radius:6px;"><input type="checkbox" id="nw_include_home" checked onchange="reRenderNWChart()" style="width:14px; margin-right:5px;"> Include Home Equity</label>
         </div>
         <div id="nw_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
+            <span id="nw_home_legend" style="display:none;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>Home Equity</span>
         </div>
         <div id="nw_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
@@ -453,6 +477,20 @@
         </details>
 
         <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Home Equity (Optional)</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Current Home Value</b> — Today's estimated market value of your primary residence. Grows annually by your inflation rate. Set to $0 to ignore home equity entirely.<br><br>
+                <b>Option A — Sell</b><br>
+                <b>Sell at Age</b> — Age (Spouse 1) when you sell the home. The full inflation-adjusted home value is injected as a lump sum into investments (TFSA → RRSP → Non-Reg). Set to 0 to disable.<br>
+                <b>Annual Rent After</b> — Ongoing annual rent cost after selling. Added on top of your Target Net Goal from the sell year forward, inflation-adjusted. Set to $0 if moving in with family or no rent expected.<br><br>
+                <b>Option B — Downsize</b><br>
+                <b>Downsize at Age</b> — Age (Spouse 1) when you downsize. Set to 0 to disable.<br>
+                <b>Net Proceeds</b> — The cash you pocket from the downsize (sale price of old home minus cost of new home), in today's dollars. Injected as a lump sum into investments (TFSA → RRSP → Non-Reg). The remaining home value (current value minus proceeds) continues growing by inflation.<br><br>
+                <b>Note:</b> Only one option fires per run. You can use both (e.g., downsize at 70, then sell at 85) by setting both ages — each fires independently at its respective age. The Net Worth chart has an "Include Home Equity" toggle to visualize the home's value over time alongside your investment accounts.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Solver Buttons</summary>
             <div style="padding:6px 0 0 12px;">
                 <b>Solve for Retirement Age</b> — Tests both spouses' retirement age combinations. Shows top 10 earliest viable options.<br>
@@ -500,6 +538,15 @@ const formatMoney = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocale
 const formatPct   = n => n.toFixed(1) + "%";
 let FED_AGE_AMT = 9028; // Updated from buildParams before each projection
 
+// ─── Spouse toggle ──────────────────────────────────────────────────────────
+function toggleSpouse(n) {
+    const active = document.getElementById(`s${n}_active`).checked;
+    document.getElementById(`s${n}_fields`).style.opacity = active ? '1' : '0.35';
+    document.getElementById(`s${n}_fields`).style.pointerEvents = active ? '' : 'none';
+    updateNames();
+    calculate();
+}
+
 // ─── Tab switching ──────────────────────────────────────────────────────────
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -528,10 +575,20 @@ function switchTab(tabId) {
 function updateNames() {
     const s1 = document.getElementById('s1_name').value || 'Spouse 1';
     const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const s1Active = document.getElementById('s1_active').checked;
+    const s2Active = document.getElementById('s2_active').checked;
     document.querySelectorAll('.s1_name_disp').forEach(el => el.textContent = s1);
     document.querySelectorAll('.s2_name_disp').forEach(el => el.textContent = s2);
-    document.getElementById('title_s1').textContent = s1;
-    document.getElementById('title_s2').textContent = s2;
+
+    // Update h1 title based on active spouses
+    const titleEl = document.querySelector('h1');
+    if (s1Active && s2Active) {
+        titleEl.innerHTML = `<span id="title_s1">${s1}</span> & <span id="title_s2">${s2}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+    } else if (s1Active) {
+        titleEl.innerHTML = `<span id="title_s1">${s1}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+    } else if (s2Active) {
+        titleEl.innerHTML = `<span id="title_s2">${s2}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+    }
     document.title = 'Free Canadian Retirement Calculator';
 }
 
@@ -911,8 +968,10 @@ function projectYears(params, returnOverride) {
         tfsaRoomPerYr, tfsaRoomCurrent, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
         ls1_amt, ls1_age, ls1_rrsp_cap, ls2_amt, ls2_age, ls2_rrsp_cap,
         boostAge, s1_rrsp_boost, s1_tfsa_boost, s2_rrsp_boost, s2_tfsa_boost,
+        homeValue, homeSellAge, homeRent, homeDownsizeAge, homeDownsizeProceeds,
         prov, targetTaxRate,
-        s1PlanAge, s2PlanAge
+        s1PlanAge, s2PlanAge,
+        s1Active, s2Active
     } = params;
 
     FED_AGE_AMT = params.fedAgeAmt || 9028;
@@ -921,10 +980,17 @@ function projectYears(params, returnOverride) {
     let m = { rrsp: s2_rrsp, tfsa: s2_tfsa, nonreg: s2_nonreg, nonregCost: s2_nonreg };
     let shortfall = 0;
     const rows = [];
+    let homeSold = false;
+    let homeDownsized = false;
+    let annualRentCost = 0;
+    let currentTrackedHomeValue = homeValue;
+    let homeBaseAfterDownsize = homeValue; // base value after downsize, inflated from downsize year
+    let downsizeYr = 0; // year index when downsize happened
 
     let tfsaAvailableRoom = tfsaRoomCurrent || 0;
 
-    let s1Alive = true, s2Alive = true;
+    let s1Alive = s1Active !== false;
+    let s2Alive = s2Active !== false;
 
     for (let yr = 0; yr <= maxYrs; yr++) {
         const a1  = s1_age + yr;
@@ -934,18 +1000,21 @@ function projectYears(params, returnOverride) {
         // ── Survivor logic: roll assets on death ──
         if (s1Alive && a1 > s1PlanAge) {
             s1Alive = false;
-            // Roll S1 assets to S2 (tax-free spousal rollover)
-            m.rrsp += r.rrsp; r.rrsp = 0;
-            m.tfsa += r.tfsa; r.tfsa = 0;
-            m.nonreg += r.nonreg; m.nonregCost += r.nonregCost;
-            r.nonreg = 0; r.nonregCost = 0;
+            if (s1Active !== false) {
+                m.rrsp += r.rrsp; r.rrsp = 0;
+                m.tfsa += r.tfsa; r.tfsa = 0;
+                m.nonreg += r.nonreg; m.nonregCost += r.nonregCost;
+                r.nonreg = 0; r.nonregCost = 0;
+            }
         }
         if (s2Alive && a2 > s2PlanAge) {
             s2Alive = false;
-            r.rrsp += m.rrsp; m.rrsp = 0;
-            r.tfsa += m.tfsa; m.tfsa = 0;
-            r.nonreg += m.nonreg; r.nonregCost += m.nonregCost;
-            m.nonreg = 0; m.nonregCost = 0;
+            if (s2Active !== false) {
+                r.rrsp += m.rrsp; m.rrsp = 0;
+                r.tfsa += m.tfsa; m.tfsa = 0;
+                r.nonreg += m.nonreg; r.nonregCost += m.nonregCost;
+                m.nonreg = 0; m.nonregCost = 0;
+            }
         }
 
         // New TFSA room (1 person if survivor)
@@ -984,7 +1053,57 @@ function projectYears(params, returnOverride) {
             }
         }
 
-        // Determine return for this year
+        // ── Home equity events ──
+        const currentHomeValue = homeValue * inf_mult;
+
+        // Option A: Sell
+        if (!homeSold && homeSellAge > 0 && a1 === homeSellAge) {
+            homeSold = true;
+            annualRentCost = homeRent * inf_mult;
+            currentTrackedHomeValue = 0;
+            let proceeds = currentHomeValue;
+            if (proceeds > 0) {
+                const livingSpouses2 = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0) || 1;
+                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoom));
+                if (s1Alive) r.tfsa += toTFSA / livingSpouses2;
+                if (s2Alive) m.tfsa += toTFSA / livingSpouses2;
+                tfsaAvailableRoom -= toTFSA;
+                proceeds -= toTFSA;
+                if (proceeds > 0) {
+                    if (s1Alive) r.rrsp += proceeds / livingSpouses2;
+                    if (s2Alive) m.rrsp += proceeds / livingSpouses2;
+                }
+            }
+        } else if (homeSold) {
+            currentTrackedHomeValue = 0;
+
+        // Option B: Downsize
+        } else if (!homeDownsized && homeDownsizeAge > 0 && a1 === homeDownsizeAge) {
+            homeDownsized = true;
+            downsizeYr = yr;
+            const proceeds = homeDownsizeProceeds > 0 ? homeDownsizeProceeds * inf_mult : 0;
+            // Remaining home value = current value minus proceeds
+            homeBaseAfterDownsize = Math.max(0, currentHomeValue - proceeds);
+            currentTrackedHomeValue = homeBaseAfterDownsize;
+            if (proceeds > 0) {
+                const livingSpouses2 = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0) || 1;
+                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoom));
+                if (s1Alive) r.tfsa += toTFSA / livingSpouses2;
+                if (s2Alive) m.tfsa += toTFSA / livingSpouses2;
+                tfsaAvailableRoom -= toTFSA;
+                let rem = proceeds - toTFSA;
+                if (rem > 0) {
+                    if (s1Alive) r.rrsp += rem / livingSpouses2;
+                    if (s2Alive) m.rrsp += rem / livingSpouses2;
+                }
+            }
+        } else if (homeDownsized) {
+            // Grow reduced home value by inflation from the downsize year
+            currentTrackedHomeValue = homeBaseAfterDownsize * Math.pow(1 + infl, yr - downsizeYr);
+        } else {
+            // No events yet — full home value growing by inflation
+            currentTrackedHomeValue = homeValue > 0 ? currentHomeValue : 0;
+        }
         let annualReturn;
         if (returnOverride) {
             annualReturn = returnOverride[yr] ?? rPost;
@@ -1092,8 +1211,12 @@ function projectYears(params, returnOverride) {
         }
 
         if (isFullyRetired || !bothAlive) {
+            // Rent: today's dollars inflated from sell year forward
+            const currentRent = homeSold && homeRent > 0
+                ? homeRent * inf_mult
+                : 0;
             const spendMultiplier = !bothAlive ? survivorPct * multiplier : multiplier;
-            const netGoal = netGoalBase * inf_mult * spendMultiplier;
+            const netGoal = netGoalBase * inf_mult * spendMultiplier + currentRent;
 
             // ── RRIF mandatory minimums  ──
             const rrifMin_r = (s1Alive && a1 >= 72 && r.rrsp > 0) ? r.rrsp * getRRIFRate(a1) : 0;
@@ -1315,6 +1438,11 @@ function projectYears(params, returnOverride) {
 
         const totalNonReg = r.nonreg + m.nonreg;
         const nw = r.rrsp + m.rrsp + r.tfsa + m.tfsa + totalNonReg - shortfall;
+        const currentRentDisp = homeSold && homeRent > 0
+            ? homeRent * inf_mult
+            : 0;
+        const spendMultDisp = !bothAlive ? survivorPct * multiplier : multiplier;
+
         rows.push({
             a1, a2, stage,
             r_rrsp: r.rrsp, m_rrsp: m.rrsp,
@@ -1328,10 +1456,11 @@ function projectYears(params, returnOverride) {
             sweepToTFSA, sweepToNonReg,
             annualTax, pensionCredit, rrifMinDisplay,
             nw,
-            netGoalDisp: (isFullyRetired || !bothAlive) ? netGoalBase * inf_mult * (!bothAlive ? survivorPct * multiplier : multiplier) : 0,
+            netGoalDisp: (isFullyRetired || !bothAlive) ? netGoalBase * inf_mult * spendMultDisp + currentRentDisp : 0,
             isSomeoneRetired: isFullyRetired || !bothAlive,
             isMeltRow: isMelt && (isFullyRetired || !bothAlive) && a1 <= meltAge,
-            s1Alive, s2Alive
+            s1Alive, s2Alive,
+            homeEquity: homeSold ? 0 : currentTrackedHomeValue
         });
     }
     return rows;
@@ -1460,26 +1589,33 @@ function buildParams() {
     const isMelt = document.getElementById('melt_on').checked;
     const equalDraw = document.getElementById('equal_draw').checked;
     const smoothTax = document.getElementById('smooth_tax').checked;
+    const s1Active = document.getElementById('s1_active').checked;
+    const s2Active = document.getElementById('s2_active').checked;
     const s1_age = v('s1_age');
-    const s1PlanAge = v('s1_plan_age') || 90;
-    const s2PlanAge = v('s2_plan_age') || 90;
     const s2_age = v('s2_age');
-    const maxYrs = Math.max(s1PlanAge - s1_age, s2PlanAge - s2_age);
+    const s1PlanAge = s1Active ? (v('s1_plan_age') || 90) : s1_age - 1;
+    const s2PlanAge = s2Active ? (v('s2_plan_age') || 90) : s2_age - 1;
+    const maxYrs = Math.max(
+        s1Active ? s1PlanAge - s1_age : 0,
+        s2Active ? s2PlanAge - s2_age : 0
+    );
     return {
-        s1_age,       s1_retire: v('s1_retire'),
-        s1_rrsp: v('s1_rrsp_b'), s1_tfsa: v('s1_tfsa_b'), s1_nonreg: v('s1_nonreg_b'),
-        s1_rrsp_c: v('s1_rrsp_c'),
-        s1_tfsa_c: v('s1_tfsa_c'),
+        s1_age,       s1_retire: s1Active ? v('s1_retire') : s1_age,
+        s1_rrsp: s1Active ? v('s1_rrsp_b') : 0, s1_tfsa: s1Active ? v('s1_tfsa_b') : 0, s1_nonreg: s1Active ? v('s1_nonreg_b') : 0,
+        s1_rrsp_c: s1Active ? v('s1_rrsp_c') : 0,
+        s1_tfsa_c: s1Active ? v('s1_tfsa_c') : 0,
         s1_oas_age: Math.min(70, Math.max(65, v('s1_oas_age'))),
-        s1_cpp2_yrs: Math.max(0, Math.min(40, Math.min(v('s1_retire'), 70) - (s1_age - (v('sys_year') - 2024)))),
-        s2_age: v('s2_age'), s2_retire: v('s2_retire'),
-        s2_rrsp: v('s2_rrsp_b'), s2_tfsa: v('s2_tfsa_b'), s2_nonreg: v('s2_nonreg_b'),
-        s2_rrsp_c: v('s2_rrsp_c'),
-        s2_tfsa_c: v('s2_tfsa_c'),
+        s1_cpp_pct: s1Active ? v('s1_cpp_pct') : 0,
+        s1_cpp2_yrs: s1Active ? Math.max(0, Math.min(40, Math.min(v('s1_retire'), 70) - (s1_age - (v('sys_year') - 2024)))) : 0,
+        s2_age,       s2_retire: s2Active ? v('s2_retire') : s2_age,
+        s2_rrsp: s2Active ? v('s2_rrsp_b') : 0, s2_tfsa: s2Active ? v('s2_tfsa_b') : 0, s2_nonreg: s2Active ? v('s2_nonreg_b') : 0,
+        s2_rrsp_c: s2Active ? v('s2_rrsp_c') : 0,
+        s2_tfsa_c: s2Active ? v('s2_tfsa_c') : 0,
         s2_oas_age: Math.min(70, Math.max(65, v('s2_oas_age'))),
-        s2_cpp2_yrs: Math.max(0, Math.min(40, Math.min(v('s2_retire'), 70) - (v('s2_age') - (v('sys_year') - 2024)))),
-        s1_cpp_age: v('s1_cpp_age'), s1_cpp_pct: v('s1_cpp_pct'),
-        s2_cpp_age: v('s2_cpp_age'), s2_cpp_pct: v('s2_cpp_pct'),
+        s2_cpp_pct: s2Active ? v('s2_cpp_pct') : 0,
+        s2_cpp2_yrs: s2Active ? Math.max(0, Math.min(40, Math.min(v('s2_retire'), 70) - (s2_age - (v('sys_year') - 2024)))) : 0,
+        s1_cpp_age: v('s1_cpp_age'),
+        s2_cpp_age: v('s2_cpp_age'),
         infl: v('infl') / 100,
         rPre: v('r_pre') / 100, rPost: v('r_post') / 100,
         isMelt, equalDraw, smoothTax, meltAge: v('melt_age'),
@@ -1497,6 +1633,7 @@ function buildParams() {
         survivorPct: (parseFloat(document.getElementById('survivor_pct').value) || 70) / 100,
         maxYrs: maxYrs,
         s1PlanAge: s1PlanAge, s2PlanAge: s2PlanAge,
+        s1Active, s2Active,
         // Lump sums
         ls1_amt: v('ls1_amt'), ls1_age: v('ls1_age'), ls1_rrsp_cap: v('ls1_rrsp_cap'),
         ls2_amt: v('ls2_amt'), ls2_age: v('ls2_age'), ls2_rrsp_cap: v('ls2_rrsp_cap'),
@@ -1504,6 +1641,12 @@ function buildParams() {
         boostAge: v('boost_age'),
         s1_rrsp_boost: v('s1_rrsp_boost'), s1_tfsa_boost: v('s1_tfsa_boost'),
         s2_rrsp_boost: v('s2_rrsp_boost'), s2_tfsa_boost: v('s2_tfsa_boost'),
+        // Home equity
+        homeValue: v('home_value'),
+        homeSellAge: v('home_sell_age'),
+        homeRent: v('home_rent'),
+        homeDownsizeAge: v('home_downsize_age'),
+        homeDownsizeProceeds: v('home_downsize_proceeds'),
         prov: document.getElementById('province').value || 'MB',
         targetTaxRate: null
     };
@@ -1681,7 +1824,8 @@ function renderChart(rows) {
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
         const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
+        const scaleX = dispW / rect.width;
+        const mx = (e.clientX - rect.left) * scaleX;
         const idx = Math.floor((mx - PAD_L) / gap);
         if (idx >= 0 && idx < n) {
             const b = bars[idx];
@@ -2050,34 +2194,42 @@ function renderNWChart(rows) {
     const mode = getNWChartMode();
     const s1 = document.getElementById('s1_name').value || 'Spouse 1';
     const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const includeHome = document.getElementById('nw_include_home') && document.getElementById('nw_include_home').checked;
 
     // Toggle legends
     document.getElementById('nw_legend_combined').style.display = mode === 'combined' ? 'flex' : 'none';
     document.getElementById('nw_legend_split').style.display = mode === 'split' ? 'flex' : 'none';
+    const homeLegend = document.getElementById('nw_home_legend');
+    if (homeLegend) homeLegend.style.display = includeHome ? 'inline' : 'none';
 
     let stackOrder, colors, data;
 
     if (mode === 'split') {
         stackOrder = ['r_rrsp', 'm_rrsp', 'r_tfsa', 'm_tfsa', 'r_nonreg', 'm_nonreg'];
+        if (includeHome) stackOrder.push('home');
         colors = {
             r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
             r_tfsa: '#16a085', m_tfsa: '#76d7c4',
-            r_nonreg: '#8e44ad', m_nonreg: '#c39bd3'
+            r_nonreg: '#8e44ad', m_nonreg: '#c39bd3',
+            home: '#e67e22'
         };
         data = rows.map(d => ({
             age: d.a1,
             r_rrsp: Math.max(0, d.r_rrsp), m_rrsp: Math.max(0, d.m_rrsp),
             r_tfsa: Math.max(0, d.r_tfsa), m_tfsa: Math.max(0, d.m_tfsa),
-            r_nonreg: Math.max(0, d.totalNonReg / 2), m_nonreg: Math.max(0, d.totalNonReg / 2)
+            r_nonreg: Math.max(0, d.totalNonReg / 2), m_nonreg: Math.max(0, d.totalNonReg / 2),
+            home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
         }));
     } else {
         stackOrder = ['rrsp', 'tfsa', 'nonreg'];
-        colors = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad' };
+        if (includeHome) stackOrder.push('home');
+        colors = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad', home: '#e67e22' };
         data = rows.map(d => ({
             age: d.a1,
             rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
             tfsa: Math.max(0, d.r_tfsa + d.m_tfsa),
-            nonreg: Math.max(0, d.totalNonReg)
+            nonreg: Math.max(0, d.totalNonReg),
+            home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
         }));
     }
 
@@ -2171,18 +2323,21 @@ function renderNWChart(rows) {
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
         const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
+        const scaleX = dispW / rect.width;
+        const mx = (e.clientX - rect.left) * scaleX;
         const idx = Math.round((mx - PAD_L) / gap);
         if (idx >= 0 && idx < n) {
             const d = data[idx];
             const r = rows[idx];
             if (mode === 'split') {
-                canvas.title = `Age ${d.age}: Total ${formatMoney(d.r_rrsp + d.m_rrsp + d.r_tfsa + d.m_tfsa + d.r_nonreg + d.m_nonreg)}\n` +
+                const homeStr = includeHome && d.home > 0 ? ` | Home ${formatMoney(d.home)}` : '';
+                canvas.title = `Age ${d.age}: Total ${formatMoney(d.r_rrsp + d.m_rrsp + d.r_tfsa + d.m_tfsa + d.r_nonreg + d.m_nonreg + (d.home||0))}${homeStr}\n` +
                     `${s1}: RRSP ${formatMoney(d.r_rrsp)} | TFSA ${formatMoney(d.r_tfsa)} | Non-Reg ${formatMoney(d.r_nonreg)}\n` +
                     `${s2}: RRSP ${formatMoney(d.m_rrsp)} | TFSA ${formatMoney(d.m_tfsa)} | Non-Reg ${formatMoney(d.m_nonreg)}`;
             } else {
-                const total = d.rrsp + d.tfsa + d.nonreg;
-                canvas.title = `Age ${d.age}: Total ${formatMoney(total)}\nRRSP ${formatMoney(d.rrsp)} | TFSA ${formatMoney(d.tfsa)} | Non-Reg ${formatMoney(d.nonreg)}`;
+                const total = d.rrsp + d.tfsa + d.nonreg + (d.home||0);
+                const homeStr = includeHome && d.home > 0 ? ` | Home ${formatMoney(d.home)}` : '';
+                canvas.title = `Age ${d.age}: Total ${formatMoney(total)}\nRRSP ${formatMoney(d.rrsp)} | TFSA ${formatMoney(d.tfsa)} | Non-Reg ${formatMoney(d.nonreg)}${homeStr}`;
             }
         } else {
             canvas.title = '';
@@ -2435,7 +2590,8 @@ function renderCompareNWChart(a, b) {
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
         const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
+        const scaleX = dispW / rect.width;
+        const mx = (e.clientX - rect.left) * scaleX;
         const idx = Math.round((mx - PAD_L) / gap);
         if (idx >= 0 && idx < n) {
             const age = allAges[idx];
