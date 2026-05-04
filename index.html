@@ -168,18 +168,18 @@
             <div class="row"><label>LIRA Jurisdiction</label>
                 <select id="s1_lira_prov" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
                     <option value="" selected>— Not Set —</option>
-                    <option value="AB">Alberta</option>
-                    <option value="BC">British Columbia</option>
-                    <option value="MB">Manitoba</option>
-                    <option value="NB">New Brunswick</option>
-                    <option value="NL">Newfoundland & Labrador</option>
-                    <option value="NS">Nova Scotia</option>
-                    <option value="NT">Northwest Territories (Federal)</option>
-                    <option value="NU">Nunavut (Federal)</option>
-                    <option value="ON">Ontario</option>
-                    <option value="PE">Prince Edward Island</option>
-                    <option value="SK">Saskatchewan</option>
-                    <option value="YT">Yukon (Federal)</option>
+                    <option value="AB">AB</option>
+                    <option value="BC">BC</option>
+                    <option value="MB">MB</option>
+                    <option value="NB">NB</option>
+                    <option value="NL">NL</option>
+                    <option value="NS">NS</option>
+                    <option value="NT">NT (Federal)</option>
+                    <option value="NU">NU (Federal)</option>
+                    <option value="ON">ON</option>
+                    <option value="PE">PE</option>
+                    <option value="SK">SK</option>
+                    <option value="YT">YT (Federal)</option>
                 </select>
             </div>
             </fieldset>
@@ -211,18 +211,18 @@
             <div class="row"><label>LIRA Jurisdiction</label>
                 <select id="s2_lira_prov" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
                     <option value="" selected>— Not Set —</option>
-                    <option value="AB">Alberta</option>
-                    <option value="BC">British Columbia</option>
-                    <option value="MB">Manitoba</option>
-                    <option value="NB">New Brunswick</option>
-                    <option value="NL">Newfoundland & Labrador</option>
-                    <option value="NS">Nova Scotia</option>
-                    <option value="NT">Northwest Territories (Federal)</option>
-                    <option value="NU">Nunavut (Federal)</option>
-                    <option value="ON">Ontario</option>
-                    <option value="PE">Prince Edward Island</option>
-                    <option value="SK">Saskatchewan</option>
-                    <option value="YT">Yukon (Federal)</option>
+                    <option value="AB">AB</option>
+                    <option value="BC">BC</option>
+                    <option value="MB">MB</option>
+                    <option value="NB">NB</option>
+                    <option value="NL">NL</option>
+                    <option value="NS">NS</option>
+                    <option value="NT">NT (Federal)</option>
+                    <option value="NU">NU (Federal)</option>
+                    <option value="ON">ON</option>
+                    <option value="PE">PE</option>
+                    <option value="SK">SK</option>
+                    <option value="YT">YT (Federal)</option>
                 </select>
             </div>
             </fieldset>
@@ -255,18 +255,18 @@
             <div class="row"><label>Province</label>
                 <select id="province" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px;">
                     <option value="" selected>— Select Province —</option>
-                    <option value="AB">Alberta</option>
-                    <option value="BC">British Columbia</option>
-                    <option value="MB">Manitoba</option>
-                    <option value="NB">New Brunswick</option>
-                    <option value="NL">Newfoundland & Labrador</option>
-                    <option value="NS">Nova Scotia</option>
-                    <option value="NT">Northwest Territories</option>
-                    <option value="NU">Nunavut</option>
-                    <option value="ON">Ontario</option>
-                    <option value="PE">Prince Edward Island</option>
-                    <option value="SK">Saskatchewan</option>
-                    <option value="YT">Yukon</option>
+                    <option value="AB">AB</option>
+                    <option value="BC">BC</option>
+                    <option value="MB">MB</option>
+                    <option value="NB">NB</option>
+                    <option value="NL">NL</option>
+                    <option value="NS">NS</option>
+                    <option value="NT">NT</option>
+                    <option value="NU">NU</option>
+                    <option value="ON">ON</option>
+                    <option value="PE">PE</option>
+                    <option value="SK">SK</option>
+                    <option value="YT">YT</option>
                 </select>
             </div>
             <div class="row"><label>OAS Clawback Start</label><input type="text" inputmode="decimal" class="dollar" id="oas_clawback" value="90997"></div>
@@ -423,6 +423,7 @@
         </div>
         <div id="income_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1a6b9a;vertical-align:middle;margin-right:3px;"></span>LIRA Unlock</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>CPP</span>
@@ -434,6 +435,8 @@
         <div id="income_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#85c1e9;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1a6b9a;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> LIRA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#5dade2;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> LIRA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#76d7c4;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> CPP</span>
@@ -456,6 +459,7 @@
         </div>
         <div id="nw_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1a6b9a;vertical-align:middle;margin-right:3px;"></span>LIRA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
             <span id="nw_home_legend" style="display:none;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>Home Equity</span>
@@ -463,6 +467,8 @@
         <div id="nw_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#85c1e9;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> RRSP</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1a6b9a;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> LIRA</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#5dade2;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> LIRA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#76d7c4;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> Non-Reg</span>
@@ -1122,6 +1128,7 @@ function projectYears(params, returnOverride) {
     let liraActionNotes = []; // per-year action reminders
     const liraS1Name = params.s1_name || 'Spouse 1';
     const liraS2Name = params.s2_name || 'Spouse 2';
+    let liraUnlockAmt = 0;
     let shortfall = 0;
     const rows = [];
     let homeSold = false;
@@ -1142,6 +1149,7 @@ function projectYears(params, returnOverride) {
         const inf_mult = Math.pow(1 + infl, yr);
 
         liraActionNotes = [];
+        liraUnlockAmt = 0;
 
         // ── LIRA unlock events ──
         if (!r_lira_unlock1_done && s1Alive && r.lira > 0 && a1 >= r_liraRules.unlock1Age && r_liraRules.unlock1Pct > 0) {
@@ -1149,6 +1157,7 @@ function projectYears(params, returnOverride) {
             const unlockAmt = r.lira * r_liraRules.unlock1Pct;
             r.lira -= unlockAmt;
             r.rrsp += unlockAmt;
+            liraUnlockAmt += unlockAmt;
             liraActionNotes.push(`${liraS1Name}: Unlock ${Math.round(r_liraRules.unlock1Pct * 100)}% of LIRA to RRSP (${formatMoney(unlockAmt)}). Apply to financial institution.`);
         }
         if (!m_lira_unlock1_done && s2Alive && m.lira > 0 && a2 >= m_liraRules.unlock1Age && m_liraRules.unlock1Pct > 0) {
@@ -1156,6 +1165,7 @@ function projectYears(params, returnOverride) {
             const unlockAmt = m.lira * m_liraRules.unlock1Pct;
             m.lira -= unlockAmt;
             m.rrsp += unlockAmt;
+            liraUnlockAmt += unlockAmt;
             liraActionNotes.push(`${liraS2Name}: Unlock ${Math.round(m_liraRules.unlock1Pct * 100)}% of LIRA to RRSP (${formatMoney(unlockAmt)}). Apply to financial institution.`);
         }
         if (!r_lira_unlock2_done && s1Alive && r.lira > 0 && a1 >= r_liraRules.unlock2Age) {
@@ -1163,6 +1173,7 @@ function projectYears(params, returnOverride) {
             const unlockAmt = r.lira;
             r.lira = 0;
             r.rrsp += unlockAmt;
+            liraUnlockAmt += unlockAmt;
             liraActionNotes.push(`${liraS1Name}: Full LIRA unlock to RRSP (${formatMoney(unlockAmt)}). Apply to financial institution.`);
         }
         if (!m_lira_unlock2_done && s2Alive && m.lira > 0 && a2 >= m_liraRules.unlock2Age) {
@@ -1170,6 +1181,7 @@ function projectYears(params, returnOverride) {
             const unlockAmt = m.lira;
             m.lira = 0;
             m.rrsp += unlockAmt;
+            liraUnlockAmt += unlockAmt;
             liraActionNotes.push(`${liraS2Name}: Full LIRA unlock to RRSP (${formatMoney(unlockAmt)}). Apply to financial institution.`);
         }
 
@@ -1657,6 +1669,7 @@ function projectYears(params, returnOverride) {
             isMeltRow: isMelt && (isFullyRetired || !bothAlive) && a1 <= meltAge,
             s1Alive, s2Alive,
             liraActionNotes: [...liraActionNotes],
+            liraUnlockAmt,
             homeEquity: homeSold ? 0 : currentTrackedHomeValue
         });
     }
@@ -1914,21 +1927,23 @@ function renderChart(rows) {
     let stackOrder, colorMap;
 
     if (mode === 'split') {
-        stackOrder = ['r_rrsp','m_rrsp','r_tfsa','m_tfsa','r_cpp','m_cpp','r_oas','m_oas'];
+        stackOrder = ['r_rrsp','m_rrsp','r_lira','m_lira','r_tfsa','m_tfsa','r_cpp','m_cpp','r_oas','m_oas'];
         colorMap = {
             r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
+            r_lira: '#1a6b9a', m_lira: '#5dade2',
             r_tfsa: '#16a085', m_tfsa: '#76d7c4',
             r_cpp: '#e67e22', m_cpp: '#f5b041',
             r_oas: '#27ae60', m_oas: '#82e0aa'
         };
     } else {
-        stackOrder = ['rrsp','tfsa','nonreg','cpp','oas'];
-        colorMap = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad', cpp: '#e67e22', oas: '#27ae60' };
+        stackOrder = ['rrsp','lira','tfsa','nonreg','cpp','oas'];
+        colorMap = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', cpp: '#e67e22', oas: '#27ae60' };
     }
 
-    // Build bar data
+    // Build bar data — include LIRA unlocks as distinct event
     const bars = retRows.map(d => {
-        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS;
+        const liraUnlock = d.liraUnlockAmt || 0;
+        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS + liraUnlock;
         const deductions = d.annualTax + d.oasClawback;
         const netIncome = Math.max(0, gross - deductions);
         const ratio = gross > 0 ? netIncome / gross : 0;
@@ -1937,6 +1952,7 @@ function renderChart(rows) {
             return {
                 age: d.a1,
                 r_rrsp: d.r_rrspDraw * ratio, m_rrsp: d.m_rrspDraw * ratio,
+                r_lira: (liraUnlock / 2) * ratio, m_lira: (liraUnlock / 2) * ratio,
                 r_tfsa: d.r_tfsaDraw * ratio, m_tfsa: d.m_tfsaDraw * ratio,
                 r_cpp: d.r_cpp * ratio, m_cpp: d.m_cpp * ratio,
                 r_oas: d.r_oas * ratio, m_oas: d.m_oas * ratio,
@@ -1948,7 +1964,8 @@ function renderChart(rows) {
         } else {
             return {
                 age: d.a1,
-                rrsp: d.rrspDrawAmt * ratio, tfsa: d.tfsaDrawAmt * ratio,
+                rrsp: d.rrspDrawAmt * ratio, lira: liraUnlock * ratio,
+                tfsa: d.tfsaDrawAmt * ratio,
                 nonreg: d.nonRegDrawAmt * ratio,
                 cpp: d.totalCPP * ratio, oas: d.totalOAS * ratio,
                 netIncome,
@@ -2419,10 +2436,11 @@ function renderNWChart(rows) {
     let stackOrder, colors, data;
 
     if (mode === 'split') {
-        stackOrder = ['r_rrsp', 'm_rrsp', 'r_tfsa', 'm_tfsa', 'r_nonreg', 'm_nonreg'];
+        stackOrder = ['r_rrsp', 'm_rrsp', 'r_lira', 'm_lira', 'r_tfsa', 'm_tfsa', 'r_nonreg', 'm_nonreg'];
         if (includeHome) stackOrder.push('home');
         colors = {
             r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
+            r_lira: '#1a6b9a', m_lira: '#5dade2',
             r_tfsa: '#16a085', m_tfsa: '#76d7c4',
             r_nonreg: '#8e44ad', m_nonreg: '#c39bd3',
             home: '#e67e22'
@@ -2430,17 +2448,19 @@ function renderNWChart(rows) {
         data = rows.map(d => ({
             age: d.a1,
             r_rrsp: Math.max(0, d.r_rrsp), m_rrsp: Math.max(0, d.m_rrsp),
+            r_lira: Math.max(0, d.r_lira || 0), m_lira: Math.max(0, d.m_lira || 0),
             r_tfsa: Math.max(0, d.r_tfsa), m_tfsa: Math.max(0, d.m_tfsa),
             r_nonreg: Math.max(0, d.totalNonReg / 2), m_nonreg: Math.max(0, d.totalNonReg / 2),
             home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
         }));
     } else {
-        stackOrder = ['rrsp', 'tfsa', 'nonreg'];
+        stackOrder = ['rrsp', 'lira', 'tfsa', 'nonreg'];
         if (includeHome) stackOrder.push('home');
-        colors = { rrsp: '#2980b9', tfsa: '#16a085', nonreg: '#8e44ad', home: '#e67e22' };
+        colors = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', home: '#e67e22' };
         data = rows.map(d => ({
             age: d.a1,
             rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
+            lira: Math.max(0, (d.r_lira || 0) + (d.m_lira || 0)),
             tfsa: Math.max(0, d.r_tfsa + d.m_tfsa),
             nonreg: Math.max(0, d.totalNonReg),
             home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
@@ -2545,13 +2565,13 @@ function renderNWChart(rows) {
             const r = rows[idx];
             if (mode === 'split') {
                 const homeStr = includeHome && d.home > 0 ? ` | Home ${formatMoney(d.home)}` : '';
-                canvas.title = `Age ${d.age}: Total ${formatMoney(d.r_rrsp + d.m_rrsp + d.r_tfsa + d.m_tfsa + d.r_nonreg + d.m_nonreg + (d.home||0))}${homeStr}\n` +
-                    `${s1}: RRSP ${formatMoney(d.r_rrsp)} | TFSA ${formatMoney(d.r_tfsa)} | Non-Reg ${formatMoney(d.r_nonreg)}\n` +
-                    `${s2}: RRSP ${formatMoney(d.m_rrsp)} | TFSA ${formatMoney(d.m_tfsa)} | Non-Reg ${formatMoney(d.m_nonreg)}`;
+                canvas.title = `Age ${d.age}: Total ${formatMoney(d.r_rrsp + d.m_rrsp + (d.r_lira||0) + (d.m_lira||0) + d.r_tfsa + d.m_tfsa + d.r_nonreg + d.m_nonreg + (d.home||0))}${homeStr}\n` +
+                    `${s1}: RRSP ${formatMoney(d.r_rrsp)} | LIRA ${formatMoney(d.r_lira||0)} | TFSA ${formatMoney(d.r_tfsa)} | Non-Reg ${formatMoney(d.r_nonreg)}\n` +
+                    `${s2}: RRSP ${formatMoney(d.m_rrsp)} | LIRA ${formatMoney(d.m_lira||0)} | TFSA ${formatMoney(d.m_tfsa)} | Non-Reg ${formatMoney(d.m_nonreg)}`;
             } else {
-                const total = d.rrsp + d.tfsa + d.nonreg + (d.home||0);
+                const total = d.rrsp + (d.lira||0) + d.tfsa + d.nonreg + (d.home||0);
                 const homeStr = includeHome && d.home > 0 ? ` | Home ${formatMoney(d.home)}` : '';
-                canvas.title = `Age ${d.age}: Total ${formatMoney(total)}\nRRSP ${formatMoney(d.rrsp)} | TFSA ${formatMoney(d.tfsa)} | Non-Reg ${formatMoney(d.nonreg)}${homeStr}`;
+                canvas.title = `Age ${d.age}: Total ${formatMoney(total)}\nRRSP ${formatMoney(d.rrsp)} | LIRA ${formatMoney(d.lira||0)} | TFSA ${formatMoney(d.tfsa)} | Non-Reg ${formatMoney(d.nonreg)}${homeStr}`;
             }
         } else {
             canvas.title = '';
