@@ -186,6 +186,12 @@
             <fieldset class="group"><legend>Non-Registered</legend>
             <div class="row"><label>Non-Reg Balance</label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
             </fieldset>
+            <fieldset class="group"><legend>Employer Pension</legend>
+            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Start Age</label><input type="number" id="s1_pension_age" value="65" style="width:45px"></div>
+            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s1_pension_indexed" checked style="width:20px"></div>
+            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s1_pension_survivor" value="60" style="width:45px"></div>
+            </fieldset>
             </div>
         </div>
         <div class="card" id="s2_card">
@@ -228,6 +234,12 @@
             </fieldset>
             <fieldset class="group"><legend>Non-Registered</legend>
             <div class="row"><label>Non-Reg Balance</label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
+            </fieldset>
+            <fieldset class="group"><legend>Employer Pension</legend>
+            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Start Age</label><input type="number" id="s2_pension_age" value="65" style="width:45px"></div>
+            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s2_pension_indexed" checked style="width:20px"></div>
+            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s2_pension_survivor" value="60" style="width:45px"></div>
             </fieldset>
             </div>
         </div>
@@ -286,24 +298,29 @@
             <fieldset class="group"><legend>TFSA &amp; System</legend>
             <div class="row"><label>System Year</label><input type="number" id="sys_year" value="2026" style="width:65px"></div>
             <div class="row"><label>TFSA Room / yr / Person</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_yr" value="7000" style="width:70px"></div>
-            <div class="row"><label>Current TFSA Room (total)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_current" value="0" style="width:90px"></div>
+            <div class="row"><label>Current TFSA Room (<span class="s1_name_disp">S1</span>)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s1" value="0" style="width:90px"></div>
+            <div class="row"><label>Current TFSA Room (<span class="s2_name_disp">S2</span>)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s2" value="0" style="width:90px"></div>
             <div class="row"><label>Cap Gains Inclusion %</label><input type="number" id="capgains_inc" value="50" step="5" style="width:60px"></div>
+            </fieldset>
+            <fieldset class="group"><legend>LIRA Thresholds</legend>
+            <div class="row"><label>Small Amt &lt;65</label><input type="text" inputmode="decimal" class="dollar" id="lira_small_under65" value="14920" style="width:80px"></div>
+            <div class="row"><label>Small Amt 65+</label><input type="text" inputmode="decimal" class="dollar" id="lira_small_over65" value="29840" style="width:80px"></div>
             </fieldset>
         </div>
         <div class="card">
-            <h2>Pension Income (Optional)</h2>
-            <p class="note" style="margin-bottom:8px;">Defined benefit or employer pension income. Fully taxable. Eligible for pension income credit.</p>
-            <fieldset class="group"><legend class="s1_name_disp">Spouse 1</legend>
-            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px"></div>
-            <div class="row"><label>Start Age</label><input type="number" id="s1_pension_age" value="65" style="width:45px"></div>
-            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s1_pension_indexed" checked style="width:20px"></div>
-            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s1_pension_survivor" value="60" style="width:45px"></div>
-            </fieldset>
-            <fieldset class="group"><legend class="s2_name_disp">Spouse 2</legend>
-            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px"></div>
-            <div class="row"><label>Start Age</label><input type="number" id="s2_pension_age" value="65" style="width:45px"></div>
-            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s2_pension_indexed" checked style="width:20px"></div>
-            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s2_pension_survivor" value="60" style="width:45px"></div>
+            <h2>Home Equity</h2>
+            <div class="row"><label>Current Home Value</label><input type="text" inputmode="decimal" class="dollar" id="home_value" value="0"></div>
+            <p class="note">Value grows annually by your inflation rate.</p>
+            <fieldset class="group"><legend>Optional</legend>
+            <b style="font-size:11px;">Option A — Sell</b>
+            <div class="row"><label>Sell at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Annual Rent After (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
+            <p class="note">Full home value added as lump sum. Annual rent added to spending goal from sell age onward.</p>
+            <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
+            <b style="font-size:11px;">Option B — Downsize</b>
+            <div class="row"><label>Downsize at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Net Proceeds</label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
+            <p class="note">Net proceeds (old minus new home) added as lump sum. No rent — still owning.</p>
             </fieldset>
         </div>
         <div class="card">
@@ -332,21 +349,6 @@
             <p class="note">Additional monthly amounts added on top of base contributions at the specified age. Useful for mortgage payoff, kids moving out, etc.</p>
         </div>
 
-        <div class="card">
-            <h2>Home Equity (Optional)</h2>
-            <div class="row"><label>Current Home Value</label><input type="text" inputmode="decimal" class="dollar" id="home_value" value="0"></div>
-            <p class="note">Value grows annually by your inflation rate.</p>
-            <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
-            <b style="font-size:11px;">Option A — Sell</b>
-            <div class="row"><label>Sell at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
-            <div class="row"><label>Annual Rent After (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
-            <p class="note">Full home value added as lump sum. Annual rent reduces net spending goal from sell age onward.</p>
-            <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
-            <b style="font-size:11px;">Option B — Downsize</b>
-            <div class="row"><label>Downsize at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
-            <div class="row"><label>Net Proceeds</label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
-            <p class="note">Net proceeds (old home minus new home cost) added as lump sum. No rent required — still owning.</p>
-        </div>
     </div>
 
     <div class="btn-group">
@@ -528,107 +530,155 @@
         <details style="margin-bottom:10px;" open>
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Spouse Cards</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Name</b> — Display name, used in labels and chart. Cosmetic only.<br>
-                <b>Age / Retire Age</b> — Current age and planned retirement age. Contributions stop at retirement. Spouse 1's age drives the projection timeline.<br>
-                <b>CPP Age / % Max</b> — Age to start collecting CPP (60–70) and estimated percentage of the maximum CPP benefit you'll receive. 100% = full career of maximum contributions. Check your My Service Canada statement for your actual estimate. Early CPP (before 65) is reduced by 0.6%/month; late CPP (after 65) is increased by 0.7%/month.<br>
-                <b>OAS Age</b> — Age to start collecting Old Age Security (65–70). Deferring increases the benefit by 0.6%/month (up to 36% at age 70).<br>
-                <b>RRSP / TFSA Bal</b> — Current combined RRSP and TFSA balances for this spouse.<br>
-                <b>Non-Reg Bal</b> — Current non-registered investment balance. Tracks cost basis for capital gains.<br>
-                <b>Monthly: R/T</b> — Monthly RRSP and TFSA contributions during working years. Inflation-adjusted automatically.<br>
-                <b>LIRA Balance</b> — Locked-In Retirement Account. Pension funds transferred from a former employer that cannot be freely withdrawn. The calculator automatically unlocks your LIRA per your province's rules and transfers it to RRSP. Unlock events appear as highlighted rows in the Action Plan tab. In Manitoba: 50% unlocked at 55, remainder at 65. Most other provinces follow the same pattern. Federal LIRAs (from federally regulated employers) are more restrictive — consult your plan administrator.<br><br>
-                <b>Plan to Age</b> — Per-spouse target age for the projection. The timeline runs until the later spouse reaches their plan age. Set higher for the spouse expected to live longer.
+                <b>Active checkbox</b> — Uncheck to model a single person. Unchecked spouse is excluded from all calculations, taxes, and charts. Title updates to reflect only the active spouse(s).<br><br>
+
+                <b style="color:#2c3e50;">Personal</b><br>
+                <b>Name</b> — Display name used throughout the calculator. Cosmetic only.<br>
+                <b>Age / Retire Age</b> — Current age and planned retirement age. Contributions stop and retirement draws begin at retire age. Spouse 1's age drives the x-axis on all charts.<br>
+                <b>Plan to Age</b> — The age this spouse is projected to pass away. Assets roll tax-free to the surviving spouse. Survivor rows appear in lavender in the table. The projection runs until the later spouse's plan age.<br><br>
+
+                <b style="color:#2c3e50;">Government Benefits</b><br>
+                <b>CPP Age / % of Maximum</b> — Age to start collecting CPP (60–70) and your estimated percentage of the maximum CPP benefit. Check your My Service Canada account for your actual projection. Early CPP (before 65): reduced 0.6%/month. Late CPP (after 65): increased 0.7%/month.<br>
+                <b>OAS Age</b> — Age to start collecting Old Age Security (65–70). Deferring increases by 0.6%/month, up to +36% at age 70. OAS increases by an additional 10% at age 75.<br><br>
+
+                <b style="color:#2c3e50;">Registered Accounts</b><br>
+                <b>RRSP Balance</b> — Current RRSP balance. Grows at your investment return rate. Withdrawals are fully taxable.<br>
+                <b>Monthly RRSP</b> — Monthly RRSP contribution during working years. Inflation-adjusted each year.<br>
+                <b>TFSA Balance</b> — Current TFSA balance. Grows tax-free. Withdrawals are tax-free and restore contribution room the following year.<br>
+                <b>Monthly TFSA</b> — Monthly TFSA contribution during working years. Inflation-adjusted. Overflow beyond available room goes to non-registered.<br><br>
+
+                <b style="color:#2c3e50;">LIRA</b><br>
+                <b>LIRA Balance</b> — Locked-In Retirement Account. Pension funds from a former employer that cannot be freely withdrawn. The calculator automatically applies all unlock rules:<br>
+                &nbsp;&nbsp;1. From LIF start age: draws the CRA maximum rate each year, transferred to RRSP<br>
+                &nbsp;&nbsp;2. Small amount exception: if balance drops below the threshold ($14,920 under 65 / $29,840 at 65+), full balance unlocks immediately<br>
+                &nbsp;&nbsp;3. At partial unlock age (e.g. MB 55): 50% transferred to RRSP (one-time)<br>
+                &nbsp;&nbsp;4. At full unlock age (e.g. MB 65): full remaining balance transferred to RRSP<br>
+                Unlock events appear as yellow rows in the Action Plan tab. Federal LIRAs are more restrictive — consult your plan administrator.<br>
+                <b>LIRA Jurisdiction</b> — The province where the pension plan was registered (not where you live now). This determines unlock ages and rules. Only visible when LIRA balance is entered.<br><br>
+
+                <b style="color:#2c3e50;">Non-Registered</b><br>
+                <b>Non-Reg Balance</b> — Current non-registered investment balance. Withdrawals trigger capital gains tax (at the Cap Gains Inclusion % rate) on the growth portion.<br><br>
+
+                <b style="color:#2c3e50;">Employer Pension</b><br>
+                <b>Monthly Amount (today's $)</b> — Monthly defined benefit or employer pension in today's dollars. Converted to annual and added to fully taxable income.<br>
+                <b>Start Age</b> — Age when pension payments begin. Some plans start as early as age 55.<br>
+                <b>Indexed to Inflation</b> — Checked = pension increases with inflation each year (common for public sector). Unchecked = fixed nominal amount (common in private sector). Unindexed pensions lose real value significantly over 30 years.<br>
+                <b>Survivor % (0=none)</b> — Percentage of pension paid to the surviving spouse. Common values are 60% or 100%. Check your plan documents. Pension income is eligible for the pension income credit at any age and is included in income splitting at 65+.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Life Stages</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Slow-Go Age / %</b> — Age when spending decreases (less travel, activity). Spending goal is multiplied by this percentage.<br>
-                <b>No-Go Age / %</b> — Age when spending decreases further (limited mobility). A second spending reduction multiplier.<br>
-                <b>Enable Meltdown / Melt-to Age</b> — RRSP meltdown strategy: forces larger RRSP withdrawals to deplete the RRSP by the target age. Excess (after tax) is swept into TFSA (up to room) then non-registered. Purpose: avoid large forced RRIF withdrawals at high tax rates in later years.<br>
-                <b>Equal RRSP Draw Split</b> — RRSP draws are split 50/50 between spouses to keep both in lower tax brackets. Falls back to proportional when one spouse's RRSP is depleted.<br>
-                <b>Smooth Tax Rates</b> — Multi-pass optimization to equalize the effective tax rate across all RRSP-draw years. In low-rate years, pulls extra from the RRSP and shelters it in TFSA. Minimizes total lifetime tax.<br>
-                <b>TFSA Bracket Opt</b> — Maximum annual TFSA substitution for bracket optimization. If the RRSP draw puts you just above a tax bracket threshold, this much RRSP draw is replaced with a tax-free TFSA draw to avoid the higher marginal rate. Set to $0 to disable.<br>
-                <b>Gap Year Target Rate %</b> — Maximum effective tax rate Spouse 2 should pay during gap years (when Spouse 2 is retired but Spouse 1 is still working). The engine draws from Spouse 2's RRSP up to this rate, sweeping the net into TFSA. Set higher to pull more during gap years. The sweet spot is typically your smoothed meltdown rate (~13%). Only applies when meltdown is enabled.<br>
-                <b>Survivor Spending %</b> — Percentage of the couple's spending goal the surviving spouse needs after the other passes. Default 70% — fixed costs like housing remain but many variable costs drop. Applied on top of Slow-Go/No-Go multipliers.
+                <b style="color:#2c3e50;">Spending Stages</b><br>
+                <b>Slow-Go Age / %</b> — Age when spending decreases (less travel, activity). The target net goal is multiplied by this percentage from this age forward.<br>
+                <b>No-Go Age / %</b> — Age when spending decreases further (limited mobility). A second multiplier applied on top of Slow-Go.<br>
+                <b>Survivor Spending %</b> — After one spouse passes, the survivor's spending goal drops to this percentage of the couple's goal. Default 70% — fixed costs like housing remain but many variable costs drop. Applied on top of Slow-Go/No-Go multipliers.<br><br>
+
+                <b style="color:#2c3e50;">RRSP Strategy</b><br>
+                <b>Enable RRSP Meltdown</b> — Forces larger RRSP withdrawals to fully deplete the RRSP by the target age. Excess net cash is swept to TFSA (up to room) then non-registered. Goal: avoid large forced RRIF withdrawals in later years when credits are smaller.<br>
+                <b>Meltdown Target Age</b> — The age by which the RRSP should be fully depleted. Typically 75 (before RRIF minimums accelerate significantly).<br>
+                <b>Equal RRSP Draw Split (50/50)</b> — RRSP draws are split evenly between spouses to keep both in lower tax brackets. Falls back to proportional when one RRSP is depleted.<br>
+                <b>Smooth Tax Rates</b> — Multi-pass optimization to equalize the effective tax rate across all retirement years. In low-rate years, pulls extra RRSP and shelters it in TFSA. Minimizes total lifetime tax. Recommended: on.<br>
+                <b>TFSA Bracket Opt (0=off)</b> — Maximum annual TFSA substitution for bracket optimization. If the RRSP draw would push you just above a tax bracket, this amount of RRSP draw is replaced with a tax-free TFSA draw. Set to $0 to disable.<br><br>
+
+                <b style="color:#2c3e50;">Gap Year &amp; Survivor</b><br>
+                <b>Gap Year Target Rate %</b> — When Spouse 2 retires before Spouse 1, the calculator draws from Spouse 2's RRSP up to this effective tax rate during those gap years, sweeping the net proceeds to TFSA. Matches the meltdown rate for consistency (~12–13%). Only active when meltdown is enabled.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Benefits & Market</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Province</b> — Determines provincial tax brackets, basic personal amount, age credit, and pension credit. Quebec excluded.<br>
-                <b>Max CPP</b> — Maximum annual CPP retirement benefit at age 65 (current year).<br>
-                <b>Max CPP2 Annual</b> — Estimated maximum annual CPP2 (enhanced) benefit at full 40-year maturity. Prorated by years of contribution.<br>
-                <b>Max OAS</b> — Maximum annual OAS benefit. Full OAS requires 40 years of Canadian residence after age 18.<br>
-                <b>OAS Clawback Start</b> — Net income threshold above which OAS is clawed back at 15%.<br>
-                <b>Fed Age Amount</b> — Federal age amount tax credit (CRA line 30100). Available at 65+. Clawed back at 15% above ~$45,522 income. Updated via Sync button.<br>
-                <b>Target Net Goal</b> — Desired annual after-tax spending in retirement (today's dollars). Inflation-adjusted and stage-adjusted.<br>
-                <b>Pre/Post-Ret Return %</b> — Expected annual investment return before/after retirement. Compounded monthly.<br>
-                <b>Inflation %</b> — Annual inflation rate. Indexes spending, benefits, brackets, contributions, TFSA room.<br>
-                <b>System Year</b> — Base year for calculations. Tax values are 2025 base, indexed forward.<br>
-                <b>TFSA Room/yr/person</b> — Annual TFSA contribution room per person. Inflation-indexed. Overflow goes to non-registered.<br>
-                <b>Current TFSA Room (total)</b> — Combined unused TFSA contribution room for both spouses right now. Prevents early overflow to non-reg.<br>
-                <b>Cap Gains Inclusion %</b> — Percentage of capital gains taxable on non-registered withdrawals.
+                <b style="color:#2c3e50;">Tax Jurisdiction</b><br>
+                <b>Province</b> — Sets provincial tax brackets, basic personal amount, age amount, and pension income credit. All provinces except Quebec supported. Required — calculator will not run without it.<br>
+                <b>OAS Clawback Start</b> — Net income threshold above which OAS is recovered at 15 cents per dollar. 2026: $90,997.<br>
+                <b>Fed Age Amount</b> — Federal age amount tax credit (CRA line 30100). Available at 65+. Clawed back at 15% above ~$45,522. Updated via Sync to Current Year.<br><br>
+
+                <b style="color:#2c3e50;">Government Benefits</b><br>
+                <b>Max CPP</b> — Maximum annual CPP retirement benefit at age 65 (2026: $18,091.80). Scaled by your CPP % of Maximum. Updated via Sync.<br>
+                <b>Max CPP2 Annual</b> — Maximum annual CPP2 (enhanced CPP) benefit at full 40-year maturity (2026: $3,466). Prorated by years of contribution since 2024. Updated via Sync.<br>
+                <b>Max OAS</b> — Maximum annual OAS benefit (2026: $8,907.72). Updated via Sync.<br><br>
+
+                <b style="color:#2c3e50;">Goals &amp; Returns</b><br>
+                <b>Target Net Goal</b> — Desired annual after-tax household spending in retirement, in today's dollars. Inflation-adjusted each year. Reduced by Slow-Go/No-Go/Survivor multipliers.<br>
+                <b>Pre-Retirement Return %</b> — Expected annual investment return while still working. Compounded monthly.<br>
+                <b>Post-Retirement Return %</b> — Expected annual investment return during retirement. Typically lower than pre-retirement.<br>
+                <b>Inflation %</b> — Annual inflation rate. Indexes spending, CPP/OAS, tax brackets, contributions, TFSA room, and LIRA thresholds.<br><br>
+
+                <b style="color:#2c3e50;">TFSA &amp; System</b><br>
+                <b>System Year</b> — The base year for tax values. Defaults to current year. Tax brackets are 2025 base, indexed forward from this year.<br>
+                <b>TFSA Room / yr / Person</b> — Annual new TFSA contribution room per person (2026: $7,000). Accrues each year per living spouse.<br>
+                <b>Current TFSA Room (S1/S2)</b> — Current unused TFSA contribution room per spouse. Check CRA My Account for your exact number. Each spouse's room is tracked independently.<br>
+                <b>Cap Gains Inclusion %</b> — Percentage of capital gains that is taxable on non-registered withdrawals (2026: 50%).<br><br>
+
+                <b style="color:#2c3e50;">LIRA Thresholds</b><br>
+                <b>Small Amt &lt;65</b> — If a LIRA balance falls below this amount while the owner is under 65, the full balance unlocks to RRSP immediately. 2026: $14,920. Indexed by inflation in the projection. Updated via Sync.<br>
+                <b>Small Amt 65+</b> — Same threshold for ages 65 and older. 2026: $29,840. Updated via Sync.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Pension Income (Optional)</summary>
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Home Equity</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Monthly Amount (today's $)</b> — Monthly defined benefit or employer pension payment in today's dollars. Set to $0 if no pension. Converted to annual and added to taxable income.<br>
-                <b>Start Age</b> — Age when pension payments begin. Unlike CPP/OAS, DB pensions can start as early as 55 for some plans.<br>
-                <b>Indexed to Inflation</b> — Check if the pension increases with inflation (common for government/public sector pensions). Uncheck for fixed nominal pensions (common in private sector). Unindexed pensions lose real value significantly over 30 years.<br>
-                <b>Survivor %</b> — Percentage of the pension the surviving spouse receives after the pensioner dies. Common values are 60% or 100%. Set to 0 if no survivor benefit in the plan. Check your pension plan documents for the actual percentage.<br><br>
-                <b>How it's calculated:</b> Pension income is fully taxable. It's included in income splitting (both spouses 65+), OAS clawback calculations, and eligible for the pension income credit at any age (unlike RRIF which requires 65). A large pension can significantly increase your taxable income and reduce RRSP draw requirements.
-            </div>
-        </details>
+                <b>Current Home Value</b> — Today's estimated market value of your primary residence. Grows annually by your inflation rate. Used for the NW chart "Include Home Equity" toggle and for sell/downsize events. Set to $0 if not a homeowner.<br><br>
 
-        <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Lump Sums & Contribution Boost</summary>
-            <div style="padding:6px 0 0 12px;">
-                <b>Lump Sums</b> — One-time additions (inheritance, property sale) at a specified age. Allocation: TFSA (up to room) → RRSP (up to cap) → Non-Reg. Split 50/50. Set to 0 to disable.<br>
-                <b>Contribution Boost</b> — Additional monthly RRSP/TFSA amounts added ON TOP of base contributions at the specified age. Both spouses activate together. Useful for mortgage payoff, kids leaving home.
-            </div>
-        </details>
-
-        <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Home Equity (Optional)</summary>
-            <div style="padding:6px 0 0 12px;">
-                <b>Current Home Value</b> — Today's estimated market value of your primary residence. Grows annually by your inflation rate. Set to $0 to ignore home equity entirely.<br><br>
                 <b>Option A — Sell</b><br>
-                <b>Sell at Age</b> — Age (Spouse 1) when you sell the home. The full inflation-adjusted home value is injected as a lump sum into investments (TFSA → RRSP → Non-Reg). Set to 0 to disable.<br>
-                <b>Annual Rent After</b> — Ongoing annual rent cost after selling. Added on top of your Target Net Goal from the sell year forward, inflation-adjusted. Set to $0 if moving in with family or no rent expected.<br><br>
+                <b>Sell at Age</b> — Age (Spouse 1) when the home is sold. At this age, the full inflation-adjusted home value is injected as a lump sum into investments (TFSA up to room → RRSP → Non-Reg). Set to 0 to disable.<br>
+                <b>Annual Rent After (today's $)</b> — Ongoing annual rent cost in today's dollars after selling. Added on top of the Target Net Goal each year from the sell age forward, inflation-adjusted. Set to $0 if moving in with family or otherwise rent-free.<br><br>
+
                 <b>Option B — Downsize</b><br>
-                <b>Downsize at Age</b> — Age (Spouse 1) when you downsize. Set to 0 to disable.<br>
-                <b>Net Proceeds</b> — The cash you pocket from the downsize (sale price of old home minus cost of new home), in today's dollars. Injected as a lump sum into investments (TFSA → RRSP → Non-Reg). The remaining home value (current value minus proceeds) continues growing by inflation.<br><br>
-                <b>Note:</b> Only one option fires per run. You can use both (e.g., downsize at 70, then sell at 85) by setting both ages — each fires independently at its respective age. The Net Worth chart has an "Include Home Equity" toggle to visualize the home's value over time alongside your investment accounts.
+                <b>Downsize at Age</b> — Age (Spouse 1) when you move to a smaller home. Set to 0 to disable.<br>
+                <b>Net Proceeds</b> — Cash pocketed from the downsize (old home sale price minus new home cost), in today's dollars. Inflation-adjusted at the downsize year and injected into investments (TFSA → RRSP → Non-Reg). The remaining home value (current value minus proceeds) continues growing by inflation on the NW chart.<br><br>
+
+                <b>Note:</b> Both options can be used together (e.g. downsize at 70, sell at 85). Each fires independently at its age. The NW Over Time chart has an "Include Home Equity" toggle (default on) showing the home's value as an orange area over time.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Lump Sums &amp; Contribution Boost</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Lump Sums</b> — Up to two one-time cash injections (inheritance, bonus, property proceeds). Triggered at Spouse 1's specified age. Allocated: TFSA (up to available room) → RRSP (up to cap) → Non-Reg. Split 50/50 between spouses. Set amount to 0 to disable. RRSP room is not tracked — verify your available room via CRA My Account before assuming it can absorb a lump sum.<br>
+                <b>Max to RRSP (0=unlimited)</b> — Cap the RRSP portion of the lump sum. Useful if your RRSP room is limited. Excess goes to Non-Reg.<br><br>
+                <b>Contribution Boost</b> — Additional monthly RRSP and/or TFSA contributions per spouse, starting at Spouse 1's specified age. Added on top of base contributions. Both spouses activate at the same age. Useful to model mortgage payoff, children moving out, or a raise.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Solver Buttons</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Solve for Retirement Age</b> — Tests both spouses' retirement age combinations. Shows top 10 earliest viable options.<br>
-                <b>Solve for Target Net Goal</b> — Finds the maximum sustainable annual spending.<br>
-                <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra monthly RRSP contribution needed.<br>
-                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 age permutations for both spouses to maximize the final portfolio.
+                <b>Solve for Retirement Age</b> — Tests all combinations of both spouses' retirement ages (up to age 75) and returns the top 10 earliest combinations where money does not run out. Sorted by lowest combined retirement age.<br>
+                <b>Solve for Target Net Goal</b> — Binary searches for the maximum sustainable annual spending given current inputs. Shows the highest goal where the portfolio survives to the plan age.<br>
+                <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra monthly RRSP contribution (Spouse 1) needed to reach the target net goal.<br>
+                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 combinations of CPP and OAS start ages for both spouses to maximize final portfolio value. Note: solvers run without tax smoothing for speed — re-enable smoothing and recalculate after applying the result.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Assumptions & Calculation Rules</summary>
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Charts &amp; Tabs</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Tax</b> — Federal + provincial progressive brackets, indexed by inflation. Federal lowest rate 14.5% (2025+). CPP/OAS taxable. TFSA withdrawals tax-free. Ontario surtax modelled. 2025 base values. Federal age amount configurable via input field.<br><br>
-                <b>Income Splitting</b> — Spouse 65+ can transfer up to 50% of RRIF draw. Both 65+: all income pooled 50/50. CPP sharing not modelled.<br><br>
-                <b>Withdrawal Order</b> — RRSP first → TFSA when depleted → Non-Reg last. TFSA bracket opt can pull small amounts earlier.<br><br>
-                <b>Meltdown</b> — Forces RRSP depletion by target age. Floor = RRSP ÷ remaining years. Excess swept to TFSA/Non-Reg. $10 minimum threshold.<br><br>
-                <b>Gap Years</b> — When Spouse 2 retires before Spouse 1, Spouse 2 draws from RRSP up to the Gap Year Target Rate to pre-meltdown at a lower rate. Net is swept to TFSA. Spouse 1 continues contributing. Only active when meltdown is enabled.<br><br>
-                <b>RRIF Minimums</b> — Mandatory at 72+ (5.28% rising to 20% at 95+). Enforced above spending need.<br><br>
-                <b>CPP2</b> — Auto-calculated from contribution years (2024 to retirement or 70). Partial = years÷40 × max. Same early/late adjustment as CPP.<br><br>
-                <b>Growth</b> — Monthly compounding. Contributions inflation-adjusted. TFSA room tracked with overflow to non-reg.<br><br>
-                <b>Smoothing</b> — Three-pass: baseline rates → target average → re-run with adjusted draws. Cannot reduce pre-65 rates below spending minimum.<br><br>
-                <b>Not Modelled</b> — Employment income, provincial health premiums (ON/BC), GIS, employer pensions (DB/DC), CPP pension sharing. Net worth mixes pre-tax (RRSP) and post-tax (TFSA) dollars. Solvers run without smoothing for speed.
+                <b>Setup &amp; Projections</b> — Main tab with inputs and the year-by-year ledger table. Combined view shows pooled totals; Split view shows per-spouse columns including RRSP, LIRA, TFSA, CPP, OAS, and pension.<br>
+                <b>Charts</b> — Two charts: Retirement Income Breakdown (stacked bars per year showing RRSP/LIRA/TFSA/CPP/OAS/pension source) and Net Worth Over Time (stacked area). Both have Combined/Split toggles. NW chart has an Include Home Equity toggle.<br>
+                <b>Compare</b> — Save two named scenarios and overlay their net worth lines on a single chart.<br>
+                <b>Action Plan</b> — Year-by-year withdrawal instructions. Shows exactly what to draw, where to put the cash, CPP/OAS income, tax owed, and TFSA sweeps. Yellow rows indicate LIRA unlock events with specific instructions.<br>
+                <b>Monte Carlo</b> — Runs 500+ simulations with randomized annual returns (based on your return and standard deviation inputs) to estimate probability of not running out of money. Two-pass smoothing per simulation.<br>
+                <b>Help</b> — This tab.
+            </div>
+        </details>
+
+        <details style="margin-bottom:10px;">
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Assumptions &amp; Calculation Rules</summary>
+            <div style="padding:6px 0 0 12px;">
+                <b>Tax engine</b> — Federal + provincial progressive brackets, indexed by inflation each year. Federal lowest rate 14.5% (2025+). CPP, OAS, RRSP/RRIF draws, employer pension, and LIRA draws are all fully taxable. TFSA withdrawals are tax-free. Ontario surtax modelled. Quebec excluded.<br><br>
+                <b>Income splitting</b> — Spouses 65+ can pool eligible pension income 50/50 for tax. Includes RRIF draws (65+), employer pension (any age), CPP/OAS. CPP pension sharing not modelled separately.<br><br>
+                <b>Withdrawal order</b> — RRSP/RRIF first → TFSA when RRSP depleted or bracket opt triggered → Non-Reg last. LIRA draws happen before retirement draws and flow into RRSP.<br><br>
+                <b>RRIF minimums</b> — Mandatory at 72+. Starting at 5.28% of Jan 1 balance, rising to 20% at 95+. Enforced even above the spending goal — excess goes to TFSA/Non-Reg.<br><br>
+                <b>LIF maximums</b> — Annual maximum withdrawal from a LIF (LIRA in drawdown phase) per CRA schedule. Ranges from ~6.4% at age 54 to 20% at 95+. Calculator always draws the maximum to drain the LIRA as fast as possible.<br><br>
+                <b>CPP2</b> — Enhanced CPP. Auto-calculated from contribution years since 2024. Same early/late adjustment as CPP. Maximum benefit prorated by years ÷ 40.<br><br>
+                <b>OAS at 75</b> — OAS automatically increases by 10% at age 75 per current rules.<br><br>
+                <b>Smoothing</b> — Three-pass: baseline rates → compute average → re-run with adjusted draws targeting that average. Reduces large swings in tax rate between meltdown years and post-meltdown years.<br><br>
+                <b>Survivor years</b> — On death (plan age exceeded): all assets roll to survivor tax-free. Survivor taxed as single filer — no income splitting. CPP/OAS stop. Survivor pension % applies to employer pension. Spending goal × survivor % × life stage multipliers.<br><br>
+                <b>Not modelled</b> — Employment income during retirement, provincial health premiums (ON/BC), GIS (Guaranteed Income Supplement), CPP death benefit, probate fees, estate costs. Net worth mixes pre-tax RRSP and post-tax TFSA dollars — actual spendable wealth is lower than shown.
             </div>
         </details>
 
@@ -649,7 +699,7 @@
 <script>
 // ─── Constants ───────────────────────────────────────────────────────────────
 // Base year: 2025 CRA values. Inflation indexing scales these forward.
-const DATA_2026 = { cpp: 18091.80, oas: 8907.72, cpp2: 3466, fedAgeAmt: 9028 };
+const DATA_2026 = { cpp: 18091.80, oas: 8907.72, cpp2: 3466, fedAgeAmt: 9028, liraSmallUnder65: 14920, liraSmallOver65: 29840 };
 const formatMoney = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString();
 const formatPct   = n => n.toFixed(1) + "%";
 let FED_AGE_AMT = 9028; // Updated from buildParams before each projection
@@ -833,19 +883,36 @@ const PROV_TAX = {
 // Federal plans (pension from federally regulated employers) are more restrictive;
 // these rules apply to provincially regulated LIRAs.
 const LIRA_RULES = {
-    AB: { unlock1Age: 50, unlock1Pct: 0.50, unlock2Age: 65 },
-    BC: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    MB: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    NB: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    NL: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    NS: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    NT: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71 }, // federal-like
-    NU: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71 },
-    ON: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    PE: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    SK: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65 },
-    YT: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71 },
+    AB: { unlock1Age: 50, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 50 },
+    BC: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    MB: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    NB: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    NL: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    NS: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    NT: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71, lifStartAge: 71 },
+    NU: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71, lifStartAge: 71 },
+    ON: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    PE: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    SK: { unlock1Age: 55, unlock1Pct: 0.50, unlock2Age: 65, lifStartAge: 55 },
+    YT: { unlock1Age: 71, unlock1Pct: 0.00, unlock2Age: 71, lifStartAge: 71 },
 };
+
+// LIF maximum annual withdrawal rate by age (federal schedule, used by most provinces)
+// Source: CRA/provincial regulations. Rate = max % of Jan 1 balance that can be withdrawn.
+function getLIFMaxRate(age) {
+    if (age < 54) return 0;
+    // Federal/provincial LIF maximum rates (approximate CRA schedule)
+    const rates = {
+        54:0.0640, 55:0.0641, 56:0.0642, 57:0.0643, 58:0.0644, 59:0.0645,
+        60:0.0646, 61:0.0647, 62:0.0648, 63:0.0649, 64:0.0650, 65:0.0651,
+        66:0.0652, 67:0.0653, 68:0.0654, 69:0.0655, 70:0.0656, 71:0.0657,
+        72:0.0658, 73:0.0659, 74:0.0660, 75:0.0661, 76:0.0662, 77:0.0663,
+        78:0.0664, 79:0.0665, 80:0.0686, 81:0.0700, 82:0.0714, 83:0.0733,
+        84:0.0750, 85:0.0769, 86:0.0800, 87:0.0833, 88:0.0870, 89:0.0909,
+        90:0.1000, 91:0.1111, 92:0.1250, 93:0.1429, 94:0.1667, 95:0.2000,
+    };
+    return rates[Math.min(age, 95)] || 0.20;
+}
 // Returns total federal + provincial tax for ONE person's taxable income.
 // prov = province code (e.g. "MB"). inf = cumulative inflation multiplier.
 function getProvTax(income, age, inf, prov) {
@@ -1107,7 +1174,8 @@ function projectYears(params, returnOverride) {
         s1_pension_amt, s1_pension_age, s1_pension_indexed, s1_pension_survivor,
         s2_pension_amt, s2_pension_age, s2_pension_indexed, s2_pension_survivor,
         slowAge, slowPct, noAge, noPct, netGoalBase, maxYrs,
-        tfsaRoomPerYr, tfsaRoomCurrent, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
+        tfsaRoomPerYr, tfsaRoomCurrentS1, tfsaRoomCurrentS2, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
+        liraSmallUnder65, liraSmallOver65,
         ls1_amt, ls1_age, ls1_rrsp_cap, ls2_amt, ls2_age, ls2_rrsp_cap,
         boostAge, s1_rrsp_boost, s1_tfsa_boost, s2_rrsp_boost, s2_tfsa_boost,
         homeValue, homeSellAge, homeRent, homeDownsizeAge, homeDownsizeProceeds,
@@ -1138,7 +1206,18 @@ function projectYears(params, returnOverride) {
     let homeBaseAfterDownsize = homeValue; // base value after downsize, inflated from downsize year
     let downsizeYr = 0; // year index when downsize happened
 
-    let tfsaAvailableRoom = tfsaRoomCurrent || 0;
+    let tfsaAvailableRoomS1 = tfsaRoomCurrentS1 || 0;
+    let tfsaAvailableRoomS2 = tfsaRoomCurrentS2 || 0;
+    // Helper: combined room (for backward compat with code that uses tfsaAvailableRoom)
+    const getTFSARoom = () => tfsaAvailableRoomS1 + tfsaAvailableRoomS2;
+    const setTFSARoom = (amt) => {
+        // Subtract proportionally from each spouse's room
+        const total = tfsaAvailableRoomS1 + tfsaAvailableRoomS2;
+        if (total <= 0) return;
+        const ratio = tfsaAvailableRoomS1 / total;
+        tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1 - amt * ratio);
+        tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2 - amt * (1 - ratio));
+    };
 
     let s1Alive = s1Active !== false;
     let s2Alive = s2Active !== false;
@@ -1185,6 +1264,48 @@ function projectYears(params, returnOverride) {
             liraActionNotes.push(`${liraS2Name}: Full LIRA unlock to RRSP (${formatMoney(unlockAmt)}). Apply to financial institution.`);
         }
 
+        // ── LIF maximum drawdown — draw as much as allowed each year ──
+        // Small amount exception: if balance < threshold, unlock entire amount immediately
+        // 2026 base: <$14,920 (under 65) or <$29,840 (65+). Indexed by inflation.
+        const smallAmtUnder65 = (liraSmallUnder65 || 14920) * inf_mult;
+        const smallAmtOver65  = (liraSmallOver65  || 29840) * inf_mult;
+
+        let r_lif_draw = 0, m_lif_draw = 0;
+        if (s1Alive && r.lira > 0 && a1 >= r_liraRules.lifStartAge && a1 < r_liraRules.unlock2Age) {
+            const smallThresh = a1 >= 65 ? smallAmtOver65 : smallAmtUnder65;
+            if (r.lira <= smallThresh) {
+                // Small amount exception — full unlock
+                r_lif_draw = r.lira;
+                r.rrsp += r_lif_draw;
+                r.lira = 0;
+                liraUnlockAmt += r_lif_draw;
+                liraActionNotes.push(`${liraS1Name}: LIRA small amount exception — full balance unlocked to RRSP (${formatMoney(r_lif_draw)}).`);
+            } else {
+                // Normal LIF maximum draw
+                const maxRate = getLIFMaxRate(a1);
+                r_lif_draw = r.lira * maxRate;
+                r.lira -= r_lif_draw;
+                r.rrsp += r_lif_draw;
+                liraUnlockAmt += r_lif_draw;
+            }
+        }
+        if (s2Alive && m.lira > 0 && a2 >= m_liraRules.lifStartAge && a2 < m_liraRules.unlock2Age) {
+            const smallThresh = a2 >= 65 ? smallAmtOver65 : smallAmtUnder65;
+            if (m.lira <= smallThresh) {
+                m_lif_draw = m.lira;
+                m.rrsp += m_lif_draw;
+                m.lira = 0;
+                liraUnlockAmt += m_lif_draw;
+                liraActionNotes.push(`${liraS2Name}: LIRA small amount exception — full balance unlocked to RRSP (${formatMoney(m_lif_draw)}).`);
+            } else {
+                const maxRate = getLIFMaxRate(a2);
+                m_lif_draw = m.lira * maxRate;
+                m.lira -= m_lif_draw;
+                m.rrsp += m_lif_draw;
+                liraUnlockAmt += m_lif_draw;
+            }
+        }
+
         // ── Survivor logic: roll LIRA to survivor ──
         if (s1Alive && a1 > s1PlanAge) {
             s1Alive = false;
@@ -1209,7 +1330,8 @@ function projectYears(params, returnOverride) {
 
         // New TFSA room (1 person if survivor)
         const livingSpouses = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0);
-        tfsaAvailableRoom += tfsaRoomPerYr * livingSpouses * inf_mult;
+        if (s1Alive) tfsaAvailableRoomS1 += tfsaRoomPerYr * inf_mult;
+        if (s2Alive) tfsaAvailableRoomS2 += tfsaRoomPerYr * inf_mult;
 
         // ── Lump sum allocations (start of year, before growth) ──
         const lumpSums = [
@@ -1220,10 +1342,13 @@ function projectYears(params, returnOverride) {
             if (ls.amt > 0 && ls.age > 0 && a1 === ls.age) {
                 let remaining = ls.amt;
                 // Phase 1: TFSA (up to available room, split 50/50)
-                const toTFSA = Math.min(remaining, Math.max(0, tfsaAvailableRoom));
+                const toTFSA = Math.min(remaining, Math.max(0, tfsaAvailableRoomS1 + tfsaAvailableRoomS2));
                 r.tfsa += toTFSA / 2;
                 m.tfsa += toTFSA / 2;
-                tfsaAvailableRoom -= toTFSA;
+                const _toTFSATotal = toTFSA;
+                const _s1ratio = (tfsaAvailableRoomS1) / Math.max(1, tfsaAvailableRoomS1 + tfsaAvailableRoomS2);
+                tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1 - _toTFSATotal * _s1ratio);
+                tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2 - _toTFSATotal * (1 - _s1ratio));
                 remaining -= toTFSA;
                 // Phase 2: RRSP (up to cap if specified, split 50/50)
                 if (remaining > 0) {
@@ -1254,10 +1379,13 @@ function projectYears(params, returnOverride) {
             let proceeds = currentHomeValue;
             if (proceeds > 0) {
                 const livingSpouses2 = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0) || 1;
-                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoom));
+                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoomS1 + tfsaAvailableRoomS2));
                 if (s1Alive) r.tfsa += toTFSA / livingSpouses2;
                 if (s2Alive) m.tfsa += toTFSA / livingSpouses2;
-                tfsaAvailableRoom -= toTFSA;
+                const _toTFSATotal = toTFSA;
+                const _s1ratio = (tfsaAvailableRoomS1) / Math.max(1, tfsaAvailableRoomS1 + tfsaAvailableRoomS2);
+                tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1 - _toTFSATotal * _s1ratio);
+                tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2 - _toTFSATotal * (1 - _s1ratio));
                 proceeds -= toTFSA;
                 if (proceeds > 0) {
                     if (s1Alive) r.rrsp += proceeds / livingSpouses2;
@@ -1277,10 +1405,13 @@ function projectYears(params, returnOverride) {
             currentTrackedHomeValue = homeBaseAfterDownsize;
             if (proceeds > 0) {
                 const livingSpouses2 = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0) || 1;
-                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoom));
+                const toTFSA = Math.min(proceeds, Math.max(0, tfsaAvailableRoomS1 + tfsaAvailableRoomS2));
                 if (s1Alive) r.tfsa += toTFSA / livingSpouses2;
                 if (s2Alive) m.tfsa += toTFSA / livingSpouses2;
-                tfsaAvailableRoom -= toTFSA;
+                const _toTFSATotal = toTFSA;
+                const _s1ratio = (tfsaAvailableRoomS1) / Math.max(1, tfsaAvailableRoomS1 + tfsaAvailableRoomS2);
+                tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1 - _toTFSATotal * _s1ratio);
+                tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2 - _toTFSATotal * (1 - _s1ratio));
                 let rem = proceeds - toTFSA;
                 if (rem > 0) {
                     if (s1Alive) r.rrsp += rem / livingSpouses2;
@@ -1313,19 +1444,19 @@ function projectYears(params, returnOverride) {
         for (let mon = 0; mon < 12; mon++) {
             if (s1Alive && a1 < s1_retire) {
                 r.rrsp += r_rrsp_mo * inf_mult;
-                const tfsaAdd = Math.min(r_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoom));
+                const tfsaAdd = Math.min(r_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS1));
                 const nonregAdd = (r_tfsa_mo * inf_mult) - tfsaAdd;
                 r.tfsa += tfsaAdd;
-                tfsaAvailableRoom -= tfsaAdd;
+                tfsaAvailableRoomS1 -= tfsaAdd;
                 r.nonreg += nonregAdd;
                 r.nonregCost += nonregAdd;
             }
             if (s2Alive && a2 < s2_retire) {
                 m.rrsp += m_rrsp_mo * inf_mult;
-                const tfsaAdd = Math.min(m_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoom));
+                const tfsaAdd = Math.min(m_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS2));
                 const nonregAdd = (m_tfsa_mo * inf_mult) - tfsaAdd;
                 m.tfsa += tfsaAdd;
-                tfsaAvailableRoom -= tfsaAdd;
+                tfsaAvailableRoomS2 -= tfsaAdd;
                 m.nonreg += nonregAdd;
                 m.nonregCost += nonregAdd;
             }
@@ -1405,9 +1536,11 @@ function projectYears(params, returnOverride) {
                 // Sweep net to TFSA
                 const netSweep = gapDraw - annualTax;
                 if (netSweep > 10) {
-                    sweepToTFSA = Math.min(netSweep, Math.max(0, tfsaAvailableRoom));
+                    sweepToTFSA = Math.min(netSweep, Math.max(0, tfsaAvailableRoomS1 + tfsaAvailableRoomS2));
                     m.tfsa += sweepToTFSA;
-                    tfsaAvailableRoom -= sweepToTFSA;
+                    tfsaAvailableRoomS1 -= sweepToTFSA / 2; tfsaAvailableRoomS2 -= sweepToTFSA / 2;
+                tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1);
+                tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2);
                     sweepToNonReg = netSweep - sweepToTFSA;
                     if (sweepToNonReg > 0) {
                         m.nonreg += sweepToNonReg;
@@ -1576,7 +1709,7 @@ function projectYears(params, returnOverride) {
                     r.tfsa -= r_tfsaDraw;
                     m.tfsa -= m_tfsaDraw;
                 }
-                tfsaAvailableRoom += tfsaDrawAmt;
+                tfsaAvailableRoomS1 += tfsaDrawAmt / 2; tfsaAvailableRoomS2 += tfsaDrawAmt / 2;
 
                 // Phase 3: Non-reg if still short
                 const remainingNet = tfsaNeeded - tfsaDrawAmt;
@@ -1623,7 +1756,7 @@ function projectYears(params, returnOverride) {
                         r.tfsa -= r_tfsaDraw;
                         m.tfsa -= m_tfsaDraw;
                     }
-                    tfsaAvailableRoom += actualTFSAOpt;
+                    tfsaAvailableRoomS1 += actualTFSAOpt / 2; tfsaAvailableRoomS2 += actualTFSAOpt / 2;
                     tfsaDrawAmt = actualTFSAOpt;
                 }
 
@@ -1631,10 +1764,12 @@ function projectYears(params, returnOverride) {
                 const netAfterTax = actualRRSPDraw + annualPensions - annualTax - oasClawback;
                 if (netAfterTax > netGoal + 10) {
                     const sweep = netAfterTax - netGoal;
-                    sweepToTFSA = Math.min(sweep, Math.max(0, tfsaAvailableRoom));
+                    sweepToTFSA = Math.min(sweep, Math.max(0, tfsaAvailableRoomS1 + tfsaAvailableRoomS2));
                     sweepToNonReg = sweep - sweepToTFSA;
                     r.tfsa += sweepToTFSA / 2; m.tfsa += sweepToTFSA / 2;
-                    tfsaAvailableRoom -= sweepToTFSA;
+                    tfsaAvailableRoomS1 -= sweepToTFSA / 2; tfsaAvailableRoomS2 -= sweepToTFSA / 2;
+                tfsaAvailableRoomS1 = Math.max(0, tfsaAvailableRoomS1);
+                tfsaAvailableRoomS2 = Math.max(0, tfsaAvailableRoomS2);
                     r.nonreg += sweepToNonReg / 2; m.nonreg += sweepToNonReg / 2;
                     r.nonregCost += sweepToNonReg / 2; m.nonregCost += sweepToNonReg / 2;
                 }
@@ -1854,8 +1989,11 @@ function buildParams() {
         noAge: v('no_age'), noPct: v('no_pct') / 100,
         netGoalBase: v('goal_go'),
         tfsaRoomPerYr: v('tfsa_room_yr'),
-        tfsaRoomCurrent: v('tfsa_room_current'),
+        tfsaRoomCurrentS1: s1Active ? v('tfsa_room_s1') : 0,
+        tfsaRoomCurrentS2: s2Active ? v('tfsa_room_s2') : 0,
         capGainsInclusion: v('capgains_inc') || 50,
+        liraSmallUnder65: v('lira_small_under65') || 14920,
+        liraSmallOver65: v('lira_small_over65') || 29840,
         tfsaBracketMax: v('tfsa_bracket_max'),
         gapTargetRate: (parseFloat(document.getElementById('gap_target_rate').value) || 12) / 100,
         survivorPct: (parseFloat(document.getElementById('survivor_pct').value) || 70) / 100,
@@ -3173,21 +3311,23 @@ function syncRates() {
         document.getElementById('oas_max_val').value = formatDollarValue(DATA_2026.oas);
         document.getElementById('cpp2_max_val').value = formatDollarValue(DATA_2026.cpp2);
         document.getElementById('fed_age_amt').value = formatDollarValue(DATA_2026.fedAgeAmt);
+        document.getElementById('lira_small_under65').value = formatDollarValue(DATA_2026.liraSmallUnder65);
+        document.getElementById('lira_small_over65').value = formatDollarValue(DATA_2026.liraSmallOver65);
     } else {
         const newCpp = prompt(`Enter Max ANNUAL CPP for ${yr}:`, DATA_2026.cpp);
         const newOas = prompt(`Enter Max ANNUAL OAS for ${yr}:`, DATA_2026.oas);
         const newCpp2 = prompt(`Enter Max ANNUAL CPP2 benefit (at 40yr maturity) for ${yr}:`, DATA_2026.cpp2);
         const newAgeAmt = prompt(`Enter Federal Age Amount for ${yr} (CRA line 30100):`, DATA_2026.fedAgeAmt);
+        const newLiraU65 = prompt(`Enter LIRA Small Amount Exception (under 65) for ${yr}:`, DATA_2026.liraSmallUnder65);
+        const newLira65 = prompt(`Enter LIRA Small Amount Exception (65+) for ${yr}:`, DATA_2026.liraSmallOver65);
         if (newCpp && newOas) {
             document.getElementById('cpp_max_val').value = formatDollarValue(parseFloat(newCpp));
             document.getElementById('oas_max_val').value = formatDollarValue(parseFloat(newOas));
         }
-        if (newCpp2) {
-            document.getElementById('cpp2_max_val').value = formatDollarValue(parseFloat(newCpp2));
-        }
-        if (newAgeAmt) {
-            document.getElementById('fed_age_amt').value = formatDollarValue(parseFloat(newAgeAmt));
-        }
+        if (newCpp2) document.getElementById('cpp2_max_val').value = formatDollarValue(parseFloat(newCpp2));
+        if (newAgeAmt) document.getElementById('fed_age_amt').value = formatDollarValue(parseFloat(newAgeAmt));
+        if (newLiraU65) document.getElementById('lira_small_under65').value = formatDollarValue(parseFloat(newLiraU65));
+        if (newLira65) document.getElementById('lira_small_over65').value = formatDollarValue(parseFloat(newLira65));
     }
     document.getElementById('cpp_label').innerText = `Max CPP (${yr})`;
     document.getElementById('oas_label').innerText = `Max OAS (${yr})`;
