@@ -707,8 +707,26 @@ let FED_AGE_AMT = 9028; // Updated from buildParams before each projection
 // ─── Spouse toggle ──────────────────────────────────────────────────────────
 function toggleSpouse(n) {
     const active = document.getElementById(`s${n}_active`).checked;
-    document.getElementById(`s${n}_fields`).style.opacity = active ? '1' : '0.35';
-    document.getElementById(`s${n}_fields`).style.pointerEvents = active ? '' : 'none';
+    const fields = document.getElementById(`s${n}_fields`);
+    fields.style.opacity = active ? '1' : '0.35';
+    fields.style.pointerEvents = active ? '' : 'none';
+    fields.querySelectorAll('input, select').forEach(el => {
+        el.disabled = !active;
+    });
+
+    // Also disable/enable spouse-specific fields that live outside the spouse card
+    const externalFields = n === 1
+        ? ['tfsa_room_s1']
+        : ['tfsa_room_s2', 's2_rrsp_boost', 's2_tfsa_boost'];
+
+    for (const id of externalFields) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        el.disabled = !active;
+        el.style.opacity = active ? '' : '0.5';
+        if (!active) el.value = el.classList.contains('dollar') ? '$0' : '0';
+    }
+
     updateNames();
     calculate();
 }
@@ -1495,13 +1513,18 @@ function projectYears(params, returnOverride) {
 
         // ── Life stage ──
         const bothAlive = s1Alive && s2Alive;
+        // wasCouple: true only if BOTH spouses were originally active.
+        // Single-person plans never enter "Survivor" mode — they just retire normally.
+        const wasCouple = (s1Active !== false) && (s2Active !== false);
+        const isSurvivorYear = wasCouple && !bothAlive; // died mid-projection
         const isFullyRetired = s1Alive ? (a1 >= s1_retire) : true;
         const isGapYear = bothAlive && (a2 >= s2_retire && a1 < s1_retire);
-        let stage = (!bothAlive) ? "Survivor" : (isFullyRetired ? "Go-Go" : (isGapYear ? "Gap" : "Working"));
+        let stage = isSurvivorYear ? "Survivor"
+            : (isFullyRetired ? "Go-Go" : (isGapYear ? "Gap" : "Working"));
         let multiplier = 1.0;
-        if (isFullyRetired || !bothAlive) {
-            if      (a1 >= noAge)   { stage = !bothAlive ? "Survivor" : "No-Go";   multiplier = noPct; }
-            else if (a1 >= slowAge) { stage = !bothAlive ? "Survivor" : "Slow-Go";  multiplier = slowPct; }
+        if (isFullyRetired || isSurvivorYear) {
+            if      (a1 >= noAge)   { stage = isSurvivorYear ? "Survivor" : "No-Go";   multiplier = noPct; }
+            else if (a1 >= slowAge) { stage = isSurvivorYear ? "Survivor" : "Slow-Go";  multiplier = slowPct; }
         }
 
         let annualTax = 0, oasClawback = 0, pensionCredit = 0;
@@ -1550,12 +1573,9 @@ function projectYears(params, returnOverride) {
             }
         }
 
-        if (isFullyRetired || !bothAlive) {
-            // Rent: today's dollars inflated from sell year forward
-            const currentRent = homeSold && homeRent > 0
-                ? homeRent * inf_mult
-                : 0;
-            const spendMultiplier = !bothAlive ? survivorPct * multiplier : multiplier;
+        if (isFullyRetired || isSurvivorYear) {
+            const currentRent = homeSold && homeRent > 0 ? homeRent * inf_mult : 0;
+            const spendMultiplier = isSurvivorYear ? survivorPct * multiplier : multiplier;
             const netGoal = netGoalBase * inf_mult * spendMultiplier + currentRent;
 
             // ── RRIF mandatory minimums  ──
@@ -1582,7 +1602,7 @@ function projectYears(params, returnOverride) {
             // For tax purposes: survivor uses only their own age, no splitting
             const tax_a1 = s1Alive ? a1 : a2;  // use survivor's age for credits
             const tax_a2 = s2Alive ? a2 : a1;  // same — single filer uses one age
-            const singleFiler = !s1Alive || !s2Alive;
+            const singleFiler = isSurvivorYear || !wasCouple;
 
             // ── Tax rate smoothing: increase draw in low-rate years ──
             if (targetTaxRate && totalRRSP > 0 && minRRSPDraw > 0) {
@@ -1780,10 +1800,8 @@ function projectYears(params, returnOverride) {
 
         const totalNonReg = r.nonreg + m.nonreg;
         const nw = r.rrsp + m.rrsp + r.tfsa + m.tfsa + totalNonReg - shortfall;
-        const currentRentDisp = homeSold && homeRent > 0
-            ? homeRent * inf_mult
-            : 0;
-        const spendMultDisp = !bothAlive ? survivorPct * multiplier : multiplier;
+        const currentRentDisp = homeSold && homeRent > 0 ? homeRent * inf_mult : 0;
+        const spendMultDisp = isSurvivorYear ? survivorPct * multiplier : multiplier;
 
         rows.push({
             a1, a2, stage,
@@ -1799,9 +1817,9 @@ function projectYears(params, returnOverride) {
             sweepToTFSA, sweepToNonReg,
             annualTax, pensionCredit, rrifMinDisplay,
             nw,
-            netGoalDisp: (isFullyRetired || !bothAlive) ? netGoalBase * inf_mult * spendMultDisp + currentRentDisp : 0,
-            isSomeoneRetired: isFullyRetired || !bothAlive,
-            isMeltRow: isMelt && (isFullyRetired || !bothAlive) && a1 <= meltAge,
+            netGoalDisp: (isFullyRetired || isSurvivorYear) ? netGoalBase * inf_mult * spendMultDisp + currentRentDisp : 0,
+            isSomeoneRetired: isFullyRetired || isSurvivorYear,
+            isMeltRow: isMelt && (isFullyRetired || isSurvivorYear) && a1 <= meltAge,
             s1Alive, s2Alive,
             liraActionNotes: [...liraActionNotes],
             liraUnlockAmt,
@@ -3384,6 +3402,8 @@ window.onload = () => {
         initDollarFields();
         updateNames();
         updateDateDisplay();
+        toggleSpouse(1);
+        toggleSpouse(2);
         calculate();
     } else {
         initDollarFields();
