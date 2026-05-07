@@ -464,7 +464,7 @@
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1a6b9a;vertical-align:middle;margin-right:3px;"></span>LIRA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#16a085;vertical-align:middle;margin-right:3px;"></span>TFSA</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
-            <span id="nw_home_legend" style="display:none;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>Home Equity</span>
+            <span id="nw_home_legend" style="display:none;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e6914;vertical-align:middle;margin-right:3px;"></span>Home Equity</span>
         </div>
         <div id="nw_legend_split" style="display:none; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> RRSP</span>
@@ -2599,7 +2599,7 @@ function renderNWChart(rows) {
             r_lira: '#1a6b9a', m_lira: '#5dade2',
             r_tfsa: '#16a085', m_tfsa: '#76d7c4',
             r_nonreg: '#8e44ad', m_nonreg: '#c39bd3',
-            home: '#e67e22'
+            home: '#8e6914'
         };
         data = rows.map(d => ({
             age: d.a1,
@@ -2612,7 +2612,7 @@ function renderNWChart(rows) {
     } else {
         stackOrder = ['rrsp', 'lira', 'tfsa', 'nonreg'];
         if (includeHome) stackOrder.push('home');
-        colors = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', home: '#e67e22' };
+        colors = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', home: '#8e6914' };
         data = rows.map(d => ({
             age: d.a1,
             rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
