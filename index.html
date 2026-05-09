@@ -352,10 +352,16 @@
     </div>
 
     <div class="btn-group">
+        <button class="btn-calc" onclick="calculate()">Recalculate Strategy</button>
+        <button class="btn-sync" onclick="syncRates()">Sync to Current Year</button>
+        <button class="btn-save" onclick="saveData()">Save Setup</button>
+    </div>
+    <div class="btn-group">
         <button class="btn-solve" onclick="solveRetireAge()">Solve for Retirement Age</button>
         <button class="btn-solve" onclick="solveNetGoal()">Solve for Target Net Goal</button>
         <button class="btn-solve" onclick="solveExtraRRSP()">Solve for Additional Monthly RRSP</button>
         <button class="btn-solve" onclick="solveCPPOAS()">Solve for Optimal CPP/OAS</button>
+        <button class="btn-solve" onclick="solveReturnPct()">Solve for Return %</button>
     </div>
     <div id="solver_result" style="display:none; background:#fff3e0; border:1px solid #ffb74d; border-radius:8px; padding:12px; margin-bottom:15px; font-size:12px;"></div>
 
@@ -650,7 +656,8 @@
                 <b>Solve for Retirement Age</b> — Tests all combinations of both spouses' retirement ages (up to age 75) and returns the top 10 earliest combinations where money does not run out. Sorted by lowest combined retirement age.<br>
                 <b>Solve for Target Net Goal</b> — Binary searches for the maximum sustainable annual spending given current inputs. Shows the highest goal where the portfolio survives to the plan age.<br>
                 <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra monthly RRSP contribution (Spouse 1) needed to reach the target net goal.<br>
-                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 combinations of CPP and OAS start ages for both spouses to maximize final portfolio value. Note: solvers run without tax smoothing for speed — re-enable smoothing and recalculate after applying the result.
+                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 combinations of CPP and OAS start ages for both spouses to maximize final portfolio value. Note: solvers run without tax smoothing for speed — re-enable smoothing and recalculate after applying the result.<br>
+                <b>Solve for Return %</b> — Finds the minimum post-retirement return rate (and corresponding pre-retirement rate, preserving your current spread) needed for the portfolio to survive to the plan age. Useful for stress-testing — if the minimum required return is near or above your expected return, the plan needs adjustment.
             </div>
         </details>
 
@@ -2264,6 +2271,27 @@ function getFinalNW(params) {
     return rows[rows.length - 1].nw;
 }
 
+function getRetirementStats(params) {
+    // Returns { preRetirePeakNW, finalNW } using smoothed projection
+    const p = Object.assign({}, params);
+    p.targetTaxRate = null;
+    const pass1 = projectYears(p, null);
+    let rows = pass1;
+    if (p.smoothTax) {
+        const drawRows = pass1.filter(r => r.isSomeoneRetired && r.rrspDrawAmt > 0);
+        if (drawRows.length > 0) {
+            const totalTax = drawRows.reduce((s, r) => s + r.annualTax, 0);
+            const totalGross = drawRows.reduce((s, r) => s + r.rrspDrawAmt + r.tfsaDrawAmt + r.nonRegDrawAmt + r.annualPensions, 0);
+            p.targetTaxRate = totalGross > 0 ? totalTax / totalGross : 0;
+            rows = projectYears(p, null);
+        }
+    }
+    const preRetRows = rows.filter(r => !r.isSomeoneRetired);
+    const preRetirePeakNW = preRetRows.length > 0 ? Math.max(...preRetRows.map(r => r.nw)) : 0;
+    const finalNW = rows[rows.length - 1].nw;
+    return { preRetirePeakNW, finalNW };
+}
+
 function getSmoothedFinalNW(params) {
     const p = Object.assign({}, params);
     p.targetTaxRate = null;
@@ -2543,6 +2571,76 @@ function solveCPPOAS() {
         html += `<span style="color:#888;">Current: ${currentLabel}</span>`;
 
         showSolverResult(html);
+    }, 50);
+}
+
+function solveReturnPct() {
+    const base = buildParams();
+    if (!base) return;
+
+    showSolverResult(`<b>Solve for Return %:</b> Searching...`);
+
+    setTimeout(() => {
+        const spread = base.rPre - base.rPost;
+
+        // Current stats
+        const currentStats = getRetirementStats(base);
+
+        // Binary search for minimum viable post-retirement return
+        let lo = 0.0, hi = 0.25;
+        let minViable = null;
+        for (let i = 0; i < 40; i++) {
+            const mid = (lo + hi) / 2;
+            const p = Object.assign({}, base, { rPost: mid, rPre: Math.max(mid, mid + spread) });
+            if (getFinalNW(p) >= 0) { minViable = mid; hi = mid; }
+            else lo = mid;
+        }
+
+        if (minViable === null) {
+            showSolverResult(`<b>Solve for Return %:</b> Could not find a viable return rate up to 25%. Consider reducing your spending goal or retiring later.`);
+            return;
+        }
+
+        const suggestedPost = minViable + 0.0025;
+        const suggestedPre  = Math.max(suggestedPost, suggestedPost + spread);
+        const suggestedStats = getRetirementStats(Object.assign({}, base, { rPost: suggestedPost, rPre: suggestedPre }));
+
+        const cPost = (base.rPost * 100).toFixed(2);
+        const cPre  = (base.rPre  * 100).toFixed(2);
+        const sPost = (suggestedPost * 100).toFixed(2);
+        const sPre  = (suggestedPre  * 100).toFixed(2);
+        const spreadPct = (spread * 100).toFixed(2);
+
+        const nwColor  = currentStats.finalNW >= 0 ? '#27ae60' : '#e74c3c';
+        const arrow = base.rPost > suggestedPost
+            ? `▼ You can reduce return by ${((base.rPost - suggestedPost) * 100).toFixed(2)}% and still be viable.`
+            : `▲ You need to increase return by ${((suggestedPost - base.rPost) * 100).toFixed(2)}% to be viable.`;
+
+        showSolverResult(
+            `<b>Solve for Return %</b> &nbsp;<span style="color:#888; font-size:10px;">(${spreadPct}% spread preserved)</span><br><br>` +
+            `<table style="font-size:11px; border-collapse:collapse;">` +
+            `<tr style="background:#f5f5f5;"><th style="padding:4px 12px; text-align:left;"></th>` +
+                `<th style="padding:4px 12px;">Pre-Ret Return</th>` +
+                `<th style="padding:4px 12px;">Post-Ret Return</th>` +
+                `<th style="padding:4px 12px; text-align:right;">Peak Pre-Ret NW</th>` +
+                `<th style="padding:4px 12px; text-align:right;">Final NW</th>` +
+                `<th style="padding:4px 12px;"></th></tr>` +
+            `<tr><td style="padding:4px 12px; font-weight:bold;">Current</td>` +
+                `<td style="padding:4px 12px; text-align:center;">${cPre}%</td>` +
+                `<td style="padding:4px 12px; text-align:center;">${cPost}%</td>` +
+                `<td style="padding:4px 12px; text-align:right;">${formatMoney(currentStats.preRetirePeakNW)}</td>` +
+                `<td style="padding:4px 12px; text-align:right; font-weight:bold; color:${nwColor};">${formatMoney(currentStats.finalNW)}</td>` +
+                `<td style="padding:4px 12px;"></td></tr>` +
+            `<tr style="background:#eaf4fb;"><td style="padding:4px 12px; font-weight:bold;">Minimum (+ 0.25% buffer)</td>` +
+                `<td style="padding:4px 12px; text-align:center;">${sPre}%</td>` +
+                `<td style="padding:4px 12px; text-align:center;">${sPost}%</td>` +
+                `<td style="padding:4px 12px; text-align:right;">${formatMoney(suggestedStats.preRetirePeakNW)}</td>` +
+                `<td style="padding:4px 12px; text-align:right; font-weight:bold;">${formatMoney(suggestedStats.finalNW)}</td>` +
+                `<td style="padding:4px 12px;"><button class="btn-solve" style="padding:2px 10px; min-width:auto; flex:none; font-size:10px;" ` +
+                `onclick="document.getElementById('r_pre').value=${sPre}; document.getElementById('r_post').value=${sPost}; calculate();">Apply</button></td></tr>` +
+            `</table><br>` +
+            `<span style="font-size:11px;">${arrow}</span>`
+        );
     }, 50);
 }
 
