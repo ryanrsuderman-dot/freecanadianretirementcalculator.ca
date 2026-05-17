@@ -43,19 +43,71 @@
     }
     </script>
     <style>
-        :root { --primary: #1a252f; --accent: #c0392b; --safe: #27ae60; --bg: #f4f7f6; --header-bg: #2c3e50; }
+        :root { --primary: #1a252f; --accent: #c0392b; --safe: #27ae60; --bg: #f4f7f6; --header-bg: #2c3e50; --card-bg: white; --text: #333; --border: #dce4ea; --input-bg: white; --note-color: #666; }
+        body.dark-mode { --bg: #1a1f2e; --header-bg: #0f1623; --card-bg: #242b3d; --text: #dde1e7; --border: #374155; --input-bg: #2f3649; --note-color: #9aa0ae; --safe: #2ecc71; }
+        body.dark-mode { background: var(--bg); color: var(--text); }
+        body.dark-mode .card { background: var(--card-bg); border-color: var(--border); }
+        body.dark-mode input, body.dark-mode select { background: var(--input-bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+        body.dark-mode fieldset.group { border-color: var(--border); }
+        body.dark-mode fieldset.group legend { color: var(--text); }
+        body.dark-mode .stat-box { background: #2f3649; border-color: #4a5568; }
+        body.dark-mode .stat-box.warn { background: #3d3520; border-color: #6b5f00; }
+        body.dark-mode .stat-box.danger { background: #3d1f1f; border-color: #7f2020; }
+        body.dark-mode th { background: #0f1623; }
+        body.dark-mode td { border-color: #374155; }
+        body.dark-mode tr.gap td { background-color: #1a2f40 !important; }
+        body.dark-mode tr.survivor td { background-color: #2a1f38 !important; }
+        body.dark-mode tr.slow-go td { background-color: #2a2710 !important; }
+        body.dark-mode tr.no-go td { background-color: #262626 !important; }
+        body.dark-mode tr.out-of-money td { background-color: #3d1f1f !important; }
+        body.dark-mode .tab-btn { background: #2f3649; color: #9aa0ae; border-color: #374155; }
+        body.dark-mode .tab-btn.active { background: var(--card-bg); color: #7ec8e3; border-color: #7ec8e3; }
+        body.dark-mode details summary { color: #7ec8e3; }
+        body.dark-mode .note { color: var(--note-color); }
+        /* Tooltip styles */
+        .info-icon { display: inline-block; width: 14px; height: 14px; background: #3498db; color: white; border-radius: 50%; font-size: 9px; text-align: center; line-height: 14px; cursor: pointer; margin-left: 4px; font-weight: bold; vertical-align: middle; flex-shrink: 0; position: relative; }
+        .info-icon:hover::after { content: attr(data-tip); position: absolute; left: 18px; top: -4px; background: #2c3e50; color: white; padding: 5px 8px; border-radius: 5px; font-size: 10px; white-space: nowrap; z-index: 999; max-width: 280px; white-space: normal; width: 260px; line-height: 1.4; font-weight: normal; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        /* Shortfall alert */
+        .shortfall-alert { background: #fce4e4; border: 2px solid #e74c3c; border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; color: #922b21; display: none; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; font-size: 11px; }
         .container { max-width: 1500px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.1); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .card { border: 1px solid #e1e8ed; padding: 15px; border-radius: 10px; background: #fff; }
+        .card { border: 1px solid #e1e8ed; padding: 15px; border-radius: 10px; background: #fff; min-width: 260px; }
+        .card-grid { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .card { min-width: 100%; }
+            .card-grid { flex-direction: column; }
+            .btn-group { flex-wrap: wrap; }
+            .btn-wrap { min-width: 45%; }
+            .container { padding: 10px; }
+            table { font-size: 9px; }
+            th, td { padding: 4px 3px; }
+            h1 { font-size: 1.1rem; }
+            .stat-box { min-width: 80px; }
+            .row label { max-width: 60%; font-size: 10px; }
+        }
         h2 { margin-top: 0; font-size: 1rem; color: var(--header-bg); border-bottom: 3px solid var(--safe); padding-bottom: 5px; margin-bottom: 12px; }
-        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 6px; white-space: nowrap; }
-        .row label { flex-shrink: 0; white-space: nowrap; }
-        fieldset.group { border: 1px solid #dce4ea; border-radius: 6px; padding: 8px 10px 6px 10px; margin: 8px 0; }
+        .row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 6px; flex-wrap: nowrap; }
+        .row label { flex-shrink: 1; white-space: normal; min-width: 0; max-width: 60%; font-size: 11px; padding-top: 3px; }
+        .row input, .row select, .row span { flex-shrink: 0; }
+        fieldset.group { border: 1px solid #dce4ea; border-radius: 6px; padding: 8px 10px 6px 10px; margin: 8px 0; width: 100%; box-sizing: border-box; }
         fieldset.group legend { font-size: 10px; font-weight: bold; color: #2c3e50; padding: 0 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Dark mode table row fixes */
+        body.dark-mode tr.working td { color: #6b7280; }
+        body.dark-mode tr.slow-go td { background-color: #2a2700 !important; color: #e8e0c0 !important; }
+        body.dark-mode tr.no-go td { background-color: #2a2a2a !important; color: #9aa0ae !important; }
+        body.dark-mode tr.gap td { background-color: #0f2030 !important; color: #7ec8e3 !important; }
+        body.dark-mode tr.survivor td { background-color: #1e1028 !important; color: #c9a0dc !important; }
+        body.dark-mode tr.out-of-money td { background-color: #3d1010 !important; color: #ff8080 !important; }
+        body.dark-mode tr:nth-child(even) td { background-color: #2a3040 !important; }
+        body.dark-mode td { color: var(--text); }
         input[type="number"] { width: 55px; padding: 4px; border: 1px solid #ccd6dd; border-radius: 4px; text-align: right; }
         input.dollar { width: 80px; padding: 4px; border: 1px solid #ccd6dd; border-radius: 4px; text-align: right; }
         .btn-group { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+        .btn-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 120px; }
+        .btn-wrap button { width: 100%; }
+        .btn-tip { font-size: 9px; color: #999; margin-top: 2px; text-align: center; line-height: 1.2; }
         button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; min-width: 120px; }
         .btn-calc { background: var(--safe); color: white; }
         .btn-save { background: var(--header-bg); color: white; }
@@ -100,10 +152,17 @@
 </head>
 <body>
 <div class="container">
-    <h1><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span></h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <h1 style="margin:0;"><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span></h1>
+        <button onclick="toggleDarkMode()" id="dark_btn" style="font-size:11px; padding:4px 10px; background:#7f8c8d; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; white-space:nowrap; flex:0 0 80px; width:80px; min-width:80px;">🌙 Dark</button>
+    </div>
+    <div id="shortfall_alert" class="shortfall-alert">
+        ⚠ <b>Shortfall:</b> <span id="shortfall_msg"></span>
+    </div>
     <div style="font-size:11px; color:#7f8c8d; margin:-8px 0 10px 0;">Today: <b id="current_date"></b> — System Year: <b id="sys_year_disp"></b> <span id="year_mismatch" style="color:#e74c3c; display:none;">⚠ mismatch</span> — Province: <b id="prov_disp">Manitoba</b></div>
 
-    <div style="background:#fff8e1; border:1px solid #ffe082; border-left:4px solid #f39c12; border-radius:6px; padding:10px 14px; margin-bottom:12px; font-size:11px; color:#555; line-height:1.5;">
+    <div id="disclaimer_box" style="background:#fff8e1; border:1px solid #ffe082; border-left:4px solid #f39c12; border-radius:6px; padding:10px 14px; margin-bottom:12px; font-size:11px; color:#555; line-height:1.5; position:relative;">
+        <button onclick="dismissDisclaimer()" style="position:absolute; top:6px; right:8px; background:none; border:none; font-size:16px; cursor:pointer; color:#aaa; line-height:1; padding:0; flex:none; min-width:auto;" title="Dismiss — won't show again">✕</button>
         <b>⚠ Disclaimer:</b> This calculator is for <b>educational and planning purposes only</b> and does not constitute financial, tax, or legal advice. Results are based on assumptions and estimates that may not reflect your specific situation, current legislation, or future changes to tax rules or government benefits. Calculations are approximations — always verify with a qualified financial advisor or tax professional before making retirement decisions. The creator of this tool accepts no liability for any decisions made based on its output.
         <details style="margin-top:6px;">
             <summary style="cursor:pointer; color:#e67e22; font-weight:bold; font-size:10px;">Key assumptions & limitations (click to expand)</summary>
@@ -121,15 +180,15 @@
     </div>
 
     <div class="btn-group">
-        <button class="btn-calc" onclick="calculate()">Recalculate Strategy</button>
-        <button class="btn-sync" onclick="syncRates()">Sync to Current Year</button>
-        <button class="btn-save" onclick="saveData()">Save Setup</button>
+        <div class="btn-wrap"><button class="btn-calc" onclick="calculate()">Recalculate Strategy</button><span class="btn-tip">Run the projection with current inputs</span></div>
+        <div class="btn-wrap"><button class="btn-sync" onclick="syncRates()">Sync to Current Year</button><span class="btn-tip">Update CPP/OAS/LIRA values to current year</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="saveData()">Save Setup</button><span class="btn-tip">Save all inputs to browser storage</span></div>
     </div>
     <div id="status_top" style="text-align:center; font-weight:bold; color:#27ae60; height:15px; margin-bottom:5px;"></div>
-    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
-        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire_top">$0</b></div>
-        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak_top">$0</b></div>
-        <div class="stat-box" id="final_box_top"><small>Final Portfolio Value (at death)</small><br><b id="sum_final_top">$0</b></div>
+    <div class="card-grid">
+        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire_top">$0</b><br><small id="sum_retire_age_top" style="color:#888;"></small></div>
+        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak_top">$0</b><br><small id="sum_peak_age_top" style="color:#888;"></small></div>
+        <div class="stat-box" id="final_box_top"><small>Final Portfolio Value (at death)</small><br><b id="sum_final_top">$0</b><br><small id="sum_final_age_top" style="color:#888;"></small></div>
     </div>
 
     <div class="tab-bar">
@@ -149,23 +208,25 @@
             <h2 style="display:flex; justify-content:space-between; align-items:center;"><span class="s1_name_disp">Spouse 1</span> <label style="font-size:11px; font-weight:normal; color:#555; cursor:pointer;"><input type="checkbox" id="s1_active" checked onchange="toggleSpouse(1)" style="width:14px; margin-right:3px;">Active</label></h2>
             <div id="s1_fields">
             <fieldset class="group"><legend>Personal</legend>
-            <div class="row"><label>Name</label><input type="text" id="s1_name" value="Spouse 1" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
-            <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s1_age" value="50" style="width:45px"> / <input type="number" id="s1_retire" value="65" style="width:45px"></span></div>
-            <div class="row"><label>Plan to Age</label><input type="number" id="s1_plan_age" value="90" style="width:45px"></div>
+            <div class="row"><label>Name <span class="info-icon" data-tip="Display name used throughout the calculator. Cosmetic only — does not affect calculations.">i</span></label><input type="text" id="s1_name" value="Spouse 1" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
+            <div class="row"><label>Age / Retire Age <span class="info-icon" data-tip="Current age and the age you plan to stop working. Contributions stop and retirement draws begin at retire age.">i</span></label><span><input type="number" id="s1_age" value="50" style="width:45px"> / <input type="number" id="s1_retire" value="65" style="width:45px"></span></div>
+            <div class="row"><label>Plan to Age <span class="info-icon" data-tip="Age this spouse is projected to pass away. Assets roll tax-free to the survivor. The projection runs until the later spouse's plan age.">i</span></label><input type="number" id="s1_plan_age" value="90" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>Government Benefits</legend>
-            <div class="row"><label>CPP Age / % of Maximum</label><span><input type="number" id="s1_cpp_age" value="65" style="width:45px"> / <input type="number" id="s1_cpp_pct" value="75" style="width:45px"></span></div>
-            <div class="row"><label>OAS Age</label><input type="number" id="s1_oas_age" value="65" min="65" max="70" style="width:45px"></div>
+            <div class="row"><label>CPP Age / % of Max <span class="info-icon" data-tip="Age to start CPP (60-70) and your % of the maximum benefit. Check My Service Canada for your estimate. Early before 65: -0.6%/month. Late after 65: +0.7%/month.">i</span></label><span><input type="number" id="s1_cpp_age" value="65" style="width:45px"> / <input type="number" id="s1_cpp_pct" value="75" style="width:45px"></span></div>
+            <div class="row"><label>OAS Age <span class="info-icon" data-tip="Age to start OAS (65-70). Deferring past 65 increases benefit by 0.6%/month (+36% max at 70). OAS increases 10% more at age 75.">i</span></label><input type="number" id="s1_oas_age" value="65" min="65" max="70" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>Registered Accounts</legend>
-            <div class="row"><label>RRSP Balance</label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"></div>
-            <div class="row"><label>Monthly RRSP</label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"></div>
-            <div class="row"><label>TFSA Balance</label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></div>
-            <div class="row"><label>Monthly TFSA</label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"></div>
+            <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Room (0=unlimited) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_spousal_rrsp" value="0" style="width:70px"></div>
+            <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws tax-free. Withdrawals restore room next year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></div>
+            <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></div>
             </fieldset>
             <fieldset class="group"><legend>LIRA</legend>
-            <div class="row"><label>LIRA Balance</label><input type="text" inputmode="decimal" class="dollar" id="s1_lira_b" value="0"></div>
-            <div class="row"><label>LIRA Jurisdiction</label>
+            <div class="row"><label>LIRA Balance <span class="info-icon" data-tip="Locked-In Retirement Account from a former employer pension. Cannot withdraw freely — rules vary by jurisdiction. Calculator auto-applies all unlock rules.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_lira_b" value="0"></div>
+            <div class="row"><label>LIRA Jurisdiction <span class="info-icon" data-tip="Province where the pension plan was registered — NOT where you live now. Determines unlock ages and rules. Different from your living province.">i</span></label>
                 <select id="s1_lira_prov" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
                     <option value="" selected>— Not Set —</option>
                     <option value="AB">AB</option>
@@ -184,13 +245,13 @@
             </div>
             </fieldset>
             <fieldset class="group"><legend>Non-Registered</legend>
-            <div class="row"><label>Non-Reg Balance</label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
+            <div class="row"><label>Non-Reg Balance <span class="info-icon" data-tip="Non-registered investment account. No contribution limits. Withdrawals trigger capital gains tax on growth at the Cap Gains Inclusion % rate.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
             </fieldset>
             <fieldset class="group"><legend>Employer Pension</legend>
-            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px"></div>
-            <div class="row"><label>Start Age</label><input type="number" id="s1_pension_age" value="65" style="width:45px"></div>
-            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s1_pension_indexed" checked style="width:20px"></div>
-            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s1_pension_survivor" value="60" style="width:45px"></div>
+            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Pension Start Age</label><input type="number" id="s1_pension_age" value="65" style="width:45px"></div>
+            <div class="row"><label>Indexed to Inflation <span class="info-icon" data-tip="Check for government/public sector pensions that increase with inflation. Uncheck for fixed private sector pensions — these lose real value over time.">i</span></label><input type="checkbox" id="s1_pension_indexed" checked style="width:20px"></div>
+            <div class="row"><label>Survivor % <span class="info-icon" data-tip="% of pension paid to surviving spouse. Common values: 60% or 100%. Check your plan documents. Set 0 if no survivor benefit.">i</span></label><input type="number" id="s1_pension_survivor" value="60" style="width:45px"></div>
             </fieldset>
             </div>
         </div>
@@ -198,23 +259,25 @@
             <h2 style="display:flex; justify-content:space-between; align-items:center;"><span class="s2_name_disp">Spouse 2</span> <label style="font-size:11px; font-weight:normal; color:#555; cursor:pointer;"><input type="checkbox" id="s2_active" checked onchange="toggleSpouse(2)" style="width:14px; margin-right:3px;">Active</label></h2>
             <div id="s2_fields">
             <fieldset class="group"><legend>Personal</legend>
-            <div class="row"><label>Name</label><input type="text" id="s2_name" value="Spouse 2" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
-            <div class="row"><label>Age / Retire Age</label><span><input type="number" id="s2_age" value="47" style="width:45px"> / <input type="number" id="s2_retire" value="65" style="width:45px"></span></div>
-            <div class="row"><label>Plan to Age</label><input type="number" id="s2_plan_age" value="90" style="width:45px"></div>
+            <div class="row"><label>Name <span class="info-icon" data-tip="Display name used throughout the calculator. Cosmetic only — does not affect calculations.">i</span></label><input type="text" id="s2_name" value="Spouse 2" oninput="updateNames()" style="width:120px; text-align:left; border:1px solid #ccd6dd; border-radius:4px; padding:4px;"></div>
+            <div class="row"><label>Age / Retire Age <span class="info-icon" data-tip="Current age and the age you plan to stop working. Contributions stop and retirement draws begin at retire age.">i</span></label><span><input type="number" id="s2_age" value="47" style="width:45px"> / <input type="number" id="s2_retire" value="65" style="width:45px"></span></div>
+            <div class="row"><label>Plan to Age <span class="info-icon" data-tip="Age this spouse is projected to pass away. Assets roll tax-free to the survivor. The projection runs until the later spouse's plan age.">i</span></label><input type="number" id="s2_plan_age" value="90" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>Government Benefits</legend>
-            <div class="row"><label>CPP Age / % of Maximum</label><span><input type="number" id="s2_cpp_age" value="65" style="width:45px"> / <input type="number" id="s2_cpp_pct" value="75" style="width:45px"></span></div>
-            <div class="row"><label>OAS Age</label><input type="number" id="s2_oas_age" value="65" min="65" max="70" style="width:45px"></div>
+            <div class="row"><label>CPP Age / % of Max <span class="info-icon" data-tip="Age to start CPP (60-70) and your % of the maximum benefit. Check My Service Canada for your estimate. Early before 65: -0.6%/month. Late after 65: +0.7%/month.">i</span></label><span><input type="number" id="s2_cpp_age" value="65" style="width:45px"> / <input type="number" id="s2_cpp_pct" value="75" style="width:45px"></span></div>
+            <div class="row"><label>OAS Age <span class="info-icon" data-tip="Age to start OAS (65-70). Deferring past 65 increases benefit by 0.6%/month (+36% max at 70). OAS increases 10% more at age 75.">i</span></label><input type="number" id="s2_oas_age" value="65" min="65" max="70" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>Registered Accounts</legend>
-            <div class="row"><label>RRSP Balance</label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"></div>
-            <div class="row"><label>Monthly RRSP</label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"></div>
-            <div class="row"><label>TFSA Balance</label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></div>
-            <div class="row"><label>Monthly TFSA</label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal. Converts to RRIF at 71 with mandatory minimums.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"></div>
+            <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Room (0=unlimited) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_spousal_rrsp" value="0" style="width:70px"></div>
+            <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws completely tax-free. Withdrawals restore contribution room the following calendar year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></div>
+            <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></div>
             </fieldset>
             <fieldset class="group"><legend>LIRA</legend>
-            <div class="row"><label>LIRA Balance</label><input type="text" inputmode="decimal" class="dollar" id="s2_lira_b" value="0"></div>
-            <div class="row"><label>LIRA Jurisdiction</label>
+            <div class="row"><label>LIRA Balance <span class="info-icon" data-tip="Locked-In Retirement Account from a former employer pension. Cannot withdraw freely. Calculator auto-applies all provincial unlock rules.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_lira_b" value="0"></div>
+            <div class="row"><label>LIRA Jurisdiction <span class="info-icon" data-tip="Province where the pension plan was registered — NOT where you live now. Determines unlock ages and rules. Different from your living province.">i</span></label>
                 <select id="s2_lira_prov" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
                     <option value="" selected>— Not Set —</option>
                     <option value="AB">AB</option>
@@ -233,38 +296,46 @@
             </div>
             </fieldset>
             <fieldset class="group"><legend>Non-Registered</legend>
-            <div class="row"><label>Non-Reg Balance</label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
+            <div class="row"><label>Non-Reg Balance <span class="info-icon" data-tip="Non-registered investment account. No contribution limits. Withdrawals trigger capital gains tax on growth at the Cap Gains Inclusion % rate.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
             </fieldset>
             <fieldset class="group"><legend>Employer Pension</legend>
-            <div class="row"><label>Monthly Amount (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px"></div>
-            <div class="row"><label>Start Age</label><input type="number" id="s2_pension_age" value="65" style="width:45px"></div>
-            <div class="row"><label>Indexed to Inflation</label><input type="checkbox" id="s2_pension_indexed" checked style="width:20px"></div>
-            <div class="row"><label>Survivor % (0=none)</label><input type="number" id="s2_pension_survivor" value="60" style="width:45px"></div>
+            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Pension Start Age</label><input type="number" id="s2_pension_age" value="65" style="width:45px"></div>
+            <div class="row"><label>Indexed to Inflation <span class="info-icon" data-tip="Check for government/public sector pensions that increase with inflation. Uncheck for fixed private sector pensions — these lose real value over time.">i</span></label><input type="checkbox" id="s2_pension_indexed" checked style="width:20px"></div>
+            <div class="row"><label>Survivor % <span class="info-icon" data-tip="% of pension paid to surviving spouse. Common values: 60% or 100%. Check your plan documents. Set 0 if no survivor benefit.">i</span></label><input type="number" id="s2_pension_survivor" value="60" style="width:45px"></div>
             </fieldset>
             </div>
         </div>
         <div class="card">
             <h2>Life Stages (%)</h2>
             <fieldset class="group"><legend>Spending Stages</legend>
-            <div class="row"><label>Slow-Go Age</label><span><input type="number" id="slow_age" value="70" style="width:45px"> @ <input type="number" id="slow_pct" value="90" style="width:45px">%</span></div>
-            <div class="row"><label>No-Go Age</label><span><input type="number" id="no_age" value="80" style="width:45px"> @ <input type="number" id="no_pct" value="80" style="width:45px">%</span></div>
-            <div class="row"><label>Survivor Spending %</label><input type="number" id="survivor_pct" value="70" step="5" style="width:45px"></div>
+            <div class="row"><label>Slow-Go Age <span class="info-icon" data-tip="Age when spending starts to slow down (less travel, activities). The spending goal is multiplied by the % from this age forward.">i</span></label><span><input type="number" id="slow_age" value="70" style="width:45px"> @ <input type="number" id="slow_pct" value="90" style="width:45px">%</span></div>
+            <div class="row"><label>No-Go Age <span class="info-icon" data-tip="Age when spending drops further (limited mobility). A second multiplier on top of the Slow-Go reduction.">i</span></label><span><input type="number" id="no_age" value="80" style="width:45px"> @ <input type="number" id="no_pct" value="80" style="width:45px">%</span></div>
+            <div class="row"><label>Survivor Spending % <span class="info-icon" data-tip="After one spouse passes, survivor needs this % of the couple's spending goal. Default 70% — housing fixed but many costs drop.">i</span></label><input type="number" id="survivor_pct" value="70" step="5" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>RRSP Strategy</legend>
-            <div class="row"><label>Enable RRSP Meltdown</label><input type="checkbox" id="melt_on" checked style="width:20px"></div>
-            <div class="row"><label>Meltdown Target Age</label><input type="number" id="melt_age" value="75" style="width:45px"></div>
-            <div class="row"><label>Equal RRSP Draw Split (50/50)</label><input type="checkbox" id="equal_draw" checked style="width:20px"></div>
-            <div class="row"><label>Smooth Tax Rates</label><input type="checkbox" id="smooth_tax" checked style="width:20px"></div>
-            <div class="row"><label>TFSA Bracket Opt (0=off)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_bracket_max" value="10000" style="width:80px"></div>
+            <div class="row"><label>Enable RRSP Meltdown <span class="info-icon" data-tip="Forces larger RRSP draws to deplete it by the target age. Avoids high RRIF minimums later. Excess swept to TFSA then non-reg.">i</span></label><input type="checkbox" id="melt_on" checked style="width:20px"></div>
+            <div class="row"><label>Meltdown to Age <span class="info-icon" data-tip="Age by which the RRSP should be fully depleted. Typically 75 — before RRIF minimums accelerate significantly.">i</span></label><input type="number" id="melt_age" value="75" style="width:45px"></div>
+            <div class="row"><label>Equal RRSP Split (50/50) <span class="info-icon" data-tip="Splits RRSP draws 50/50 between spouses to keep both in lower tax brackets. Falls back to proportional when one RRSP is depleted.">i</span></label><input type="checkbox" id="equal_draw" checked style="width:20px"></div>
+            <div class="row"><label>Smooth Tax Rates <span class="info-icon" data-tip="Multi-pass optimizer that equalizes effective tax rates across retirement years, minimizing total lifetime tax paid. Recommended: on.">i</span></label><input type="checkbox" id="smooth_tax" checked style="width:20px"></div>
+            <div class="row"><label>TFSA Bracket Opt <span class="info-icon" data-tip="Maximum RRSP draw replaced with tax-free TFSA draw to avoid crossing a tax bracket. Set $0 to disable.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_bracket_max" value="10000" style="width:80px"></div>
+            <div class="row"><label>RRIF Draw Strategy <span class="info-icon" data-tip="As Needed: draws what's needed to meet goal plus meltdown. Minimum Only: only mandatory RRIF minimum after 72, supplementing from TFSA/Non-Reg.">i</span></label>
+                <select id="rrif_strategy" style="padding:3px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
+                    <option value="needed" selected>As Needed</option>
+                    <option value="minimum">Minimum Only</option>
+                </select>
+            </div>
             </fieldset>
             <fieldset class="group"><legend>Gap Year &amp; Survivor</legend>
-            <div class="row"><label>Gap Year Target Rate %</label><input type="number" id="gap_target_rate" value="12" step="1" style="width:45px"></div>
+            <div class="row"><label>Gap Year Target Rate % <span class="info-icon" data-tip="During gap years (S2 retired, S1 working), draws S2's RRSP up to this effective rate and sweeps net to TFSA. Typically 12-13%.">i</span></label><input type="number" id="gap_target_rate" value="12" step="1" style="width:45px"></div>
+            <div class="row"><label>CPP Pension Sharing <span class="info-icon" data-tip="Both spouses 60+ can pool CPP and split it to reduce combined tax. Requires both to be receiving CPP.">i</span></label><input type="checkbox" id="cpp_sharing" style="width:20px"></div>
+            <div class="row"><label>Enable GIS <span class="info-icon" data-tip="Guaranteed Income Supplement — tax-free monthly benefit for low-income OAS recipients 65+. Reduces 50 cents per dollar of other income. 2026 max: ~$1,086/mo single, ~$654/mo each for couples.">i</span></label><input type="checkbox" id="gis_enabled" style="width:20px"></div>
             </fieldset>
         </div>
         <div class="card">
             <h2>Benefits & Market</h2>
             <fieldset class="group"><legend>Tax Jurisdiction</legend>
-            <div class="row"><label>Province</label>
+            <div class="row"><label>Province <span class="info-icon" data-tip="Sets provincial tax brackets, personal amount, age credit, and pension credit. Required before calculating. Quebec not supported.">i</span></label>
                 <select id="province" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px;">
                     <option value="" selected>— Select Province —</option>
                     <option value="AB">AB</option>
@@ -281,45 +352,46 @@
                     <option value="YT">YT</option>
                 </select>
             </div>
-            <div class="row"><label>OAS Clawback Start</label><input type="text" inputmode="decimal" class="dollar" id="oas_clawback" value="90997"></div>
-            <div class="row"><label id="age_amt_label">Fed Age Amount</label><input type="text" inputmode="decimal" class="dollar" id="fed_age_amt" value="9028" style="width:70px"></div>
+            <div class="row"><label>OAS Clawback Start <span class="info-icon" data-tip="Net income above this threshold triggers OAS recovery at 15 cents per dollar. 2026: $90,997.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="oas_clawback" value="90997"></div>
+            <div class="row"><label>Fed Age Amount <span class="info-icon" data-tip="Federal age amount credit (CRA line 30100). Available at 65+. Clawed back at 15% above ~$45,522 income. Update annually via Sync.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="fed_age_amt" value="9028" style="width:70px"></div>
+            <div class="row"><label>Provincial Health Premium <span class="info-icon" data-tip="ON/BC charge income-based health premiums (max ~$900/yr). Check if applicable to your province — others have no premium.">i</span></label><input type="checkbox" id="prov_health_premium" style="width:20px"></div>
             </fieldset>
             <fieldset class="group"><legend>Government Benefits</legend>
-            <div class="row"><label id="cpp_label">Max CPP</label><input type="text" inputmode="decimal" class="dollar" id="cpp_max_val" value="18091.80"></div>
-            <div class="row"><label id="cpp2_label">Max CPP2 Annual</label><input type="text" inputmode="decimal" class="dollar" id="cpp2_max_val" value="3466"></div>
-            <div class="row"><label id="oas_label">Max OAS</label><input type="text" inputmode="decimal" class="dollar" id="oas_max_val" value="8907.72"></div>
+            <div class="row"><label>Max CPP <span class="info-icon" data-tip="Maximum annual CPP at age 65 for 2026. Scaled by your CPP % of Maximum. Update each year via Sync to Current Year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="cpp_max_val" value="18091.80"></div>
+            <div class="row"><label>Max CPP2 Annual <span class="info-icon" data-tip="Maximum annual CPP2 (enhanced CPP) at 40-year maturity. Auto-prorated by contribution years since 2024. Update via Sync.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="cpp2_max_val" value="3466"></div>
+            <div class="row"><label>Max OAS <span class="info-icon" data-tip="Maximum annual OAS benefit. Increases 10% at age 75. Update annually via Sync to Current Year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="oas_max_val" value="8907.72"></div>
             </fieldset>
             <fieldset class="group"><legend>Goals &amp; Returns</legend>
-            <div class="row"><label>Target Net Goal</label><input type="text" inputmode="decimal" class="dollar" id="goal_go" value="75000"></div>
-            <div class="row"><label>Pre-Retirement Return %</label><input type="number" id="r_pre" value="6" step="0.1" style="width:60px"></div>
-            <div class="row"><label>Post-Retirement Return %</label><input type="number" id="r_post" value="4.5" step="0.1" style="width:60px"></div>
-            <div class="row"><label>Inflation %</label><input type="number" id="infl" value="2.5"></div>
+            <div class="row"><label>Target Net Goal <span class="info-icon" data-tip="Desired annual after-tax household spending in today's dollars. Inflation-adjusted each year. Adjusted by life stage multipliers.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="goal_go" value="75000"></div>
+            <div class="row"><label>Pre-Ret Return % <span class="info-icon" data-tip="Expected annual investment return while still working. Compounded monthly. Typical range: 5-7% for balanced portfolios.">i</span></label><input type="number" id="r_pre" value="6" step="0.1" style="width:60px"></div>
+            <div class="row"><label>Post-Ret Return % <span class="info-icon" data-tip="Expected annual return during retirement. Typically lower than pre-retirement as portfolios de-risk. Typical range: 3-5%.">i</span></label><input type="number" id="r_post" value="4.5" step="0.1" style="width:60px"></div>
+            <div class="row"><label>Inflation % <span class="info-icon" data-tip="Annual inflation rate. Indexes spending, CPP/OAS, tax brackets, contributions, TFSA room, and LIRA thresholds. Bank of Canada target: 2%.">i</span></label><input type="number" id="infl" value="2.5"></div>
             </fieldset>
             <fieldset class="group"><legend>TFSA &amp; System</legend>
-            <div class="row"><label>System Year</label><input type="number" id="sys_year" value="2026" style="width:65px"></div>
-            <div class="row"><label>TFSA Room / yr / Person</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_yr" value="7000" style="width:70px"></div>
-            <div class="row"><label>Current TFSA Room (<span class="s1_name_disp">S1</span>)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s1" value="0" style="width:90px"></div>
-            <div class="row"><label>Current TFSA Room (<span class="s2_name_disp">S2</span>)</label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s2" value="0" style="width:90px"></div>
-            <div class="row"><label>Cap Gains Inclusion %</label><input type="number" id="capgains_inc" value="50" step="5" style="width:60px"></div>
+            <div class="row"><label>System Year <span class="info-icon" data-tip="The base year for tax values. Defaults to current year. Change only if you want to model from a future starting point.">i</span></label><input type="number" id="sys_year" value="2026" style="width:65px"></div>
+            <div class="row"><label>TFSA Room / yr / Person <span class="info-icon" data-tip="Annual new TFSA contribution room per person. 2026: $7,000. Accrues each year per living spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_yr" value="7000" style="width:70px"></div>
+            <div class="row"><label>TFSA Room (S1) <span class="info-icon" data-tip="Your unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s1" value="0" style="width:90px"></div>
+            <div class="row"><label>TFSA Room (S2) <span class="info-icon" data-tip="Spouse 2's unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s2" value="0" style="width:90px"></div>
+            <div class="row"><label>Cap Gains % <span class="info-icon" data-tip="% of capital gains that is taxable on non-registered withdrawals. 2026: 50%. May change with federal budget updates.">i</span></label><input type="number" id="capgains_inc" value="50" step="5" style="width:60px"></div>
             </fieldset>
             <fieldset class="group"><legend>LIRA Thresholds</legend>
-            <div class="row"><label>Small Amt &lt;65</label><input type="text" inputmode="decimal" class="dollar" id="lira_small_under65" value="14920" style="width:80px"></div>
-            <div class="row"><label>Small Amt 65+</label><input type="text" inputmode="decimal" class="dollar" id="lira_small_over65" value="29840" style="width:80px"></div>
+            <div class="row"><label>Small Amt &lt;65 <span class="info-icon" data-tip="If LIRA balance falls below this while under 65, full balance unlocks to RRSP immediately. 2026: $14,920. Indexed by inflation.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="lira_small_under65" value="14920" style="width:80px"></div>
+            <div class="row"><label>Small Amt 65+ <span class="info-icon" data-tip="Same threshold for age 65+. 2026: $29,840. Update each year via Sync to Current Year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="lira_small_over65" value="29840" style="width:80px"></div>
             </fieldset>
         </div>
         <div class="card">
             <h2>Home Equity</h2>
-            <div class="row"><label>Current Home Value</label><input type="text" inputmode="decimal" class="dollar" id="home_value" value="0"></div>
+            <div class="row"><label>Current Home Value <span class="info-icon" data-tip="Today's estimated market value of your primary home. Grows annually by your inflation rate. Used for the NW chart and sell/downsize events.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="home_value" value="0"></div>
             <p class="note">Value grows annually by your inflation rate.</p>
             <fieldset class="group"><legend>Optional</legend>
             <b style="font-size:11px;">Option A — Sell</b>
-            <div class="row"><label>Sell at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
-            <div class="row"><label>Annual Rent After (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
+            <div class="row"><label>Sell at S1 Age <span class="info-icon" data-tip="Age (S1) when you sell the home. Full inflation-adjusted value injected into investments (TFSA → RRSP → Non-Reg). Set 0 to disable.">i</span></label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Annual Rent (today's $) <span class="info-icon" data-tip="Ongoing rent cost after selling, in today's dollars. Added on top of your spending goal each year from the sell date, inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
             <p class="note">Full home value added as lump sum. Annual rent added to spending goal from sell age onward.</p>
             <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
             <b style="font-size:11px;">Option B — Downsize</b>
-            <div class="row"><label>Downsize at <span class="s1_name_disp">S1</span> Age (0=off)</label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
-            <div class="row"><label>Net Proceeds</label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
+            <div class="row"><label>Downsize at S1 Age <span class="info-icon" data-tip="Age (S1) when you downsize. Net proceeds injected into investments. Remaining home value continues growing on the NW chart.">i</span></label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Net Proceeds <span class="info-icon" data-tip="Cash pocketed from downsize (old home sale price minus new home cost), in today's dollars. Allocated: TFSA → RRSP → Non-Reg.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
             <p class="note">Net proceeds (old minus new home) added as lump sum. No rent — still owning.</p>
             </fieldset>
         </div>
@@ -327,24 +399,24 @@
             <h2>Lump Sums (Optional)</h2>
             <fieldset class="group"><legend>Lump Sum 1</legend>
             <div class="row"><label>Amount / <span class="s1_name_disp">Spouse 1</span>'s Age</label><span><input type="text" inputmode="decimal" class="dollar" id="ls1_amt" value="0" style="width:70px"> @ <input type="number" id="ls1_age" value="0" style="width:45px"></span></div>
-            <div class="row"><label>Max to RRSP (0=unlimited)</label><input type="text" inputmode="decimal" class="dollar" id="ls1_rrsp_cap" value="0" style="width:70px"></div>
+            <div class="row"><label>Max to RRSP <span class="info-icon" data-tip="Cap the RRSP portion of this lump sum. Useful if your RRSP room is limited. Excess goes to Non-Reg. RRSP room not tracked — verify with CRA.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="ls1_rrsp_cap" value="0" style="width:70px"></div>
             </fieldset>
             <fieldset class="group"><legend>Lump Sum 2</legend>
             <div class="row"><label>Amount / <span class="s1_name_disp">Spouse 1</span>'s Age</label><span><input type="text" inputmode="decimal" class="dollar" id="ls2_amt" value="0" style="width:70px"> @ <input type="number" id="ls2_age" value="0" style="width:45px"></span></div>
-            <div class="row"><label>Max to RRSP (0=unlimited)</label><input type="text" inputmode="decimal" class="dollar" id="ls2_rrsp_cap" value="0" style="width:70px"></div>
+            <div class="row"><label>Max to RRSP <span class="info-icon" data-tip="Cap the RRSP portion of this lump sum. Useful if your RRSP room is limited. Excess goes to Non-Reg. RRSP room not tracked — verify with CRA.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="ls2_rrsp_cap" value="0" style="width:70px"></div>
             </fieldset>
             <p class="note">Allocation: TFSA (up to room) → RRSP (up to cap) → Non-Reg. Split 50/50 between spouses. RRSP room not tracked — verify externally.</p>
         </div>
         <div class="card">
             <h2>Contribution Boost (Optional)</h2>
-            <div class="row"><label>At <span class="s1_name_disp">Spouse 1</span>'s Age (0=off)</label><input type="number" id="boost_age" value="0" style="width:45px"></div>
+            <div class="row"><label>At S1's Age <span class="info-icon" data-tip="Both spouses' boost contributions activate at this age. Useful for mortgage payoff, kids moving out, or a salary increase.">i</span></label><input type="number" id="boost_age" value="0" style="width:45px"></div>
             <fieldset class="group"><legend class="s1_name_disp">Spouse 1</legend>
-            <div class="row"><label>RRSP Boost</label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_boost" value="0" style="width:70px"></div>
-            <div class="row"><label>TFSA Boost</label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_boost" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Boost <span class="info-icon" data-tip="Additional monthly RRSP on top of base contribution, starting at the boost age. Inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_boost" value="0" style="width:70px"></div>
+            <div class="row"><label>TFSA Boost <span class="info-icon" data-tip="Additional monthly TFSA on top of base contribution, starting at the boost age. Overflow goes to non-reg.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_boost" value="0" style="width:70px"></div>
             </fieldset>
             <fieldset class="group"><legend class="s2_name_disp">Spouse 2</legend>
-            <div class="row"><label>RRSP Boost</label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_boost" value="0" style="width:70px"></div>
-            <div class="row"><label>TFSA Boost</label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_boost" value="0" style="width:70px"></div>
+            <div class="row"><label>RRSP Boost <span class="info-icon" data-tip="Additional monthly RRSP on top of base contribution, starting at the boost age. Inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_boost" value="0" style="width:70px"></div>
+            <div class="row"><label>TFSA Boost <span class="info-icon" data-tip="Additional monthly TFSA on top of base contribution, starting at the boost age. Overflow goes to non-reg.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_boost" value="0" style="width:70px"></div>
             </fieldset>
             <p class="note">Additional monthly amounts added on top of base contributions at the specified age. Useful for mortgage payoff, kids moving out, etc.</p>
         </div>
@@ -352,29 +424,39 @@
     </div>
 
     <div class="btn-group">
-        <button class="btn-calc" onclick="calculate()">Recalculate Strategy</button>
-        <button class="btn-sync" onclick="syncRates()">Sync to Current Year</button>
-        <button class="btn-save" onclick="saveData()">Save Setup</button>
+        <div class="btn-wrap"><button class="btn-calc" onclick="calculate()">Recalculate Strategy</button><span class="btn-tip">Run the projection with current inputs</span></div>
+        <div class="btn-wrap"><button class="btn-sync" onclick="syncRates()">Sync to Current Year</button><span class="btn-tip">Update CPP/OAS/LIRA values to current year</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="saveData()">Save Setup</button><span class="btn-tip">Save all inputs to browser storage</span></div>
     </div>
     <div class="btn-group">
-        <button class="btn-solve" onclick="solveRetireAge()">Solve for Retirement Age</button>
-        <button class="btn-solve" onclick="solveNetGoal()">Solve for Target Net Goal</button>
-        <button class="btn-solve" onclick="solveExtraRRSP()">Solve for Additional Monthly RRSP</button>
-        <button class="btn-solve" onclick="solveCPPOAS()">Solve for Optimal CPP/OAS</button>
-        <button class="btn-solve" onclick="solveReturnPct()">Solve for Return %</button>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveRetireAge()">Solve for Retirement Age</button><span class="btn-tip">Find the earliest age both spouses can retire</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveNetGoal()">Solve for Target Net Goal</button><span class="btn-tip">Find the maximum sustainable annual spending</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveExtraRRSP()">Solve for Additional Monthly RRSP</button><span class="btn-tip">Find extra RRSP needed to hit your goal</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveCPPOAS()">Solve for Optimal CPP/OAS</button><span class="btn-tip">Find the best CPP/OAS start ages to maximize wealth</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveReturnPct()">Solve for Return %</button><span class="btn-tip">Find the minimum return needed — shows room to de-risk</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="showInflationSensitivity()">Inflation Sensitivity</button><span class="btn-tip">Show final NW across a range of inflation rates</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="showReturnSensitivity()">Return Sensitivity</button><span class="btn-tip">Show final NW across a range of return rates</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="printReport()" style="background:#16a085;">🖨 Print Report</button><span class="btn-tip">Open a clean printable summary</span></div>
     </div>
     <div id="solver_result" style="display:none; background:#fff3e0; border:1px solid #ffb74d; border-radius:8px; padding:12px; margin-bottom:15px; font-size:12px;"></div>
 
-    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
-        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire">$0</b></div>
-        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak">$0</b></div>
-        <div class="stat-box" id="final_box"><small>Final Portfolio Value (at death)</small><br><b id="sum_final">$0</b></div>
+    <div class="card-grid">
+        <div class="stat-box"><small>Peak Net Worth (Pre-Retirement)</small><br><b id="sum_retire">$0</b><br><small id="sum_retire_age" style="color:#888;"></small></div>
+        <div class="stat-box"><small>Peak Net Worth</small><br><b id="sum_peak">$0</b><br><small id="sum_peak_age" style="color:#888;"></small></div>
+        <div class="stat-box" id="final_box"><small>Final Portfolio Value (at death)</small><br><b id="sum_final">$0</b><br><small id="sum_final_age" style="color:#888;"></small></div>
     </div>
     <div id="status"></div>
-    <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
-        <b>View:</b>
-        <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="ledger_view" value="combined" checked onchange="rerenderLedger()"> Combined</label>
-        <label style="cursor:pointer;"><input type="radio" name="ledger_view" value="split" onchange="rerenderLedger()"> Split by Spouse</label>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
+            <b>View:</b>
+            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="ledger_view" value="combined" checked onchange="rerenderLedger()"> Combined</label>
+            <label style="cursor:pointer;"><input type="radio" name="ledger_view" value="split" onchange="rerenderLedger()"> Split by Spouse</label>
+        </div>
+        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
+            <b>Values:</b>
+            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="ledger_values" value="nominal" checked onchange="rerenderLedger()"> Nominal</label>
+            <label style="cursor:pointer;"><input type="radio" name="ledger_values" value="real" onchange="rerenderLedger()"> Real (Today's $)</label>
+        </div>
     </div>
     <div style="overflow-x:auto;">
         <table id="ledger">
@@ -405,7 +487,7 @@
         <p class="note">Std dev applies annual return randomness around your base rates.</p>
         <button class="btn-mc" onclick="runMonteCarlo()" style="margin-top:10px; width:100%;">Run Monte Carlo</button>
     </div>
-    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+    <div class="card-grid">
         <div class="stat-box" id="mc_box" style="display:none"><small>MC Median Final</small><br><b id="mc_median">$0</b></div>
         <div class="stat-box" id="mc_success_box" style="display:none"><small>MC Success Rate</small><br><b id="mc_success">0%</b></div>
     </div>
@@ -436,6 +518,7 @@
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:3px;"></span>Non-Reg</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e67e22;vertical-align:middle;margin-right:3px;"></span>CPP</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#27ae60;vertical-align:middle;margin-right:3px;"></span>OAS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f1c40f;vertical-align:middle;margin-right:3px;"></span>GIS</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e74c3c;vertical-align:middle;margin-right:3px;"></span>Shortfall</span>
             <span>- - - Net Spending Goal</span>
             <span style="color:#888;">(Bars show net income after tax; hover for details)</span>
@@ -451,6 +534,8 @@
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f5b041;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> CPP</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#27ae60;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> OAS</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#82e0aa;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> OAS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f1c40f;vertical-align:middle;margin-right:3px;"></span><span class="s1_name_disp">S1</span> GIS</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f9e04b;vertical-align:middle;margin-right:3px;"></span><span class="s2_name_disp">S2</span> GIS</span>
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e74c3c;vertical-align:middle;margin-right:3px;"></span>Shortfall</span>
             <span>- - - Net Spending Goal</span>
         </div>
@@ -489,9 +574,15 @@
 
     <!-- TAB: Compare -->
     <div id="tab_compare" class="tab-content">
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button class="btn-sync" onclick="saveScenario('A')" style="flex:1;">Save Current as Scenario A</button>
-        <button class="btn-mc" onclick="saveScenario('B')" style="flex:1;">Save Current as Scenario B</button>
+    <div style="display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+            <input type="text" id="scenario_a_note" placeholder="Scenario A description (e.g. Retire at 60)" style="width:100%; padding:6px 8px; border:1px solid #ccd6dd; border-radius:5px; font-size:12px; margin-bottom:5px; box-sizing:border-box;">
+            <button class="btn-sync" onclick="saveScenario('A')" style="width:100%;">Save Current as Scenario A</button>
+        </div>
+        <div style="flex:1; min-width:200px;">
+            <input type="text" id="scenario_b_note" placeholder="Scenario B description (e.g. Retire at 65)" style="width:100%; padding:6px 8px; border:1px solid #ccd6dd; border-radius:5px; font-size:12px; margin-bottom:5px; box-sizing:border-box;">
+            <button class="btn-mc" onclick="saveScenario('B')" style="width:100%;">Save Current as Scenario B</button>
+        </div>
     </div>
     <div id="compare_result" style="display:none;"></div>
     <p id="compare_placeholder" style="color:#999; text-align:center; padding:40px 0;">Save two scenarios to compare them side by side.</p>
@@ -536,40 +627,42 @@
         <details style="margin-bottom:10px;" open>
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Spouse Cards</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Active checkbox</b> — Uncheck to model a single person. Unchecked spouse is excluded from all calculations, taxes, and charts. Title updates to reflect only the active spouse(s).<br><br>
+                <b>Active checkbox</b> — Uncheck to model a single person. All fields for that spouse are disabled and zeroed. The projection runs as a single-person plan with no survivor mode, no income splitting, and no survivor spending reduction.<br><br>
 
                 <b style="color:#2c3e50;">Personal</b><br>
                 <b>Name</b> — Display name used throughout the calculator. Cosmetic only.<br>
-                <b>Age / Retire Age</b> — Current age and planned retirement age. Contributions stop and retirement draws begin at retire age. Spouse 1's age drives the x-axis on all charts.<br>
-                <b>Plan to Age</b> — The age this spouse is projected to pass away. Assets roll tax-free to the surviving spouse. Survivor rows appear in lavender in the table. The projection runs until the later spouse's plan age.<br><br>
+                <b>Age / Retire Age</b> — Current age and planned retirement age. Contributions stop and draws begin at retire age. Spouse 1's age drives the x-axis on all charts.<br>
+                <b>Plan to Age</b> — Projected age at death. Assets roll tax-free to the survivor. The projection runs until the later spouse's plan age.<br><br>
 
                 <b style="color:#2c3e50;">Government Benefits</b><br>
-                <b>CPP Age / % of Maximum</b> — Age to start collecting CPP (60–70) and your estimated percentage of the maximum CPP benefit. Check your My Service Canada account for your actual projection. Early CPP (before 65): reduced 0.6%/month. Late CPP (after 65): increased 0.7%/month.<br>
-                <b>OAS Age</b> — Age to start collecting Old Age Security (65–70). Deferring increases by 0.6%/month, up to +36% at age 70. OAS increases by an additional 10% at age 75.<br><br>
+                <b>CPP Age / % of Max</b> — Age to start CPP (60–70) and your % of the maximum benefit. Check My Service Canada for your estimate. Early CPP (before 65): −0.6%/month. Late CPP (after 65): +0.7%/month.<br>
+                <b>OAS Age</b> — Age to start OAS (65–70). Deferring adds 0.6%/month (+36% max at 70). OAS increases a further 10% at age 75.<br><br>
 
                 <b style="color:#2c3e50;">Registered Accounts</b><br>
-                <b>RRSP Balance</b> — Current RRSP balance. Grows at your investment return rate. Withdrawals are fully taxable.<br>
-                <b>Monthly RRSP</b> — Monthly RRSP contribution during working years. Inflation-adjusted each year.<br>
-                <b>TFSA Balance</b> — Current TFSA balance. Grows tax-free. Withdrawals are tax-free and restore contribution room the following year.<br>
-                <b>Monthly TFSA</b> — Monthly TFSA contribution during working years. Inflation-adjusted. Overflow beyond available room goes to non-registered.<br><br>
+                <b>RRSP Balance</b> — Current RRSP balance. Grows at your investment return rate. Fully taxable on withdrawal. Converts to RRIF at 71 with mandatory minimum draws.<br>
+                <b>Monthly RRSP</b> — Monthly RRSP contribution during working years. Inflation-adjusted annually.<br>
+                <b>RRSP Room (0=unlimited)</b> — Current available RRSP contribution room from CRA My Account. Set to 0 for unlimited. When set, contributions stop when room is exhausted. Verify via CRA My Account — room is not automatically calculated from income.<br>
+                <b>Monthly Spousal RRSP</b> — Monthly contribution to your spouse's RRSP using your own room. Goes into the spouse's RRSP balance for potential income splitting in early retirement (before age 65).<br>
+                <b>TFSA Balance</b> — Current TFSA balance. Grows and withdraws completely tax-free. Withdrawals restore room the following calendar year.<br>
+                <b>Monthly TFSA</b> — Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered.<br><br>
 
                 <b style="color:#2c3e50;">LIRA</b><br>
-                <b>LIRA Balance</b> — Locked-In Retirement Account. Pension funds from a former employer that cannot be freely withdrawn. The calculator automatically applies all unlock rules:<br>
+                <b>LIRA Balance</b> — Locked-In Retirement Account from a former employer pension. Cannot withdraw freely. The calculator automatically applies all unlock rules:<br>
                 &nbsp;&nbsp;1. From LIF start age: draws the CRA maximum rate each year, transferred to RRSP<br>
-                &nbsp;&nbsp;2. Small amount exception: if balance drops below the threshold ($14,920 under 65 / $29,840 at 65+), full balance unlocks immediately<br>
-                &nbsp;&nbsp;3. At partial unlock age (e.g. MB 55): 50% transferred to RRSP (one-time)<br>
-                &nbsp;&nbsp;4. At full unlock age (e.g. MB 65): full remaining balance transferred to RRSP<br>
-                Unlock events appear as yellow rows in the Action Plan tab. Federal LIRAs are more restrictive — consult your plan administrator.<br>
-                <b>LIRA Jurisdiction</b> — The province where the pension plan was registered (not where you live now). This determines unlock ages and rules. Only visible when LIRA balance is entered.<br><br>
+                &nbsp;&nbsp;2. Small amount exception: if balance falls below the threshold, full amount unlocks immediately<br>
+                &nbsp;&nbsp;3. At partial unlock age (e.g. MB age 55): 50% transferred to RRSP (one-time)<br>
+                &nbsp;&nbsp;4. At full unlock age (e.g. MB age 65): remaining balance transferred to RRSP<br>
+                Unlock events appear as yellow rows in the Action Plan tab.<br>
+                <b>LIRA Jurisdiction</b> — Province where the pension plan was registered (not where you live). Determines unlock ages and LIF rules.<br><br>
 
                 <b style="color:#2c3e50;">Non-Registered</b><br>
-                <b>Non-Reg Balance</b> — Current non-registered investment balance. Withdrawals trigger capital gains tax (at the Cap Gains Inclusion % rate) on the growth portion.<br><br>
+                <b>Non-Reg Balance</b> — Non-registered investments. Withdrawals trigger capital gains tax on growth at the Cap Gains Inclusion % rate.<br><br>
 
                 <b style="color:#2c3e50;">Employer Pension</b><br>
-                <b>Monthly Amount (today's $)</b> — Monthly defined benefit or employer pension in today's dollars. Converted to annual and added to fully taxable income.<br>
-                <b>Start Age</b> — Age when pension payments begin. Some plans start as early as age 55.<br>
-                <b>Indexed to Inflation</b> — Checked = pension increases with inflation each year (common for public sector). Unchecked = fixed nominal amount (common in private sector). Unindexed pensions lose real value significantly over 30 years.<br>
-                <b>Survivor % (0=none)</b> — Percentage of pension paid to the surviving spouse. Common values are 60% or 100%. Check your plan documents. Pension income is eligible for the pension income credit at any age and is included in income splitting at 65+.
+                <b>Monthly (today's $)</b> — Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.<br>
+                <b>Pension Start Age</b> — Age when pension begins. Some plans start as early as 55.<br>
+                <b>Indexed to Inflation</b> — Check for public sector pensions that increase with inflation. Uncheck for fixed private sector pensions — these lose real value over time.<br>
+                <b>Survivor %</b> — % of pension paid to surviving spouse after pensioner's death. Common: 60% or 100%. Check your plan documents.
             </div>
         </details>
 
@@ -577,19 +670,22 @@
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Life Stages</summary>
             <div style="padding:6px 0 0 12px;">
                 <b style="color:#2c3e50;">Spending Stages</b><br>
-                <b>Slow-Go Age / %</b> — Age when spending decreases (less travel, activity). The target net goal is multiplied by this percentage from this age forward.<br>
-                <b>No-Go Age / %</b> — Age when spending decreases further (limited mobility). A second multiplier applied on top of Slow-Go.<br>
-                <b>Survivor Spending %</b> — After one spouse passes, the survivor's spending goal drops to this percentage of the couple's goal. Default 70% — fixed costs like housing remain but many variable costs drop. Applied on top of Slow-Go/No-Go multipliers.<br><br>
+                <b>Slow-Go Age / %</b> — Age when spending decreases. The spending goal is multiplied by this % from this age forward.<br>
+                <b>No-Go Age / %</b> — Age when spending decreases further. A second multiplier on top of Slow-Go.<br>
+                <b>Survivor Spending %</b> — After one spouse passes, the survivor's spending goal drops to this % of the couple's goal. Default 70%.<br><br>
 
                 <b style="color:#2c3e50;">RRSP Strategy</b><br>
-                <b>Enable RRSP Meltdown</b> — Forces larger RRSP withdrawals to fully deplete the RRSP by the target age. Excess net cash is swept to TFSA (up to room) then non-registered. Goal: avoid large forced RRIF withdrawals in later years when credits are smaller.<br>
-                <b>Meltdown Target Age</b> — The age by which the RRSP should be fully depleted. Typically 75 (before RRIF minimums accelerate significantly).<br>
-                <b>Equal RRSP Draw Split (50/50)</b> — RRSP draws are split evenly between spouses to keep both in lower tax brackets. Falls back to proportional when one RRSP is depleted.<br>
-                <b>Smooth Tax Rates</b> — Multi-pass optimization to equalize the effective tax rate across all retirement years. In low-rate years, pulls extra RRSP and shelters it in TFSA. Minimizes total lifetime tax. Recommended: on.<br>
-                <b>TFSA Bracket Opt (0=off)</b> — Maximum annual TFSA substitution for bracket optimization. If the RRSP draw would push you just above a tax bracket, this amount of RRSP draw is replaced with a tax-free TFSA draw. Set to $0 to disable.<br><br>
+                <b>Enable RRSP Meltdown</b> — Forces larger RRSP withdrawals to deplete the RRSP by the target age. Excess swept to TFSA then non-reg. Avoids large forced RRIF draws in later years.<br>
+                <b>Meltdown to Age</b> — Age by which RRSP should be fully depleted. Typically 75.<br>
+                <b>Equal RRSP Split (50/50)</b> — Splits RRSP draws evenly between spouses to keep both in lower tax brackets.<br>
+                <b>Smooth Tax Rates</b> — Multi-pass optimizer equalizing effective tax rates across retirement years. Minimizes total lifetime tax. Recommended: on.<br>
+                <b>TFSA Bracket Opt</b> — Maximum RRSP draw replaced with tax-free TFSA draw to avoid crossing a bracket threshold. Set $0 to disable.<br>
+                <b>RRIF Draw Strategy</b> — "As Needed" draws what's required to meet the spending goal plus meltdown. "Minimum Only" caps draws at the RRIF mandatory minimum after age 72 and supplements from TFSA/Non-Reg — useful for preserving the RRSP/RRIF as long as possible.<br><br>
 
                 <b style="color:#2c3e50;">Gap Year &amp; Survivor</b><br>
-                <b>Gap Year Target Rate %</b> — When Spouse 2 retires before Spouse 1, the calculator draws from Spouse 2's RRSP up to this effective tax rate during those gap years, sweeping the net proceeds to TFSA. Matches the meltdown rate for consistency (~12–13%). Only active when meltdown is enabled.
+                <b>Gap Year Target Rate %</b> — When Spouse 2 retires before Spouse 1, draws S2's RRSP up to this effective tax rate during gap years, sweeping the net to TFSA. ~12–13%. Only active when meltdown is enabled.<br>
+                <b>CPP Pension Sharing</b> — Both spouses 60+ can pool their CPP income and split it 50/50 to reduce combined tax. Requires both to be receiving CPP. Check this if one spouse has significantly higher CPP than the other.<br>
+                <b>Enable GIS</b> — Guaranteed Income Supplement. Tax-free monthly benefit for low-income OAS recipients 65+. Clawed back 50 cents per dollar of other income. 2026 max: ~$1,086/mo single, ~$654/mo per person for couples. Shown as a yellow-orange bar in the income chart.
             </div>
         </details>
 
@@ -597,95 +693,101 @@
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Benefits & Market</summary>
             <div style="padding:6px 0 0 12px;">
                 <b style="color:#2c3e50;">Tax Jurisdiction</b><br>
-                <b>Province</b> — Sets provincial tax brackets, basic personal amount, age amount, and pension income credit. All provinces except Quebec supported. Required — calculator will not run without it.<br>
-                <b>OAS Clawback Start</b> — Net income threshold above which OAS is recovered at 15 cents per dollar. 2026: $90,997.<br>
-                <b>Fed Age Amount</b> — Federal age amount tax credit (CRA line 30100). Available at 65+. Clawed back at 15% above ~$45,522. Updated via Sync to Current Year.<br><br>
+                <b>Province</b> — Sets provincial tax brackets, personal amount, age credit, and pension credit. All provinces except Quebec. Required.<br>
+                <b>OAS Clawback Start</b> — Income threshold above which OAS is recovered at 15¢/dollar. 2026: $90,997.<br>
+                <b>Fed Age Amount</b> — Federal age credit (CRA line 30100). Available 65+. Clawed back above ~$45,522. Update via Sync.<br>
+                <b>Provincial Health Premium</b> — ON and BC charge income-based health premiums (max ~$900/yr per person). Check if applicable to your province. Does not apply outside ON/BC.<br><br>
 
                 <b style="color:#2c3e50;">Government Benefits</b><br>
-                <b>Max CPP</b> — Maximum annual CPP retirement benefit at age 65 (2026: $18,091.80). Scaled by your CPP % of Maximum. Updated via Sync.<br>
-                <b>Max CPP2 Annual</b> — Maximum annual CPP2 (enhanced CPP) benefit at full 40-year maturity (2026: $3,466). Prorated by years of contribution since 2024. Updated via Sync.<br>
-                <b>Max OAS</b> — Maximum annual OAS benefit (2026: $8,907.72). Updated via Sync.<br><br>
+                <b>Max CPP</b> — Maximum annual CPP at age 65 (2026: $18,091.80). Scaled by your CPP % of Max. Update via Sync.<br>
+                <b>Max CPP2 Annual</b> — Maximum CPP2 (enhanced CPP) at 40-year maturity (2026: $3,466). Prorated by contribution years since 2024. Update via Sync.<br>
+                <b>Max OAS</b> — Maximum annual OAS (2026: $8,907.72). Update via Sync.<br><br>
 
                 <b style="color:#2c3e50;">Goals &amp; Returns</b><br>
-                <b>Target Net Goal</b> — Desired annual after-tax household spending in retirement, in today's dollars. Inflation-adjusted each year. Reduced by Slow-Go/No-Go/Survivor multipliers.<br>
-                <b>Pre-Retirement Return %</b> — Expected annual investment return while still working. Compounded monthly.<br>
-                <b>Post-Retirement Return %</b> — Expected annual investment return during retirement. Typically lower than pre-retirement.<br>
-                <b>Inflation %</b> — Annual inflation rate. Indexes spending, CPP/OAS, tax brackets, contributions, TFSA room, and LIRA thresholds.<br><br>
+                <b>Target Net Goal</b> — Desired annual after-tax household spending in today's dollars. Inflation-adjusted each year. Reduced by life stage multipliers.<br>
+                <b>Pre-Ret Return %</b> — Expected annual return while working. Compounded monthly.<br>
+                <b>Post-Ret Return %</b> — Expected annual return in retirement. Typically lower than pre-retirement.<br>
+                <b>Inflation %</b> — Annual inflation rate. Indexes spending, benefits, brackets, contributions, TFSA room, and LIRA thresholds. Bank of Canada target: 2%.<br><br>
 
                 <b style="color:#2c3e50;">TFSA &amp; System</b><br>
-                <b>System Year</b> — The base year for tax values. Defaults to current year. Tax brackets are 2025 base, indexed forward from this year.<br>
-                <b>TFSA Room / yr / Person</b> — Annual new TFSA contribution room per person (2026: $7,000). Accrues each year per living spouse.<br>
-                <b>Current TFSA Room (S1/S2)</b> — Current unused TFSA contribution room per spouse. Check CRA My Account for your exact number. Each spouse's room is tracked independently.<br>
-                <b>Cap Gains Inclusion %</b> — Percentage of capital gains that is taxable on non-registered withdrawals (2026: 50%).<br><br>
+                <b>System Year</b> — Base year for tax values. Change only if modelling from a future starting point.<br>
+                <b>TFSA Room / yr / Person</b> — Annual new TFSA room per person (2026: $7,000). Accrues per living spouse.<br>
+                <b>TFSA Room (S1/S2)</b> — Current unused TFSA room per spouse. Check CRA My Account. Tracked independently per spouse.<br>
+                <b>Cap Gains %</b> — % of capital gains taxable on non-registered withdrawals (2026: 50%).<br><br>
 
                 <b style="color:#2c3e50;">LIRA Thresholds</b><br>
-                <b>Small Amt &lt;65</b> — If a LIRA balance falls below this amount while the owner is under 65, the full balance unlocks to RRSP immediately. 2026: $14,920. Indexed by inflation in the projection. Updated via Sync.<br>
-                <b>Small Amt 65+</b> — Same threshold for ages 65 and older. 2026: $29,840. Updated via Sync.
+                <b>Small Amt &lt;65</b> — LIRA balance below this while under 65 triggers full immediate unlock to RRSP. 2026: $14,920. Inflation-indexed. Update via Sync.<br>
+                <b>Small Amt 65+</b> — Same threshold for 65+. 2026: $29,840. Update via Sync.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Home Equity</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Current Home Value</b> — Today's estimated market value of your primary residence. Grows annually by your inflation rate. Used for the NW chart "Include Home Equity" toggle and for sell/downsize events. Set to $0 if not a homeowner.<br><br>
-
-                <b>Option A — Sell</b><br>
-                <b>Sell at Age</b> — Age (Spouse 1) when the home is sold. At this age, the full inflation-adjusted home value is injected as a lump sum into investments (TFSA up to room → RRSP → Non-Reg). Set to 0 to disable.<br>
-                <b>Annual Rent After (today's $)</b> — Ongoing annual rent cost in today's dollars after selling. Added on top of the Target Net Goal each year from the sell age forward, inflation-adjusted. Set to $0 if moving in with family or otherwise rent-free.<br><br>
-
-                <b>Option B — Downsize</b><br>
-                <b>Downsize at Age</b> — Age (Spouse 1) when you move to a smaller home. Set to 0 to disable.<br>
-                <b>Net Proceeds</b> — Cash pocketed from the downsize (old home sale price minus new home cost), in today's dollars. Inflation-adjusted at the downsize year and injected into investments (TFSA → RRSP → Non-Reg). The remaining home value (current value minus proceeds) continues growing by inflation on the NW chart.<br><br>
-
-                <b>Note:</b> Both options can be used together (e.g. downsize at 70, sell at 85). Each fires independently at its age. The NW Over Time chart has an "Include Home Equity" toggle (default on) showing the home's value as an orange area over time.
+                <b>Current Home Value</b> — Today's market value of your primary home. Grows by inflation annually. Used for NW chart and sell/downsize events.<br><br>
+                <b>Option A — Sell at Age</b> — Full inflation-adjusted home value injected into investments (TFSA → RRSP → Non-Reg) at that age. Annual rent added to spending goal from sell age onward.<br>
+                <b>Option B — Downsize at Age</b> — Net proceeds (old minus new home cost) injected as a lump sum. Remaining home value continues growing on the NW chart.<br><br>
+                Both options can be used together (e.g. downsize at 70, sell at 85). The NW chart has an "Include Home Equity" toggle (default on).
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Lump Sums &amp; Contribution Boost</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Lump Sums</b> — Up to two one-time cash injections (inheritance, bonus, property proceeds). Triggered at Spouse 1's specified age. Allocated: TFSA (up to available room) → RRSP (up to cap) → Non-Reg. Split 50/50 between spouses. Set amount to 0 to disable. RRSP room is not tracked — verify your available room via CRA My Account before assuming it can absorb a lump sum.<br>
-                <b>Max to RRSP (0=unlimited)</b> — Cap the RRSP portion of the lump sum. Useful if your RRSP room is limited. Excess goes to Non-Reg.<br><br>
-                <b>Contribution Boost</b> — Additional monthly RRSP and/or TFSA contributions per spouse, starting at Spouse 1's specified age. Added on top of base contributions. Both spouses activate at the same age. Useful to model mortgage payoff, children moving out, or a raise.
+                <b>Lump Sums</b> — Up to two one-time injections (inheritance, bonus, property sale). Triggered at Spouse 1's age. Allocated: TFSA (up to room) → RRSP (up to cap) → Non-Reg. Split 50/50 between spouses.<br>
+                <b>Max to RRSP</b> — Cap the RRSP portion. Excess goes to Non-Reg. Verify RRSP room via CRA My Account.<br><br>
+                <b>Contribution Boost</b> — Additional monthly RRSP/TFSA per spouse from a specified age. Useful for mortgage payoff, children moving out, or a raise.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Solver Buttons</summary>
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Buttons &amp; Solvers</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Solve for Retirement Age</b> — Tests all combinations of both spouses' retirement ages (up to age 75) and returns the top 10 earliest combinations where money does not run out. Sorted by lowest combined retirement age.<br>
-                <b>Solve for Target Net Goal</b> — Binary searches for the maximum sustainable annual spending given current inputs. Shows the highest goal where the portfolio survives to the plan age.<br>
-                <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra monthly RRSP contribution (Spouse 1) needed to reach the target net goal.<br>
-                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 combinations of CPP and OAS start ages for both spouses to maximize final portfolio value. Note: solvers run without tax smoothing for speed — re-enable smoothing and recalculate after applying the result.<br>
-                <b>Solve for Return %</b> — Finds the minimum post-retirement return rate (and corresponding pre-retirement rate, preserving your current spread) needed for the portfolio to survive to the plan age. Useful for stress-testing — if the minimum required return is near or above your expected return, the plan needs adjustment.
+                <b>Recalculate Strategy</b> — Runs the full projection with current inputs. Buttons appear both above and below the input cards.<br>
+                <b>Sync to Current Year</b> — Updates CPP, OAS, CPP2, Fed Age Amount, and LIRA thresholds to current year values. For future years, prompts you to enter the updated amounts.<br>
+                <b>Save Setup</b> — Saves all inputs to browser local storage. Restored automatically on next visit.<br><br>
+                <b>Solve for Retirement Age</b> — Finds the top 10 earliest retirement age combinations where the portfolio survives.<br>
+                <b>Solve for Target Net Goal</b> — Finds the maximum sustainable annual spending with current inputs.<br>
+                <b>Solve for Additional Monthly RRSP</b> — Finds the minimum extra RRSP contribution needed to reach your spending goal.<br>
+                <b>Solve for Optimal CPP/OAS</b> — Tests all 4,356 age combinations to maximize final portfolio. Solvers run without smoothing for speed — re-enable and recalculate after applying.<br>
+                <b>Solve for Return %</b> — Finds the minimum post-retirement return needed (preserving your pre/post spread). Shows current vs minimum side by side with an Apply button to de-risk your portfolio. Includes 0.25% buffer.<br>
+                <b>Inflation Sensitivity</b> — Table showing final NW at inflation rates from 1% to 4%. Your current rate is highlighted with a ◀.<br>
+                <b>Return Sensitivity</b> — Table showing final NW at post-retirement returns from 1% to 6%, preserving the pre/post spread. Current rate highlighted.<br>
+                <b>🖨 Print Report</b> — Opens a clean printable summary with key stats, inputs, and a year-by-year retirement table. Includes a "Print / Save PDF" button.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
-            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Charts &amp; Tabs</summary>
+            <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Charts, Tabs &amp; UI</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Setup &amp; Projections</b> — Main tab with inputs and the year-by-year ledger table. Combined view shows pooled totals; Split view shows per-spouse columns including RRSP, LIRA, TFSA, CPP, OAS, and pension.<br>
-                <b>Charts</b> — Two charts: Retirement Income Breakdown (stacked bars per year showing RRSP/LIRA/TFSA/CPP/OAS/pension source) and Net Worth Over Time (stacked area). Both have Combined/Split toggles. NW chart has an Include Home Equity toggle.<br>
-                <b>Compare</b> — Save two named scenarios and overlay their net worth lines on a single chart.<br>
-                <b>Action Plan</b> — Year-by-year withdrawal instructions. Shows exactly what to draw, where to put the cash, CPP/OAS income, tax owed, and TFSA sweeps. Yellow rows indicate LIRA unlock events with specific instructions.<br>
-                <b>Monte Carlo</b> — Runs 500+ simulations with randomized annual returns (based on your return and standard deviation inputs) to estimate probability of not running out of money. Two-pass smoothing per simulation.<br>
-                <b>Help</b> — This tab.
+                <b>Setup &amp; Projections</b> — Main tab with inputs and the year-by-year ledger. Toggle <b>Combined/Split</b> to see per-spouse columns. Toggle <b>Nominal/Real</b> to deflate all dollar values to today's purchasing power.<br>
+                <b>Charts</b> — Income Breakdown (stacked bars: RRSP/LIRA/TFSA/Non-Reg/CPP/OAS/GIS/Pension per year) and Net Worth Over Time (stacked area). Both have Combined/Split toggles. NW chart has Include Home Equity toggle.<br>
+                <b>Compare</b> — Enter a description in the text field, then save two scenarios to overlay their net worth lines. The label from the description field becomes the scenario name.<br>
+                <b>Action Plan</b> — Year-by-year withdrawal instructions. Yellow rows = LIRA unlock events with specific action required.<br>
+                <b>Monte Carlo</b> — 500+ simulations with randomized returns to estimate probability of not running out of money.<br>
+                <b>Help</b> — This tab.<br><br>
+                <b>🌙 Dark Mode</b> — Toggle button top-right. Preference saved between sessions.<br>
+                <b>⚠ Shortfall Alert</b> — Red banner appears when the portfolio goes negative, showing the exact age. Disappears when the plan is viable.<br>
+                <b>✕ Dismiss Disclaimer</b> — Close the disclaimer permanently. Won't show again on return visits.<br>
+                <b>ⓘ Tooltips</b> — Blue info icons on all input fields. Hover to see a one-line explanation without opening Help.
             </div>
         </details>
 
         <details style="margin-bottom:10px;">
             <summary style="cursor:pointer; font-weight:bold; color:#2980b9;">Assumptions &amp; Calculation Rules</summary>
             <div style="padding:6px 0 0 12px;">
-                <b>Tax engine</b> — Federal + provincial progressive brackets, indexed by inflation each year. Federal lowest rate 14.5% (2025+). CPP, OAS, RRSP/RRIF draws, employer pension, and LIRA draws are all fully taxable. TFSA withdrawals are tax-free. Ontario surtax modelled. Quebec excluded.<br><br>
-                <b>Income splitting</b> — Spouses 65+ can pool eligible pension income 50/50 for tax. Includes RRIF draws (65+), employer pension (any age), CPP/OAS. CPP pension sharing not modelled separately.<br><br>
-                <b>Withdrawal order</b> — RRSP/RRIF first → TFSA when RRSP depleted or bracket opt triggered → Non-Reg last. LIRA draws happen before retirement draws and flow into RRSP.<br><br>
-                <b>RRIF minimums</b> — Mandatory at 72+. Starting at 5.28% of Jan 1 balance, rising to 20% at 95+. Enforced even above the spending goal — excess goes to TFSA/Non-Reg.<br><br>
-                <b>LIF maximums</b> — Annual maximum withdrawal from a LIF (LIRA in drawdown phase) per CRA schedule. Ranges from ~6.4% at age 54 to 20% at 95+. Calculator always draws the maximum to drain the LIRA as fast as possible.<br><br>
-                <b>CPP2</b> — Enhanced CPP. Auto-calculated from contribution years since 2024. Same early/late adjustment as CPP. Maximum benefit prorated by years ÷ 40.<br><br>
-                <b>OAS at 75</b> — OAS automatically increases by 10% at age 75 per current rules.<br><br>
-                <b>Smoothing</b> — Three-pass: baseline rates → compute average → re-run with adjusted draws targeting that average. Reduces large swings in tax rate between meltdown years and post-meltdown years.<br><br>
-                <b>Survivor years</b> — On death (plan age exceeded): all assets roll to survivor tax-free. Survivor taxed as single filer — no income splitting. CPP/OAS stop. Survivor pension % applies to employer pension. Spending goal × survivor % × life stage multipliers.<br><br>
-                <b>Not modelled</b> — Employment income during retirement, provincial health premiums (ON/BC), GIS (Guaranteed Income Supplement), CPP death benefit, probate fees, estate costs. Net worth mixes pre-tax RRSP and post-tax TFSA dollars — actual spendable wealth is lower than shown.
+                <b>Tax engine</b> — Federal + provincial progressive brackets indexed by inflation. Federal lowest rate 14.5% (2025+). CPP, OAS, RRSP/RRIF draws, employer pension, and LIRA draws are fully taxable. TFSA and GIS are tax-free. Ontario surtax modelled. Quebec excluded.<br><br>
+                <b>Income splitting</b> — Both spouses 65+ can pool eligible income 50/50. Includes RRIF draws, employer pension, CPP/OAS. CPP Pension Sharing separately available as a checkbox.<br><br>
+                <b>Withdrawal order</b> — RRSP/RRIF → TFSA (when depleted or bracket opt triggered) → Non-Reg. LIRA draws happen before retirement draws and flow into RRSP.<br><br>
+                <b>RRSP contribution room</b> — Tracked per spouse when set. Spousal RRSP contributions consume the contributor's room. Set to 0 for unlimited (default).<br><br>
+                <b>RRIF minimums</b> — Mandatory at 72+. Starting at 5.28% rising to 20% at 95+. Enforced above the spending goal — excess goes to TFSA/Non-Reg.<br><br>
+                <b>LIF maximums</b> — CRA schedule ~6.4% at 54 rising to 20% at 95+. Calculator always draws the maximum to drain the LIRA as fast as possible.<br><br>
+                <b>CPP2</b> — Auto-calculated from contribution years since 2024. Same early/late adjustments as CPP. Prorated by years ÷ 40.<br><br>
+                <b>GIS</b> — Tax-free. Clawed back 50¢/dollar of other income. Calculated before the RRSP solver so the solver draws less RRSP when GIS covers part of the goal.<br><br>
+                <b>Provincial health premium</b> — ON/BC only. Income-based, max ~$900/yr per person inflation-indexed. Added to tax after the RRSP solver.<br><br>
+                <b>Smoothing</b> — Three-pass: baseline rates → target average → re-run adjusted. Reduces tax rate swings between meltdown and post-meltdown years.<br><br>
+                <b>Survivor years</b> — On death: all assets roll to survivor tax-free. Single filer — no splitting. CPP/OAS stop. Survivor pension % applies. Spending goal × survivor % × life stage multipliers.<br><br>
+                <b>Not modelled</b> — Employment income during retirement, CPP death benefit, probate fees, estate costs. Net worth mixes pre-tax RRSP and post-tax TFSA dollars — actual spendable wealth is lower than shown.
             </div>
         </details>
 
@@ -736,6 +838,19 @@ function toggleSpouse(n) {
 
     updateNames();
     calculate();
+}
+
+function dismissDisclaimer() {
+    document.getElementById('disclaimer_box').style.display = 'none';
+    localStorage.setItem('disclaimer_dismissed', '1');
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('dark_btn');
+    const isDark = document.body.classList.contains('dark-mode');
+    btn.textContent = isDark ? '☀ Light' : '🌙 Dark';
+    localStorage.setItem('dark_mode', isDark ? '1' : '0');
 }
 
 // ─── Tab switching ──────────────────────────────────────────────────────────
@@ -1193,7 +1308,9 @@ function solveRetirementDraw(netGoal, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, a
 function projectYears(params, returnOverride) {
     const {
         s1_age, s1_retire, s1_rrsp, s1_lira, s1_lira_prov, s1_tfsa, s1_rrsp_c, s1_tfsa_c, s1_cpp_age, s1_cpp_pct, s1_oas_age, s1_cpp2_yrs,
+        s1_rrsp_room, s1_spousal_rrsp,
         s2_age, s2_retire, s2_rrsp, s2_lira, s2_lira_prov, s2_tfsa, s2_rrsp_c, s2_tfsa_c, s2_cpp_age, s2_cpp_pct, s2_oas_age, s2_cpp2_yrs,
+        s2_rrsp_room, s2_spousal_rrsp,
         s1_nonreg, s2_nonreg,
         infl, rPre, rPost, isMelt, equalDraw, smoothTax, meltAge, MAX_CPP, MAX_CPP2, MAX_OAS, OAS_CLAWBACK,
         s1_pension_amt, s1_pension_age, s1_pension_indexed, s1_pension_survivor,
@@ -1201,6 +1318,7 @@ function projectYears(params, returnOverride) {
         slowAge, slowPct, noAge, noPct, netGoalBase, maxYrs,
         tfsaRoomPerYr, tfsaRoomCurrentS1, tfsaRoomCurrentS2, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
         liraSmallUnder65, liraSmallOver65,
+        cppSharing, gisEnabled, rrifStrategy, provHealthPremium,
         ls1_amt, ls1_age, ls1_rrsp_cap, ls2_amt, ls2_age, ls2_rrsp_cap,
         boostAge, s1_rrsp_boost, s1_tfsa_boost, s2_rrsp_boost, s2_tfsa_boost,
         homeValue, homeSellAge, homeRent, homeDownsizeAge, homeDownsizeProceeds,
@@ -1233,6 +1351,8 @@ function projectYears(params, returnOverride) {
 
     let tfsaAvailableRoomS1 = tfsaRoomCurrentS1 || 0;
     let tfsaAvailableRoomS2 = tfsaRoomCurrentS2 || 0;
+    let rrspRoomS1 = s1_rrsp_room || 0; // 0 = unlimited
+    let rrspRoomS2 = s2_rrsp_room || 0;
     // Helper: combined room (for backward compat with code that uses tfsaAvailableRoom)
     const getTFSARoom = () => tfsaAvailableRoomS1 + tfsaAvailableRoomS2;
     const setTFSARoom = (amt) => {
@@ -1468,7 +1588,15 @@ function projectYears(params, returnOverride) {
         // Monthly contributions + compounding
         for (let mon = 0; mon < 12; mon++) {
             if (s1Alive && a1 < s1_retire) {
-                r.rrsp += r_rrsp_mo * inf_mult;
+                // Regular RRSP — capped by room if room is set
+                const s1RRSPContrib = r_rrsp_mo * inf_mult;
+                const s1RRSPActual = rrspRoomS1 > 0 ? Math.min(s1RRSPContrib, rrspRoomS1) : s1RRSPContrib;
+                // Spousal RRSP — goes into S2's RRSP, drawn from S1's room
+                const s1SpousalMo = (s1_spousal_rrsp || 0) * inf_mult;
+                const s1SpousalActual = rrspRoomS1 > 0 ? Math.min(s1SpousalMo, Math.max(0, rrspRoomS1 - s1RRSPActual)) : s1SpousalMo;
+                r.rrsp += s1RRSPActual;
+                m.rrsp += s1SpousalActual; // spousal goes to S2's RRSP
+                if (rrspRoomS1 > 0) rrspRoomS1 = Math.max(0, rrspRoomS1 - s1RRSPActual - s1SpousalActual);
                 const tfsaAdd = Math.min(r_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS1));
                 const nonregAdd = (r_tfsa_mo * inf_mult) - tfsaAdd;
                 r.tfsa += tfsaAdd;
@@ -1477,7 +1605,13 @@ function projectYears(params, returnOverride) {
                 r.nonregCost += nonregAdd;
             }
             if (s2Alive && a2 < s2_retire) {
-                m.rrsp += m_rrsp_mo * inf_mult;
+                const s2RRSPContrib = m_rrsp_mo * inf_mult;
+                const s2RRSPActual = rrspRoomS2 > 0 ? Math.min(s2RRSPContrib, rrspRoomS2) : s2RRSPContrib;
+                const s2SpousalMo = (s2_spousal_rrsp || 0) * inf_mult;
+                const s2SpousalActual = rrspRoomS2 > 0 ? Math.min(s2SpousalMo, Math.max(0, rrspRoomS2 - s2RRSPActual)) : s2SpousalMo;
+                m.rrsp += s2RRSPActual;
+                r.rrsp += s2SpousalActual; // spousal goes to S1's RRSP
+                if (rrspRoomS2 > 0) rrspRoomS2 = Math.max(0, rrspRoomS2 - s2RRSPActual - s2SpousalActual);
                 const tfsaAdd = Math.min(m_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS2));
                 const nonregAdd = (m_tfsa_mo * inf_mult) - tfsaAdd;
                 m.tfsa += tfsaAdd;
@@ -1517,6 +1651,39 @@ function projectYears(params, returnOverride) {
         }
 
         let annualPensions = r_cpp + r_oas + m_cpp + m_oas + r_pension + m_pension;
+
+        // ── CPP Pension Sharing ──
+        // Pool both CPP and split to minimize combined tax (both must be 60+ receiving CPP)
+        let r_cpp_tax = r_cpp, m_cpp_tax = m_cpp;
+        if (cppSharing && s1Alive && s2Alive && r_cpp > 0 && m_cpp > 0 && a1 >= 60 && a2 >= 60) {
+            const totalCPP = r_cpp + m_cpp;
+            r_cpp_tax = totalCPP / 2;
+            m_cpp_tax = totalCPP / 2;
+        }
+
+        // ── GIS (Guaranteed Income Supplement) ──
+        // Tax-free. Reduces 50 cents per dollar of other income above zero.
+        // 2026 max: single ~$13,032/yr, couple ~$7,848/yr each. Indexed by inflation.
+        let r_gis = 0, m_gis = 0;
+        if (gisEnabled) {
+            const maxGIS_single = 13032 * inf_mult;
+            const maxGIS_couple = 7848 * inf_mult;
+            const calcGIS = (age, otherIncome, isCouple) => {
+                if (age < 65) return 0;
+                const maxGIS = isCouple ? maxGIS_couple : maxGIS_single;
+                return Math.max(0, maxGIS - otherIncome * 0.5);
+            };
+            if (s1Alive && a1 >= 65) {
+                const s1OtherIncome = r_cpp + r_pension;
+                r_gis = calcGIS(a1, s1OtherIncome, s2Alive && a2 >= 65);
+            }
+            if (s2Alive && a2 >= 65) {
+                const s2OtherIncome = m_cpp + m_pension;
+                m_gis = calcGIS(a2, s2OtherIncome, s1Alive && a1 >= 65);
+            }
+            // Do NOT add GIS to annualPensions here — it's applied AFTER the solver
+            // so the solver correctly draws less RRSP when GIS covers part of the goal
+        }
 
         // ── Life stage ──
         const bothAlive = s1Alive && s2Alive;
@@ -1613,7 +1780,7 @@ function projectYears(params, returnOverride) {
 
             // ── Tax rate smoothing: increase draw in low-rate years ──
             if (targetTaxRate && totalRRSP > 0 && minRRSPDraw > 0) {
-                const testTax = calcCombinedTax(minRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+                const testTax = calcCombinedTax(minRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
                 const testGross = minRRSPDraw + annualPensions;
                 const testRate = testGross > 0 ? testTax / testGross : 0;
 
@@ -1622,7 +1789,7 @@ function projectYears(params, returnOverride) {
                     let lo = minRRSPDraw, hi = Math.min(totalRRSP, minRRSPDraw * 5);
                     for (let i = 0; i < 25; i++) {
                         const mid = (lo + hi) / 2;
-                        const tax = calcCombinedTax(mid, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+                        const tax = calcCombinedTax(mid, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
                         const gross = mid + annualPensions;
                         const rate = gross > 0 ? tax / gross : 0;
                         if (rate < targetTaxRate) lo = mid; else hi = mid;
@@ -1633,8 +1800,10 @@ function projectYears(params, returnOverride) {
             }
 
             // ── Solve for needed RRSP draw (includes pensions in tax) ──
+            // Reduce netGoal by GIS since it provides tax-free income outside the solver
+            const netGoalForSolver = Math.max(0, netGoal - r_gis - m_gis);
             const result = solveRetirementDraw(
-                netGoal, r_cpp, r_oas, m_cpp, m_oas,
+                netGoalForSolver, r_cpp_tax, r_oas, m_cpp_tax, m_oas,
                 r_drawRatio, tax_a1, tax_a2, inf_mult,
                 minRRSPDraw, OAS_CLAWBACK, prov, singleFiler, r_pension, m_pension
             );
@@ -1642,6 +1811,23 @@ function projectYears(params, returnOverride) {
             rrspDrawAmt = result.rrspDraw;
             annualTax   = result.tax;
             oasClawback = result.oasClawback;
+
+            // Add GIS to annualPensions AFTER solver — tax-free cash flow
+            annualPensions += r_gis + m_gis;
+
+            // RRIF Minimum-Only strategy: cap RRSP draw at minimum, cover rest from TFSA
+            if (rrifStrategy === 'minimum' && rrspDrawAmt > minRRSPDraw && minRRSPDraw > 0) {
+                rrspDrawAmt = minRRSPDraw;
+                annualTax = calcCombinedTax(minRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+            }
+
+            // Provincial health premium (ON/BC, income-based, max ~$900/yr per person)
+            if (provHealthPremium && (prov === 'ON' || prov === 'BC')) {
+                const livingCount = (s1Alive ? 1 : 0) + (s2Alive ? 1 : 0) || 1;
+                const perPersonIncome = (rrspDrawAmt + r_cpp + r_oas + m_cpp + m_oas + r_pension + m_pension) / livingCount;
+                const premiumPer = Math.min(900 * inf_mult, Math.max(0, (perPersonIncome - 20000 * inf_mult) * 0.06));
+                annualTax += premiumPer * livingCount;
+            }
 
             // ── TFSA bracket optimization: substitute TFSA for RRSP near bracket boundaries ──
             // Only apply when RRSP draw exceeds the meltdown/RRIF minimum — don't undermine meltdown
@@ -1654,11 +1840,11 @@ function projectYears(params, returnOverride) {
                 // Try $500 increments, find where marginal savings rate drops (bracket crossed)
                 let bestSwap = 0, prevMarginalRate = 0;
                 for (let swap = 500; swap <= maxSwap; swap += 500) {
-                    const newTax = calcCombinedTax(rrspDrawAmt - swap, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+                    const newTax = calcCombinedTax(rrspDrawAmt - swap, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
                     const thisSavings = baseTax - newTax;
                     // Marginal savings rate for this $500 chunk
                     const prevTax = swap > 500
-                        ? calcCombinedTax(rrspDrawAmt - swap + 500, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension)
+                        ? calcCombinedTax(rrspDrawAmt - swap + 500, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension)
                         : baseTax;
                     const marginalSavings = prevTax - newTax;
                     const marginalRate = marginalSavings / 500;
@@ -1674,7 +1860,7 @@ function projectYears(params, returnOverride) {
                 }
 
                 if (bestSwap > 0) {
-                    const newTax = calcCombinedTax(rrspDrawAmt - bestSwap, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+                    const newTax = calcCombinedTax(rrspDrawAmt - bestSwap, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
                     const savings = baseTax - newTax;
                     if (savings > 25) {
                         rrspDrawAmt -= bestSwap;
@@ -1719,9 +1905,9 @@ function projectYears(params, returnOverride) {
                 // RRSP depleted — bracket opt is moot, recalculate everything
                 tfsaDrawAmt = 0;
                 // Recalculate tax on the actual (lower) RRSP draw + pensions
-                annualTax = calcCombinedTax(actualRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+                annualTax = calcCombinedTax(actualRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
                 // Recalculate OAS clawback on lower income
-                oasClawback = calcOASClawbackBoth(actualRRSPDraw, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, tax_a1, tax_a2, OAS_CLAWBACK, inf_mult, singleFiler, r_pension, m_pension);
+                oasClawback = calcOASClawbackBoth(actualRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, OAS_CLAWBACK, inf_mult, singleFiler, r_pension, m_pension);
 
                 // Net from taxable sources
                 const netFromTaxable = actualRRSPDraw + annualPensions - annualTax - oasClawback;
@@ -1818,7 +2004,7 @@ function projectYears(params, returnOverride) {
             totalNonReg, nonRegCapGainsTax,
             annualPensions, oasClawback,
             totalCPP: r_cpp + m_cpp, totalOAS: r_oas + m_oas,
-            r_cpp, m_cpp, r_oas, m_oas, r_pension, m_pension,
+            r_cpp, m_cpp, r_oas, m_oas, r_pension, m_pension, r_gis, m_gis,
             rrspDrawAmt, tfsaDrawAmt, nonRegDrawAmt, yearShortfall,
             r_rrspDraw, m_rrspDraw, r_tfsaDraw, m_tfsaDraw, r_nonregDraw, m_nonregDraw,
             sweepToTFSA, sweepToNonReg,
@@ -1827,6 +2013,7 @@ function projectYears(params, returnOverride) {
             netGoalDisp: (isFullyRetired || isSurvivorYear) ? netGoalBase * inf_mult * spendMultDisp + currentRentDisp : 0,
             isSomeoneRetired: isFullyRetired || isSurvivorYear,
             isMeltRow: isMelt && (isFullyRetired || isSurvivorYear) && a1 <= meltAge,
+            inf_mult,
             s1Alive, s2Alive,
             liraActionNotes: [...liraActionNotes],
             liraUnlockAmt,
@@ -1856,8 +2043,13 @@ function renderLedger(rows) {
     let peak = 0;
 
     const mode = getLedgerMode();
+    const valMode = (document.querySelector('input[name="ledger_values"]:checked') || {}).value || 'nominal';
     const s1 = document.getElementById('s1_name').value || 'Spouse 1';
     const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+
+    // Deflation helper — divides by inf_mult when in real mode
+    const defl = (val, inf) => valMode === 'real' ? val / (inf || 1) : val;
+    const fm = (val, inf) => formatMoney(defl(val, inf));
 
     // Dynamic header
     if (mode === 'split') {
@@ -1898,15 +2090,16 @@ function renderLedger(rows) {
 
         const taxableIncome = d.rrspDrawAmt + d.nonRegDrawAmt + d.annualPensions;
         const taxPct = taxableIncome > 0 ? ((d.annualTax / taxableIncome) * 100).toFixed(1) + "%" : "—";
-        const taxDisp = d.annualTax > 0 ? `${formatMoney(d.annualTax)} (${taxPct})` : "$0";
-        const clawDisp = d.oasClawback > 0 ? `<span style="color:#e67e22;font-weight:bold">${formatMoney(d.oasClawback)}</span>` : "—";
-        const pcDisp = d.pensionCredit > 0 ? formatMoney(d.pensionCredit) : "—";
+        const inf = d.inf_mult || 1;
+        const taxDisp = d.annualTax > 0 ? `${fm(d.annualTax, inf)} (${taxPct})` : "$0";
+        const clawDisp = d.oasClawback > 0 ? `<span style="color:#e67e22;font-weight:bold">${fm(d.oasClawback, inf)}</span>` : "—";
+        const pcDisp = d.pensionCredit > 0 ? fm(d.pensionCredit, inf) : "—";
         const nonregDisp = d.totalNonReg > 0
-            ? `<span style="color:#8e44ad;font-weight:bold">${formatMoney(d.totalNonReg)}</span>`
+            ? `<span style="color:#8e44ad;font-weight:bold">${fm(d.totalNonReg, inf)}</span>`
             : "—";
-        const rrifDisp = d.rrifMinDisplay > 0 ? formatMoney(d.rrifMinDisplay) : "—";
+        const rrifDisp = d.rrifMinDisplay > 0 ? fm(d.rrifMinDisplay, inf) : "—";
         const tfsaDrawDisp = d.tfsaDrawAmt > 0
-            ? `<span style="color:#16a085;font-weight:bold">${formatMoney(d.tfsaDrawAmt)}</span>`
+            ? `<span style="color:#16a085;font-weight:bold">${fm(d.tfsaDrawAmt, inf)}</span>`
             : "—";
 
         if (d.totalNonReg > 0) row.classList.add("has-nonreg");
@@ -1915,22 +2108,22 @@ function renderLedger(rows) {
             row.innerHTML = `
                 <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
                 <td>${d.stage}</td>
-                <td>${formatMoney(d.r_rrsp)}</td>
-                <td>${formatMoney(d.m_rrsp)}</td>
-                <td>${d.r_lira > 0 ? formatMoney(d.r_lira) : '<span style="color:#ccc;">—</span>'}</td>
-                <td>${d.m_lira > 0 ? formatMoney(d.m_lira) : '<span style="color:#ccc;">—</span>'}</td>
-                <td>${formatMoney(d.r_tfsa)}</td>
-                <td>${formatMoney(d.m_tfsa)}</td>
+                <td>${fm(d.r_rrsp, inf)}</td>
+                <td>${fm(d.m_rrsp, inf)}</td>
+                <td>${d.r_lira > 0 ? fm(d.r_lira, inf) : '<span style="color:#ccc;">—</span>'}</td>
+                <td>${d.m_lira > 0 ? fm(d.m_lira, inf) : '<span style="color:#ccc;">—</span>'}</td>
+                <td>${fm(d.r_tfsa, inf)}</td>
+                <td>${fm(d.m_tfsa, inf)}</td>
                 <td class="nonreg-col">${nonregDisp}</td>
-                <td>${formatMoney(d.annualPensions)}</td>
+                <td>${fm(d.annualPensions, inf)}</td>
                 <td>${clawDisp}</td>
-                <td>${formatMoney(d.netGoalDisp)}</td>
-                <td>${formatMoney(d.rrspDrawAmt)}</td>
+                <td>${fm(d.netGoalDisp, inf)}</td>
+                <td>${fm(d.rrspDrawAmt, inf)}</td>
                 <td>${tfsaDrawDisp}</td>
                 <td>${taxDisp}</td>
                 <td>${pcDisp}</td>
                 <td>${rrifDisp}</td>
-                <td>${formatMoney(d.nw)}</td>
+                <td>${fm(d.nw, inf)}</td>
             `;
         } else {
             const totalRRSP = d.r_rrsp + d.m_rrsp;
@@ -1938,18 +2131,18 @@ function renderLedger(rows) {
             row.innerHTML = `
                 <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
                 <td>${d.stage}</td>
-                <td>${formatMoney(totalRRSP)}</td>
-                <td>${formatMoney(totalTFSA)}</td>
+                <td>${fm(totalRRSP, inf)}</td>
+                <td>${fm(totalTFSA, inf)}</td>
                 <td class="nonreg-col">${nonregDisp}</td>
-                <td>${formatMoney(d.annualPensions)}</td>
+                <td>${fm(d.annualPensions, inf)}</td>
                 <td>${clawDisp}</td>
-                <td>${formatMoney(d.netGoalDisp)}</td>
-                <td>${formatMoney(d.rrspDrawAmt)}</td>
+                <td>${fm(d.netGoalDisp, inf)}</td>
+                <td>${fm(d.rrspDrawAmt, inf)}</td>
                 <td>${tfsaDrawDisp}</td>
                 <td>${taxDisp}</td>
                 <td>${pcDisp}</td>
                 <td>${rrifDisp}</td>
-                <td>${formatMoney(d.nw)}</td>
+                <td>${fm(d.nw, inf)}</td>
             `;
         }
     }
@@ -1980,6 +2173,8 @@ function buildParams() {
         s1_nonreg: s1Active ? v('s1_nonreg_b') : 0,
         s1_rrsp_c: s1Active ? v('s1_rrsp_c') : 0,
         s1_tfsa_c: s1Active ? v('s1_tfsa_c') : 0,
+        s1_rrsp_room: s1Active ? v('s1_rrsp_room') : 0,
+        s1_spousal_rrsp: s1Active ? v('s1_spousal_rrsp') : 0,
         s1_oas_age: Math.min(70, Math.max(65, v('s1_oas_age'))),
         s1_cpp_pct: s1Active ? v('s1_cpp_pct') : 0,
         s1_cpp2_yrs: s1Active ? Math.max(0, Math.min(40, Math.min(v('s1_retire'), 70) - (s1_age - (v('sys_year') - 2024)))) : 0,
@@ -1990,6 +2185,8 @@ function buildParams() {
         s2_nonreg: s2Active ? v('s2_nonreg_b') : 0,
         s2_rrsp_c: s2Active ? v('s2_rrsp_c') : 0,
         s2_tfsa_c: s2Active ? v('s2_tfsa_c') : 0,
+        s2_rrsp_room: s2Active ? v('s2_rrsp_room') : 0,
+        s2_spousal_rrsp: s2Active ? v('s2_spousal_rrsp') : 0,
         s2_oas_age: Math.min(70, Math.max(65, v('s2_oas_age'))),
         s2_cpp_pct: s2Active ? v('s2_cpp_pct') : 0,
         s2_cpp2_yrs: s2Active ? Math.max(0, Math.min(40, Math.min(v('s2_retire'), 70) - (s2_age - (v('sys_year') - 2024)))) : 0,
@@ -2022,6 +2219,10 @@ function buildParams() {
         tfsaBracketMax: v('tfsa_bracket_max'),
         gapTargetRate: (parseFloat(document.getElementById('gap_target_rate').value) || 12) / 100,
         survivorPct: (parseFloat(document.getElementById('survivor_pct').value) || 70) / 100,
+        cppSharing: document.getElementById('cpp_sharing').checked,
+        gisEnabled: document.getElementById('gis_enabled').checked,
+        rrifStrategy: document.getElementById('rrif_strategy').value || 'needed',
+        provHealthPremium: document.getElementById('prov_health_premium').checked,
         maxYrs: maxYrs,
         s1PlanAge: s1PlanAge, s2PlanAge: s2PlanAge,
         s1Active, s2Active,
@@ -2075,7 +2276,7 @@ function renderChart(rows) {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, dispW, dispH);
 
-    const PAD_L = 70, PAD_R = 20, PAD_T = 20, PAD_B = 50;
+    const PAD_L = 70, PAD_R = 20, PAD_T = 20, PAD_B = 58;
     const plotW = dispW - PAD_L - PAD_R;
     const plotH = dispH - PAD_T - PAD_B;
 
@@ -2090,23 +2291,26 @@ function renderChart(rows) {
     let stackOrder, colorMap;
 
     if (mode === 'split') {
-        stackOrder = ['r_rrsp','m_rrsp','r_lira','m_lira','r_tfsa','m_tfsa','r_cpp','m_cpp','r_oas','m_oas'];
+        stackOrder = ['r_rrsp','m_rrsp','r_lira','m_lira','r_tfsa','m_tfsa','r_cpp','m_cpp','r_oas','m_oas','r_gis','m_gis'];
         colorMap = {
             r_rrsp: '#2980b9', m_rrsp: '#85c1e9',
             r_lira: '#1a6b9a', m_lira: '#5dade2',
             r_tfsa: '#16a085', m_tfsa: '#76d7c4',
             r_cpp: '#e67e22', m_cpp: '#f5b041',
-            r_oas: '#27ae60', m_oas: '#82e0aa'
+            r_oas: '#27ae60', m_oas: '#82e0aa',
+            r_gis: '#f1c40f', m_gis: '#c39bd3',
         };
     } else {
-        stackOrder = ['rrsp','lira','tfsa','nonreg','cpp','oas'];
-        colorMap = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', cpp: '#e67e22', oas: '#27ae60' };
+        stackOrder = ['rrsp','lira','tfsa','nonreg','cpp','oas','gis'];
+        colorMap = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', cpp: '#e67e22', oas: '#27ae60', gis: '#f1c40f' };
     }
 
     // Build bar data — include LIRA unlocks as distinct event
     const bars = retRows.map(d => {
         const liraUnlock = d.liraUnlockAmt || 0;
-        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS + liraUnlock;
+        const pensionIncome = (d.r_pension || 0) + (d.m_pension || 0);
+        const gisIncome = (d.r_gis || 0) + (d.m_gis || 0);
+        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS + pensionIncome + gisIncome + liraUnlock;
         const deductions = d.annualTax + d.oasClawback;
         const netIncome = Math.max(0, gross - deductions);
         const ratio = gross > 0 ? netIncome / gross : 0;
@@ -2117,8 +2321,9 @@ function renderChart(rows) {
                 r_rrsp: d.r_rrspDraw * ratio, m_rrsp: d.m_rrspDraw * ratio,
                 r_lira: (liraUnlock / 2) * ratio, m_lira: (liraUnlock / 2) * ratio,
                 r_tfsa: d.r_tfsaDraw * ratio, m_tfsa: d.m_tfsaDraw * ratio,
-                r_cpp: d.r_cpp * ratio, m_cpp: d.m_cpp * ratio,
+                r_cpp: (d.r_cpp + (d.r_pension||0)/2) * ratio, m_cpp: (d.m_cpp + (d.m_pension||0)/2) * ratio,
                 r_oas: d.r_oas * ratio, m_oas: d.m_oas * ratio,
+                r_gis: (d.r_gis || 0) * ratio, m_gis: (d.m_gis || 0) * ratio,
                 netIncome,
                 shortfall: Math.max(0, d.netGoalDisp - netIncome),
                 netGoal: d.netGoalDisp,
@@ -2130,7 +2335,8 @@ function renderChart(rows) {
                 rrsp: d.rrspDrawAmt * ratio, lira: liraUnlock * ratio,
                 tfsa: d.tfsaDrawAmt * ratio,
                 nonreg: d.nonRegDrawAmt * ratio,
-                cpp: d.totalCPP * ratio, oas: d.totalOAS * ratio,
+                cpp: (d.totalCPP + pensionIncome) * ratio, oas: d.totalOAS * ratio,
+                gis: gisIncome * ratio,
                 netIncome,
                 shortfall: Math.max(0, d.netGoalDisp - netIncome),
                 netGoal: d.netGoalDisp,
@@ -2205,15 +2411,19 @@ function renderChart(rows) {
     ctx.stroke(); ctx.setLineDash([]);
 
     // ── X-axis labels ──
-    ctx.fillStyle = '#555'; ctx.textAlign = 'center'; ctx.font = '10px Segoe UI, sans-serif';
-    const labelEvery = n > 30 ? 5 : n > 15 ? 3 : n > 8 ? 2 : 1;
+    ctx.fillStyle = '#555'; ctx.textAlign = 'center'; ctx.font = '9px Segoe UI, sans-serif';
+    const s2Active = bars.some(b => b._d && b._d.s2Alive);
     for (let i = 0; i < n; i++) {
-        if (i % labelEvery === 0 || i === n - 1) {
-            ctx.fillText(bars[i].age, PAD_L + i * gap + gap / 2, PAD_T + plotH + 15);
+        const xPos = PAD_L + i * gap + gap / 2;
+        ctx.fillText(bars[i].age, xPos, PAD_T + plotH + 13);
+        if (s2Active && bars[i]._d && bars[i]._d.a2 != null) {
+            ctx.fillStyle = '#999';
+            ctx.fillText(bars[i]._d.a2, xPos, PAD_T + plotH + 24);
+            ctx.fillStyle = '#555';
         }
     }
-    ctx.fillStyle = '#888'; ctx.font = '11px Segoe UI, sans-serif';
-    ctx.fillText('Age (' + s1 + ')', PAD_L + plotW / 2, PAD_T + plotH + 38);
+    ctx.fillStyle = '#888'; ctx.font = '10px Segoe UI, sans-serif';
+    ctx.fillText(s1 + ' / ' + s2, PAD_L + plotW / 2, PAD_T + plotH + 44);
 
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
@@ -2225,14 +2435,17 @@ function renderChart(rows) {
             const b = bars[idx];
             const d = b._d;
             if (mode === 'split') {
+                const r_gis = d.r_gis || 0, m_gis = d.m_gis || 0;
                 canvas.title = `Age ${b.age}: Net ${formatMoney(b.netIncome)} | Goal ${formatMoney(b.netGoal)}` +
-                    `\n${s1}: RRSP ${formatMoney(d.r_rrspDraw)} | TFSA ${formatMoney(d.r_tfsaDraw)} | CPP ${formatMoney(d.r_cpp)} | OAS ${formatMoney(d.r_oas)}` +
-                    `\n${s2}: RRSP ${formatMoney(d.m_rrspDraw)} | TFSA ${formatMoney(d.m_tfsaDraw)} | CPP ${formatMoney(d.m_cpp)} | OAS ${formatMoney(d.m_oas)}` +
+                    `\n${s1}: RRSP ${formatMoney(d.r_rrspDraw)} | TFSA ${formatMoney(d.r_tfsaDraw)} | CPP ${formatMoney(d.r_cpp)} | OAS ${formatMoney(d.r_oas)}` + (r_gis > 0 ? ` | GIS ${formatMoney(r_gis)}` : '') +
+                    `\n${s2}: RRSP ${formatMoney(d.m_rrspDraw)} | TFSA ${formatMoney(d.m_tfsaDraw)} | CPP ${formatMoney(d.m_cpp)} | OAS ${formatMoney(d.m_oas)}` + (m_gis > 0 ? ` | GIS ${formatMoney(m_gis)}` : '') +
                     ` | Tax+Claw ${formatMoney(b._tax)}`;
             } else {
+                const gis = (d.r_gis || 0) + (d.m_gis || 0);
                 canvas.title = `Age ${b.age}: Net Income ${formatMoney(b.netIncome)} | Goal ${formatMoney(b.netGoal)}` +
                     (b.shortfall > 0 ? ` | SHORTFALL ${formatMoney(b.shortfall)}` : '') +
                     `\nGross: RRSP ${formatMoney(d.rrspDrawAmt)} | TFSA ${formatMoney(d.tfsaDrawAmt)} | Non-Reg ${formatMoney(d.nonRegDrawAmt)} | CPP ${formatMoney(d.totalCPP)} | OAS ${formatMoney(d.totalOAS)}` +
+                    (gis > 0 ? ` | GIS ${formatMoney(gis)}` : '') +
                     ` | Tax+Claw ${formatMoney(b._tax)}`;
             }
         } else {
@@ -2574,6 +2787,262 @@ function solveCPPOAS() {
     }, 50);
 }
 
+function showInflationSensitivity() {
+    const base = buildParams();
+    if (!base) return;
+    showSolverResult(`<b>Inflation Sensitivity:</b> Calculating...`);
+    setTimeout(() => {
+        const rates = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+        let html = `<b>Inflation Sensitivity</b> &nbsp;<span style="color:#888;font-size:10px;">(all other inputs fixed)</span><br><br>`;
+        html += `<table style="font-size:11px;border-collapse:collapse;">`;
+        html += `<tr style="background:#f5f5f5;"><th style="padding:4px 12px;">Inflation %</th><th style="padding:4px 12px;text-align:right;">Final NW</th><th style="padding:4px 12px;text-align:right;">vs Current</th></tr>`;
+        const currentFinal = getSmoothedFinalNW(base);
+        for (const r of rates) {
+            const p = Object.assign({}, base, { infl: r / 100 });
+            const nw = getSmoothedFinalNW(p);
+            const diff = nw - currentFinal;
+            const isCurrent = Math.abs(r - base.infl * 100) < 0.05;
+            const diffStr = diff === 0 ? '—' : `<span style="color:${diff>0?'#27ae60':'#e74c3c'}">${diff>0?'+':''}${formatMoney(diff)}</span>`;
+            const rowStyle = isCurrent ? 'background:#eaf4fb;font-weight:bold;' : '';
+            html += `<tr style="${rowStyle}"><td style="padding:4px 12px;text-align:center;">${r.toFixed(1)}%${isCurrent?' ◀':''}</td><td style="padding:4px 12px;text-align:right;">${formatMoney(nw)}</td><td style="padding:4px 12px;text-align:right;">${diffStr}</td></tr>`;
+        }
+        html += `</table>`;
+        showSolverResult(html);
+    }, 50);
+}
+
+function showReturnSensitivity() {
+    const base = buildParams();
+    if (!base) return;
+    showSolverResult(`<b>Return Sensitivity:</b> Calculating...`);
+    setTimeout(() => {
+        const spread = base.rPre - base.rPost;
+        const postRates = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0];
+        let html = `<b>Return Sensitivity</b> &nbsp;<span style="color:#888;font-size:10px;">(${(spread*100).toFixed(1)}% spread preserved)</span><br><br>`;
+        html += `<table style="font-size:11px;border-collapse:collapse;">`;
+        html += `<tr style="background:#f5f5f5;"><th style="padding:4px 10px;">Post-Ret Return</th><th style="padding:4px 10px;">Pre-Ret Return</th><th style="padding:4px 10px;text-align:right;">Final NW</th><th style="padding:4px 10px;text-align:right;">vs Current</th></tr>`;
+        const currentFinal = getSmoothedFinalNW(base);
+        for (const rPost of postRates) {
+            const rPre = rPost + spread * 100;
+            const p = Object.assign({}, base, { rPost: rPost/100, rPre: rPre/100 });
+            const nw = getSmoothedFinalNW(p);
+            const diff = nw - currentFinal;
+            const isCurrent = Math.abs(rPost - base.rPost * 100) < 0.05;
+            const diffStr = diff === 0 ? '—' : `<span style="color:${diff>0?'#27ae60':'#e74c3c'}">${diff>0?'+':''}${formatMoney(diff)}</span>`;
+            const rowStyle = isCurrent ? 'background:#eaf4fb;font-weight:bold;' : '';
+            html += `<tr style="${rowStyle}"><td style="padding:4px 10px;text-align:center;">${rPost.toFixed(1)}%${isCurrent?' ◀':''}</td><td style="padding:4px 10px;text-align:center;">${rPre.toFixed(1)}%</td><td style="padding:4px 10px;text-align:right;">${formatMoney(nw)}</td><td style="padding:4px 10px;text-align:right;">${diffStr}</td></tr>`;
+        }
+        html += `</table>`;
+        showSolverResult(html);
+    }, 50);
+}
+
+function printReport() {
+    if (!lastRows || lastRows.length === 0) {
+        alert('Please run Recalculate Strategy first.');
+        return;
+    }
+
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const s2Active = document.getElementById('s2_active').checked;
+    const prov = document.getElementById('province').value || '';
+    const sysYear = parseInt(document.getElementById('sys_year').value) || 2026;
+    const s1AgeStart = parseInt(document.getElementById('s1_age').value) || 50;
+    const last = lastRows[lastRows.length - 1];
+    const preRetireRows = lastRows.filter(r => !r.isSomeoneRetired);
+    const preRetirePeak = preRetireRows.length > 0 ? preRetireRows.reduce((b,r)=>r.nw>b.nw?r:b,preRetireRows[0]) : null;
+    const peakRow = lastRows.reduce((b,r)=>r.nw>b.nw?r:b,lastRows[0]);
+    const shortfallRow = lastRows.find(r=>r.nw<0);
+    const mcSuccess = document.getElementById('mc_success').innerText;
+    const mcMedian = document.getElementById('mc_median').innerText;
+    const mcRan = document.getElementById('mc_success_box').style.display !== 'none';
+
+    // Capture chart canvases
+    const incomeCanvas = document.getElementById('income_chart');
+    const nwCanvas = document.getElementById('nw_chart');
+    const incomeImg = incomeCanvas ? incomeCanvas.toDataURL('image/png') : null;
+    const nwImg = nwCanvas ? nwCanvas.toDataURL('image/png') : null;
+
+    // Build full ledger
+    const ledgerMode = document.querySelector('input[name="ledger_view"]:checked')?.value || 'combined';
+    let ledgerRows = '';
+    for (const d of lastRows) {
+        const yr = sysYear + (d.a1 - s1AgeStart);
+        const totalRRSP = d.r_rrsp + d.m_rrsp;
+        const totalTFSA = d.r_tfsa + d.m_tfsa;
+        const totalLIRA = (d.r_lira||0) + (d.m_lira||0);
+        const isWorking = d.stage === 'Working' || d.stage === 'Gap';
+        const rowStyle = d.stage === 'Survivor' ? 'background:#f5eeff' :
+                         d.stage === 'Slow-Go'  ? 'background:#fffde7' :
+                         d.stage === 'No-Go'    ? 'background:#f5f5f5' :
+                         d.stage === 'Gap'      ? 'background:#eaf6ff' : '';
+        const fm = v => v > 0 ? '$' + Math.round(v).toLocaleString() : '—';
+        ledgerRows += `<tr style="${rowStyle}">
+            <td>${yr}</td>
+            <td>${d.a1}${s2Active ? '/' + d.a2 : ''}</td>
+            <td>${d.stage}</td>
+            <td>${fm(totalRRSP)}</td>
+            ${totalLIRA > 0 ? `<td>${fm(totalLIRA)}</td>` : '<td>—</td>'}
+            <td>${fm(totalTFSA)}</td>
+            <td>${fm(d.totalNonReg)}</td>
+            <td>${fm(d.annualPensions)}</td>
+            <td>${d.netGoalDisp > 0 ? fm(d.netGoalDisp) : '—'}</td>
+            <td>${d.rrspDrawAmt > 0 ? fm(d.rrspDrawAmt) : '—'}</td>
+            <td>${d.tfsaDrawAmt > 0 ? fm(d.tfsaDrawAmt) : '—'}</td>
+            <td>${d.annualTax > 0 ? fm(d.annualTax) : '—'}</td>
+            <td style="font-weight:bold;color:${d.nw<0?'#c0392b':'inherit'}">${fm(d.nw)}</td>
+        </tr>`;
+    }
+
+    // Build action plan (retirement rows only)
+    let planRows = '';
+    for (const d of lastRows) {
+        if (d.stage === 'Working' && d.rrspDrawAmt === 0 && d.tfsaDrawAmt === 0 && (!d.liraActionNotes || d.liraActionNotes.length === 0)) continue;
+        const yr = sysYear + (d.a1 - s1AgeStart);
+        const fm = v => v > 0 ? '$' + Math.round(v).toLocaleString() : '—';
+        const rowStyle = d.stage === 'Survivor' ? 'background:#f5eeff' :
+                         d.stage === 'Slow-Go'  ? 'background:#fffde7' :
+                         d.stage === 'No-Go'    ? 'background:#f5f5f5;color:#888' :
+                         d.stage === 'Gap'      ? 'background:#eaf6ff' : '';
+
+        let action = '';
+        if (d.stage === 'Working') {
+            action = 'Contributing';
+        } else if (d.stage === 'Gap') {
+            action = `Draw ${fm(d.rrspDrawAmt)} from ${s2} RRSP`;
+            if (d.sweepToTFSA > 0) action += ` → ${fm(d.sweepToTFSA)} to TFSA`;
+        } else {
+            const parts = [];
+            if (d.rrspDrawAmt > 0) { let l = `Draw ${fm(d.rrspDrawAmt)} from RRSP`; if (d.sweepToTFSA > 0) l += ` (${fm(d.sweepToTFSA)} → TFSA)`; parts.push(l); }
+            if (d.tfsaDrawAmt > 0) parts.push(`Draw ${fm(d.tfsaDrawAmt)} from TFSA`);
+            if (d.nonRegDrawAmt > 0) parts.push(`Draw ${fm(d.nonRegDrawAmt)} from Non-Reg`);
+            const gov = [];
+            if (d.r_cpp > 0) gov.push(`${s1} CPP ${fm(d.r_cpp)}`);
+            if (d.m_cpp > 0) gov.push(`${s2} CPP ${fm(d.m_cpp)}`);
+            if (d.r_oas > 0) gov.push(`${s1} OAS ${fm(d.r_oas)}`);
+            if (d.m_oas > 0) gov.push(`${s2} OAS ${fm(d.m_oas)}`);
+            if (d.r_pension > 0) gov.push(`${s1} Pension ${fm(d.r_pension)}`);
+            if (d.m_pension > 0) gov.push(`${s2} Pension ${fm(d.m_pension)}`);
+            if ((d.r_gis||0)+(d.m_gis||0) > 0) gov.push(`GIS ${fm((d.r_gis||0)+(d.m_gis||0))}`);
+            if (gov.length > 0) parts.push(gov.join(', '));
+            if (d.annualTax > 0) parts.push(`Tax ${fm(d.annualTax)}`);
+            action = parts.join(' · ');
+        }
+        planRows += `<tr style="${rowStyle}">
+            <td>${yr}</td><td>${d.a1}${s2Active?'/'+d.a2:''}</td><td>${d.stage}</td>
+            <td>${fm(d.rrspDrawAmt)}</td><td>${fm(d.tfsaDrawAmt)}</td><td>${fm(d.nonRegDrawAmt)}</td>
+            <td>${fm(d.r_cpp+d.m_cpp)}</td><td>${fm(d.r_oas+d.m_oas)}</td>
+            <td>${fm(d.annualTax)}</td><td style="font-weight:bold">${d.netGoalDisp>0?fm(d.netGoalDisp):'—'}</td>
+            <td style="font-size:10px">${action}</td>
+        </tr>`;
+        if (d.liraActionNotes && d.liraActionNotes.length > 0) {
+            for (const note of d.liraActionNotes) {
+                planRows += `<tr style="background:#fff9e6"><td colspan="11" style="font-size:10px;color:#7d4f00;font-weight:bold;padding:3px 8px;">⚠ ${note}</td></tr>`;
+            }
+        }
+    }
+
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>Retirement Report — ${s1}${s2Active?' & '+s2:''}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 11px; color: #333; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        h1 { font-size: 18px; color: #2c3e50; border-bottom: 3px solid #27ae60; padding-bottom: 6px; margin-bottom: 4px; }
+        h2 { font-size: 13px; color: #2c3e50; margin: 22px 0 8px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+        .meta { color: #888; font-size: 10px; margin-bottom: 12px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 10px 0 16px 0; }
+        .stat { background: #f0f4f8; border-radius: 6px; padding: 8px 12px; text-align: center; }
+        .stat b { display: block; font-size: 15px; color: #2c3e50; }
+        .stat small { color: #888; font-size: 10px; }
+        .inputs { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin: 8px 0 16px 0; }
+        .inp { background: #f9f9f9; padding: 5px 8px; border-radius: 4px; }
+        .inp label { color: #888; display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .shortfall { background: #fce4e4; border: 2px solid #e74c3c; padding: 8px 12px; border-radius: 6px; color: #922b21; margin: 10px 0; font-weight: bold; }
+        .mc-box { background: #f4f0fa; border: 1px solid #d7bde2; padding: 8px 12px; border-radius: 6px; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 6px; }
+        th { background: #2c3e50; color: white; padding: 5px 6px; text-align: left; font-size: 9px; }
+        td { padding: 4px 6px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) td { background: #fafafa; }
+        img.chart { width: 100%; border: 1px solid #eee; border-radius: 4px; margin: 8px 0; }
+        .footer { margin-top: 24px; font-size: 9px; color: #aaa; border-top: 1px solid #eee; padding-top: 8px; }
+        .print-btn { background: #27ae60; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 8px; }
+        @media print {
+            .no-print { display: none; }
+            h2 { page-break-after: avoid; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; }
+        }
+    </style></head><body>
+    <h1>Retirement Plan — ${s1}${s2Active?' & '+s2:''}</h1>
+    <div class="meta">
+        Generated ${new Date().toLocaleDateString('en-CA')} &nbsp;|&nbsp; Province: ${prov} &nbsp;|&nbsp;
+        <span class="no-print">
+            <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+        </span>
+    </div>
+
+    ${shortfallRow ? `<div class="shortfall">⚠ Portfolio runs out at age ${shortfallRow.a1} (${sysYear+(shortfallRow.a1-s1AgeStart)}). Review plan inputs.</div>` : ''}
+
+    <h2>Key Results</h2>
+    <div class="stat-grid">
+        ${preRetirePeak ? `<div class="stat"><small>Peak NW (Pre-Retirement)</small><b>$${Math.round(preRetirePeak.nw).toLocaleString()}</b><small>Age ${preRetirePeak.a1} (${sysYear+(preRetirePeak.a1-s1AgeStart)})</small></div>` : ''}
+        <div class="stat"><small>All-Time Peak NW</small><b>$${Math.round(peakRow.nw).toLocaleString()}</b><small>Age ${peakRow.a1} (${sysYear+(peakRow.a1-s1AgeStart)})</small></div>
+        <div class="stat"><small>Final Portfolio</small><b style="color:${last.nw<0?'#e74c3c':'#2c3e50'}">$${Math.round(last.nw).toLocaleString()}</b><small>Age ${last.a1} (${sysYear+(last.a1-s1AgeStart)})</small></div>
+    </div>
+
+    ${mcRan ? `<div class="mc-box">📊 <b>Monte Carlo:</b> Success Rate ${mcSuccess} &nbsp;|&nbsp; Median Final Portfolio ${mcMedian}</div>` : ''}
+
+    <h2>Key Inputs</h2>
+    <div class="inputs">
+        <div class="inp"><label>Target Net Goal</label>${document.getElementById('goal_go').value}/yr</div>
+        <div class="inp"><label>Pre-Ret Return</label>${document.getElementById('r_pre').value}%</div>
+        <div class="inp"><label>Post-Ret Return</label>${document.getElementById('r_post').value}%</div>
+        <div class="inp"><label>Inflation</label>${document.getElementById('infl').value}%</div>
+        <div class="inp"><label>${s1} Age / Retire</label>${document.getElementById('s1_age').value} / ${document.getElementById('s1_retire').value}</div>
+        ${s2Active ? `<div class="inp"><label>${s2} Age / Retire</label>${document.getElementById('s2_age').value} / ${document.getElementById('s2_retire').value}</div>` : ''}
+        <div class="inp"><label>${s1} CPP Age / OAS Age</label>${document.getElementById('s1_cpp_age').value} / ${document.getElementById('s1_oas_age').value}</div>
+        ${s2Active ? `<div class="inp"><label>${s2} CPP Age / OAS Age</label>${document.getElementById('s2_cpp_age').value} / ${document.getElementById('s2_oas_age').value}</div>` : ''}
+        <div class="inp"><label>Meltdown to Age</label>${document.getElementById('melt_age').value}</div>
+        <div class="inp"><label>Slow-Go / No-Go</label>${document.getElementById('slow_age').value} / ${document.getElementById('no_age').value}</div>
+        <div class="inp"><label>${s1} RRSP / TFSA</label>${document.getElementById('s1_rrsp_b').value} / ${document.getElementById('s1_tfsa_b').value}</div>
+        ${s2Active ? `<div class="inp"><label>${s2} RRSP / TFSA</label>${document.getElementById('s2_rrsp_b').value} / ${document.getElementById('s2_tfsa_b').value}</div>` : ''}
+    </div>
+
+    <h2>Income Breakdown Chart</h2>
+    ${incomeImg ? `<img class="chart" src="${incomeImg}" alt="Income Breakdown Chart">` : '<p style="color:#aaa">Chart not available</p>'}
+
+    <h2>Net Worth Over Time Chart</h2>
+    ${nwImg ? `<img class="chart" src="${nwImg}" alt="Net Worth Chart">` : '<p style="color:#aaa">Chart not available</p>'}
+
+    <h2>Year-by-Year Projection</h2>
+    <table>
+        <tr>
+            <th>Year</th><th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>LIRA</th>
+            <th>TFSA</th><th>Non-Reg</th><th>Pensions</th><th>Net Goal</th>
+            <th>RRSP Draw</th><th>TFSA Draw</th><th>Tax</th><th>Net Worth</th>
+        </tr>
+        ${ledgerRows}
+    </table>
+
+    <h2>Action Plan</h2>
+    <table>
+        <tr>
+            <th>Year</th><th>Age</th><th>Stage</th><th>RRSP Draw</th><th>TFSA Draw</th>
+            <th>Non-Reg Draw</th><th>CPP</th><th>OAS</th><th>Tax</th><th>Net Spend</th><th>Actions</th>
+        </tr>
+        ${planRows}
+    </table>
+
+    <div class="footer">
+        This report is for planning purposes only and does not constitute financial, tax, or legal advice.
+        Results are estimates based on current inputs and assumptions. Verify with a qualified financial advisor before making retirement decisions.
+        Generated by freecanadianretirementcalculator.ca
+    </div>
+    </body></html>`);
+    win.document.close();
+}
+
 function solveReturnPct() {
     const base = buildParams();
     if (!base) return;
@@ -2672,7 +3141,7 @@ function renderNWChart(rows) {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, dispW, dispH);
 
-    const PAD_L = 80, PAD_R = 20, PAD_T = 20, PAD_B = 50;
+    const PAD_L = 80, PAD_R = 20, PAD_T = 20, PAD_B = 58;
     const plotW = dispW - PAD_L - PAD_R;
     const plotH = dispH - PAD_T - PAD_B;
 
@@ -2701,6 +3170,8 @@ function renderNWChart(rows) {
         };
         data = rows.map(d => ({
             age: d.a1,
+            a2: d.a2,
+            s2Alive: d.s2Alive,
             r_rrsp: Math.max(0, d.r_rrsp), m_rrsp: Math.max(0, d.m_rrsp),
             r_lira: Math.max(0, d.r_lira || 0), m_lira: Math.max(0, d.m_lira || 0),
             r_tfsa: Math.max(0, d.r_tfsa), m_tfsa: Math.max(0, d.m_tfsa),
@@ -2713,6 +3184,8 @@ function renderNWChart(rows) {
         colors = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', home: '#8e6914' };
         data = rows.map(d => ({
             age: d.a1,
+            a2: d.a2,
+            s2Alive: d.s2Alive,
             rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
             lira: Math.max(0, (d.r_lira || 0) + (d.m_lira || 0)),
             tfsa: Math.max(0, d.r_tfsa + d.m_tfsa),
@@ -2796,17 +3269,20 @@ function renderNWChart(rows) {
     // ── X-axis labels ──
     ctx.fillStyle = '#555';
     ctx.textAlign = 'center';
-    ctx.font = '10px Segoe UI, sans-serif';
-    const labelEvery = n > 30 ? 5 : n > 15 ? 3 : 2;
+    ctx.font = '9px Segoe UI, sans-serif';
+    const s2ActiveNW = data.some(d => d.s2Alive);
     for (let i = 0; i < n; i++) {
-        if (i % labelEvery === 0 || i === n - 1) {
-            const x = PAD_L + i * gap;
-            ctx.fillText(data[i].age, x, PAD_T + plotH + 15);
+        const x = PAD_L + i * gap;
+        ctx.fillStyle = '#555';
+        ctx.fillText(data[i].age, x, PAD_T + plotH + 13);
+        if (s2ActiveNW && data[i].a2 != null) {
+            ctx.fillStyle = '#999';
+            ctx.fillText(data[i].a2, x, PAD_T + plotH + 24);
         }
     }
     ctx.fillStyle = '#888';
-    ctx.font = '11px Segoe UI, sans-serif';
-    ctx.fillText('Age (' + s1 + ')', PAD_L + plotW / 2, PAD_T + plotH + 38);
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.fillText(s1 + ' / ' + s2, PAD_L + plotW / 2, PAD_T + plotH + 44);
 
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
@@ -2891,8 +3367,9 @@ function saveScenario(which) {
     }
 
     const metrics = getScenarioMetrics(rows, params);
-    const label = prompt(`Name for Scenario ${which}:`, `Scenario ${which}`);
-    metrics.label = label || `Scenario ${which}`;
+    const noteField = document.getElementById(`scenario_${which.toLowerCase()}_note`);
+    const noteVal = noteField ? noteField.value.trim() : '';
+    metrics.label = noteVal || `Scenario ${which}`;
 
     if (which === 'A') scenarioA = metrics;
     else scenarioB = metrics;
@@ -3286,6 +3763,11 @@ function calculate() {
 
     document.getElementById('sum_retire').innerHTML = retireLabel;
     document.getElementById('sum_retire_top').innerHTML = retireLabel;
+    if (preRetirePeak) {
+        const ageStr = `Age ${preRetirePeak.a1}`;
+        document.getElementById('sum_retire_age').textContent = ageStr;
+        document.getElementById('sum_retire_age_top').textContent = ageStr;
+    }
 
     const peakRow = rows.reduce((best, r) => r.nw > best.nw ? r : best, rows[0]);
     const peakYear = sysYear + (peakRow.a1 - params.s1_age);
@@ -3295,13 +3777,27 @@ function calculate() {
 
     document.getElementById('sum_peak').innerHTML = peakLabel;
     document.getElementById('sum_peak_top').innerHTML = peakLabel;
+    ['sum_peak_age','sum_peak_age_top'].forEach(id => { document.getElementById(id).textContent = `Age ${peakRow.a1}`; });
     document.getElementById('sum_final').innerHTML = finalLabel;
     document.getElementById('sum_final_top').innerHTML = finalLabel;
+    ['sum_final_age','sum_final_age_top'].forEach(id => { document.getElementById(id).textContent = `Age ${last.a1}`; });
 
     const finalBox = document.getElementById('final_box');
     finalBox.className = "stat-box" + (last.nw < 0 ? " danger" : last.nw < 200000 ? " warn" : "");
     const finalBoxTop = document.getElementById('final_box_top');
     finalBoxTop.className = "stat-box" + (last.nw < 0 ? " danger" : last.nw < 200000 ? " warn" : "");
+
+    // ── Shortfall alert ──
+    const shortfallRow = rows.find(r => r.nw < 0);
+    const alertEl = document.getElementById('shortfall_alert');
+    const msgEl = document.getElementById('shortfall_msg');
+    if (shortfallRow) {
+        const shortYear = sysYear + (shortfallRow.a1 - params.s1_age);
+        msgEl.innerHTML = `Portfolio runs out at <b>age ${shortfallRow.a1}</b> (${shortYear}). Final balance: <b>${formatMoney(last.nw)}</b>. Consider reducing spending, retiring later, or increasing contributions.`;
+        alertEl.style.display = 'block';
+    } else {
+        alertEl.style.display = 'none';
+    }
 
     renderChart(rows);
     renderNWChart(rows);
@@ -3490,6 +3986,15 @@ function saveData() {
 
 window.onload = () => {
 
+    if (localStorage.getItem('dark_mode') === '1') {
+        document.body.classList.add('dark-mode');
+        const btn = document.getElementById('dark_btn');
+        if (btn) btn.textContent = '☀ Light';
+    }
+    if (localStorage.getItem('disclaimer_dismissed') === '1') {
+        const d = document.getElementById('disclaimer_box');
+        if (d) d.style.display = 'none';
+    }
     const s = localStorage.getItem('retirement_calc_v28');
     if (s) {
         const d = JSON.parse(s);
