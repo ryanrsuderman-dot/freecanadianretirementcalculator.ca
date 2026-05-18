@@ -153,7 +153,7 @@
 <body>
 <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-        <h1 style="margin:0;"><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span></h1>
+        <h1 style="margin:0;"><span id="title_s1">Spouse 1</span> & <span id="title_s2">Spouse 2</span>: Retirement Calculator</h1>
         <button onclick="toggleDarkMode()" id="dark_btn" style="font-size:11px; padding:4px 10px; background:#7f8c8d; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; white-space:nowrap; flex:0 0 80px; width:80px; min-width:80px;">🌙 Dark</button>
     </div>
     <div id="shortfall_alert" class="shortfall-alert">
@@ -179,10 +179,21 @@
         </details>
     </div>
 
+    <div id="profiles_bar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 12px; background:#f0f4f8; border-radius:8px; margin-bottom:8px; font-size:11px;">
+        <span style="font-weight:bold; color:#555; margin-right:4px;">Saved Profiles:</span>
+        <span id="profile_slot_1"></span>
+        <span id="profile_slot_2"></span>
+        <span id="profile_slot_3"></span>
+        <span id="profile_slot_4"></span>
+        <span id="profile_slot_5"></span>
+    </div>
+
     <div class="btn-group">
         <div class="btn-wrap"><button class="btn-calc" onclick="calculate()">Recalculate Strategy</button><span class="btn-tip">Run the projection with current inputs</span></div>
         <div class="btn-wrap"><button class="btn-sync" onclick="syncRates()">Sync to Current Year</button><span class="btn-tip">Update CPP/OAS/LIRA values to current year</span></div>
         <div class="btn-wrap"><button class="btn-save" onclick="saveData()">Save Setup</button><span class="btn-tip">Save all inputs to browser storage</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="exportCSV()" style="background:#8e44ad;">↓ Export CSV</button><span class="btn-tip">Download full projection as a spreadsheet</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="resetDefaults()" style="background:#c0392b;">↺ Reset</button><span class="btn-tip">Clear all inputs and start fresh</span></div>
     </div>
     <div id="status_top" style="text-align:center; font-weight:bold; color:#27ae60; height:15px; margin-bottom:5px;"></div>
     <div class="card-grid">
@@ -219,7 +230,7 @@
             <fieldset class="group"><legend>Registered Accounts</legend>
             <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"></div>
             <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"></div>
-            <div class="row"><label>RRSP Room (0=unlimited) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>RRSP Room (0=unknown) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_room" value="0" style="width:80px"></div>
             <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_spousal_rrsp" value="0" style="width:70px"></div>
             <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws tax-free. Withdrawals restore room next year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></div>
             <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></div>
@@ -270,7 +281,7 @@
             <fieldset class="group"><legend>Registered Accounts</legend>
             <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal. Converts to RRIF at 71 with mandatory minimums.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"></div>
             <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"></div>
-            <div class="row"><label>RRSP Room (0=unlimited) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>RRSP Room (0=unknown) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_room" value="0" style="width:80px"></div>
             <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_spousal_rrsp" value="0" style="width:70px"></div>
             <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws completely tax-free. Withdrawals restore contribution room the following calendar year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></div>
             <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></div>
@@ -311,25 +322,43 @@
             <fieldset class="group"><legend>Spending Stages</legend>
             <div class="row"><label>Slow-Go Age <span class="info-icon" data-tip="Age when spending starts to slow down (less travel, activities). The spending goal is multiplied by the % from this age forward.">i</span></label><span><input type="number" id="slow_age" value="70" style="width:45px"> @ <input type="number" id="slow_pct" value="90" style="width:45px">%</span></div>
             <div class="row"><label>No-Go Age <span class="info-icon" data-tip="Age when spending drops further (limited mobility). A second multiplier on top of the Slow-Go reduction.">i</span></label><span><input type="number" id="no_age" value="80" style="width:45px"> @ <input type="number" id="no_pct" value="80" style="width:45px">%</span></div>
-            <div class="row"><label>Survivor Spending % <span class="info-icon" data-tip="After one spouse passes, survivor needs this % of the couple's spending goal. Default 70% — housing fixed but many costs drop.">i</span></label><input type="number" id="survivor_pct" value="70" step="5" style="width:45px"></div>
+            <div class="row"><label>Survivor Spending % <span class="info-icon" data-tip="After one spouse passes, survivor needs this % of the couple's spending goal. Default 70% — housing fixed but many costs drop.">i</span></label><input type="number" id="survivor_pct" value="75" step="5" style="width:45px"></div>
             </fieldset>
             <fieldset class="group"><legend>RRSP Strategy</legend>
             <div class="row"><label>Enable RRSP Meltdown <span class="info-icon" data-tip="Forces larger RRSP draws to deplete it by the target age. Avoids high RRIF minimums later. Excess swept to TFSA then non-reg.">i</span></label><input type="checkbox" id="melt_on" checked style="width:20px"></div>
             <div class="row"><label>Meltdown to Age <span class="info-icon" data-tip="Age by which the RRSP should be fully depleted. Typically 75 — before RRIF minimums accelerate significantly.">i</span></label><input type="number" id="melt_age" value="75" style="width:45px"></div>
             <div class="row"><label>Equal RRSP Split (50/50) <span class="info-icon" data-tip="Splits RRSP draws 50/50 between spouses to keep both in lower tax brackets. Falls back to proportional when one RRSP is depleted.">i</span></label><input type="checkbox" id="equal_draw" checked style="width:20px"></div>
             <div class="row"><label>Smooth Tax Rates <span class="info-icon" data-tip="Multi-pass optimizer that equalizes effective tax rates across retirement years, minimizing total lifetime tax paid. Recommended: on.">i</span></label><input type="checkbox" id="smooth_tax" checked style="width:20px"></div>
-            <div class="row"><label>TFSA Bracket Opt <span class="info-icon" data-tip="Maximum RRSP draw replaced with tax-free TFSA draw to avoid crossing a tax bracket. Set $0 to disable.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_bracket_max" value="10000" style="width:80px"></div>
+            <div class="row"><label>TFSA Bracket Opt <span class="info-icon" data-tip="Maximum RRSP draw replaced with tax-free TFSA draw to avoid crossing a tax bracket. Set $0 to disable.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_bracket_max" value="0" style="width:80px"></div>
             <div class="row"><label>RRIF Draw Strategy <span class="info-icon" data-tip="As Needed: draws what's needed to meet goal plus meltdown. Minimum Only: only mandatory RRIF minimum after 72, supplementing from TFSA/Non-Reg.">i</span></label>
                 <select id="rrif_strategy" style="padding:3px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
                     <option value="needed" selected>As Needed</option>
                     <option value="minimum">Minimum Only</option>
                 </select>
             </div>
+            <div class="row"><label>Withdrawal Order <span class="info-icon" data-tip="Order to draw accounts when spending goal exceeds RRSP meltdown draw. Default: RRSP first. TFSA first preserves RRSP for growth. Non-Reg first depletes taxable account earliest.">i</span></label>
+                <select id="withdrawal_order" style="padding:3px; border:1px solid #ccd6dd; border-radius:4px; font-size:11px;">
+                    <option value="rrsp_first" selected>RRSP → TFSA → Non-Reg</option>
+                    <option value="tfsa_first">TFSA → RRSP → Non-Reg</option>
+                    <option value="nonreg_first">Non-Reg → RRSP → TFSA</option>
+                </select>
+            </div>
             </fieldset>
             <fieldset class="group"><legend>Gap Year &amp; Survivor</legend>
             <div class="row"><label>Gap Year Target Rate % <span class="info-icon" data-tip="During gap years (S2 retired, S1 working), draws S2's RRSP up to this effective rate and sweeps net to TFSA. Typically 12-13%.">i</span></label><input type="number" id="gap_target_rate" value="12" step="1" style="width:45px"></div>
-            <div class="row"><label>CPP Pension Sharing <span class="info-icon" data-tip="Both spouses 60+ can pool CPP and split it to reduce combined tax. Requires both to be receiving CPP.">i</span></label><input type="checkbox" id="cpp_sharing" style="width:20px"></div>
-            <div class="row"><label>Enable GIS <span class="info-icon" data-tip="Guaranteed Income Supplement — tax-free monthly benefit for low-income OAS recipients 65+. Reduces 50 cents per dollar of other income. 2026 max: ~$1,086/mo single, ~$654/mo each for couples.">i</span></label><input type="checkbox" id="gis_enabled" style="width:20px"></div>
+            <div class="row"><label>CPP Pension Sharing <span class="info-icon" data-tip="Both spouses 60+ can pool CPP and split it to reduce combined tax. Requires both to be receiving CPP.">i</span></label><input type="checkbox" id="cpp_sharing" checked style="width:20px"></div>
+            <div class="row"><label>T1032 Pension Splitting <span class="info-icon" data-tip="At 65+, CRA allows transferring up to 50% of eligible pension income (RRIF draws, DB pension) to your spouse. Calculator optimizes the split to minimize combined tax. Separate from CPP sharing.">i</span></label><input type="checkbox" id="pension_splitting" style="width:20px"></div>
+            <div class="row"><label>Enable GIS <span class="info-icon" data-tip="Guaranteed Income Supplement — tax-free monthly benefit for low-income OAS recipients 65+. Reduces 50 cents per dollar of other income. 2026 max: ~$1,086/mo single, ~$654/mo each for couples.">i</span></label><input type="checkbox" id="gis_enabled" checked style="width:20px"></div>
+            </fieldset>
+            <fieldset class="group"><legend>Part-Time Income</legend>
+            <div class="row"><label>Annual Amount (today's $) <span class="info-icon" data-tip="Taxable part-time or consulting income during phased retirement. Reduces RRSP draws needed during those years. Applied to Spouse 1.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="parttime_income" value="0" style="width:80px"></div>
+            <div class="row"><label>From Age <span class="info-icon" data-tip="Age Spouse 1 starts earning part-time income. Defaults to retire age if left at 0.">i</span></label><input type="number" id="parttime_from_age" value="0" style="width:45px"></div>
+            <div class="row"><label>To Age <span class="info-icon" data-tip="Last age of part-time income. Income stops after this age.">i</span></label><input type="number" id="parttime_to_age" value="0" style="width:45px"></div>
+            </fieldset>
+            <fieldset class="group"><legend>Other Taxable Income</legend>
+            <div class="row"><label>Annual Amount (today's $) <span class="info-icon" data-tip="Other ongoing taxable income: rental income, US Social Security, foreign pension, alimony, etc. Split evenly between spouses for tax. Inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="other_income" value="0" style="width:80px"></div>
+            <div class="row"><label>From Age <span class="info-icon" data-tip="Age (S1) when other income starts. Set 0 for start of projection.">i</span></label><input type="number" id="other_income_from_age" value="0" style="width:45px"></div>
+            <div class="row"><label>To Age <span class="info-icon" data-tip="Age (S1) when other income ends. Set 0 for no end.">i</span></label><input type="number" id="other_income_to_age" value="0" style="width:45px"></div>
             </fieldset>
         </div>
         <div class="card">
@@ -370,8 +399,8 @@
             <fieldset class="group"><legend>TFSA &amp; System</legend>
             <div class="row"><label>System Year <span class="info-icon" data-tip="The base year for tax values. Defaults to current year. Change only if you want to model from a future starting point.">i</span></label><input type="number" id="sys_year" value="2026" style="width:65px"></div>
             <div class="row"><label>TFSA Room / yr / Person <span class="info-icon" data-tip="Annual new TFSA contribution room per person. 2026: $7,000. Accrues each year per living spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_yr" value="7000" style="width:70px"></div>
-            <div class="row"><label>TFSA Room (S1) <span class="info-icon" data-tip="Your unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s1" value="0" style="width:90px"></div>
-            <div class="row"><label>TFSA Room (S2) <span class="info-icon" data-tip="Spouse 2's unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s2" value="0" style="width:90px"></div>
+            <div class="row"><label>TFSA Room (<span class="s1_name_disp">S1</span>) <span class="info-icon" data-tip="Your unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s1" value="0" style="width:90px"></div>
+            <div class="row"><label>TFSA Room (<span class="s2_name_disp">S2</span>) <span class="info-icon" data-tip="Spouse 2's unused TFSA room right now. Check CRA My Account for the exact amount. Tracked separately per spouse.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="tfsa_room_s2" value="0" style="width:90px"></div>
             <div class="row"><label>Cap Gains % <span class="info-icon" data-tip="% of capital gains that is taxable on non-registered withdrawals. 2026: 50%. May change with federal budget updates.">i</span></label><input type="number" id="capgains_inc" value="50" step="5" style="width:60px"></div>
             </fieldset>
             <fieldset class="group"><legend>LIRA Thresholds</legend>
@@ -427,6 +456,8 @@
         <div class="btn-wrap"><button class="btn-calc" onclick="calculate()">Recalculate Strategy</button><span class="btn-tip">Run the projection with current inputs</span></div>
         <div class="btn-wrap"><button class="btn-sync" onclick="syncRates()">Sync to Current Year</button><span class="btn-tip">Update CPP/OAS/LIRA values to current year</span></div>
         <div class="btn-wrap"><button class="btn-save" onclick="saveData()">Save Setup</button><span class="btn-tip">Save all inputs to browser storage</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="exportCSV()" style="background:#8e44ad;">↓ Export CSV</button><span class="btn-tip">Download full projection as a spreadsheet</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="resetDefaults()" style="background:#c0392b;">↺ Reset</button><span class="btn-tip">Clear all inputs and start fresh</span></div>
     </div>
     <div class="btn-group">
         <div class="btn-wrap"><button class="btn-solve" onclick="solveRetireAge()">Solve for Retirement Age</button><span class="btn-tip">Find the earliest age both spouses can retire</span></div>
@@ -436,6 +467,9 @@
         <div class="btn-wrap"><button class="btn-solve" onclick="solveReturnPct()">Solve for Return %</button><span class="btn-tip">Find the minimum return needed — shows room to de-risk</span></div>
         <div class="btn-wrap"><button class="btn-solve" onclick="showInflationSensitivity()">Inflation Sensitivity</button><span class="btn-tip">Show final NW across a range of inflation rates</span></div>
         <div class="btn-wrap"><button class="btn-solve" onclick="showReturnSensitivity()">Return Sensitivity</button><span class="btn-tip">Show final NW across a range of return rates</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="solveCPPBreakeven()">CPP Break-Even Age</button><span class="btn-tip">Find the age where deferring CPP pays off</span></div>
+        <div class="btn-wrap"><button class="btn-solve" onclick="showAnnuityComparison()" style="background:#8e6914;">Annuity Comparison</button><span class="btn-tip">See what a life annuity would pay vs drawdown</span></div>
+        <div class="btn-wrap"><button class="btn-save" onclick="shareURL()" style="background:#2980b9;">🔗 Share URL</button><span class="btn-tip">Copy a link with all inputs encoded</span></div>
         <div class="btn-wrap"><button class="btn-save" onclick="printReport()" style="background:#16a085;">🖨 Print Report</button><span class="btn-tip">Open a clean printable summary</span></div>
     </div>
     <div id="solver_result" style="display:none; background:#fff3e0; border:1px solid #ffb74d; border-radius:8px; padding:12px; margin-bottom:15px; font-size:12px;"></div>
@@ -464,7 +498,7 @@
                 <tr>
                     <th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>TFSA Total</th>
                     <th>Non-Reg</th>
-                    <th>CPP/OAS</th><th>OAS Clawback</th>
+                    <th>CPP/OAS</th><th>GIS</th><th>OAS Clawback</th>
                     <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
                     <th>Tax (%)</th>
                     <th>Pension Credit</th>
@@ -506,10 +540,17 @@
     <div id="tab_chart" class="tab-content">
     <div id="chart_section" style="display:none;">
         <h2 style="color:#2c3e50; border-bottom:3px solid #27ae60; padding-bottom:5px;">Retirement Income Breakdown</h2>
-        <div style="margin-bottom:8px; font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
-            <b>View:</b>
-            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="income_chart_view" value="combined" checked onchange="reRenderIncomeChart()"> Combined</label>
-            <label style="cursor:pointer;"><input type="radio" name="income_chart_view" value="split" onchange="reRenderIncomeChart()"> Split by Spouse</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
+                <b>View:</b>
+                <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="income_chart_view" value="combined" checked onchange="reRenderIncomeChart()"> Combined</label>
+                <label style="cursor:pointer;"><input type="radio" name="income_chart_view" value="split" onchange="reRenderIncomeChart()"> Split by Spouse</label>
+            </div>
+            <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
+                <b>Values:</b>
+                <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="income_chart_values" value="nominal" checked onchange="reRenderIncomeChart()"> Nominal</label>
+                <label style="cursor:pointer;"><input type="radio" name="income_chart_values" value="real" onchange="reRenderIncomeChart()"> Real (Today's $)</label>
+            </div>
         </div>
         <div id="income_legend_combined" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; font-size:10px;">
             <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:3px;"></span>RRSP/RRIF</span>
@@ -542,11 +583,17 @@
         <canvas id="income_chart" width="1400" height="420" style="width:100%; max-width:1400px;"></canvas>
 
         <h2 style="color:#2c3e50; border-bottom:3px solid #3498db; padding-bottom:5px; margin-top:30px;">Net Worth Over Time</h2>
-        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:6px;">
-        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px; display:inline-block;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
             <b>View:</b>
             <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="nw_chart_view" value="combined" checked onchange="reRenderNWChart()"> Combined</label>
             <label style="cursor:pointer;"><input type="radio" name="nw_chart_view" value="split" onchange="reRenderNWChart()"> Split by Spouse</label>
+        </div>
+        <div style="font-size:12px; padding:6px 10px; background:#f0f4f8; border-radius:6px;">
+            <b>Values:</b>
+            <label style="cursor:pointer; margin-left:8px; margin-right:12px;"><input type="radio" name="nw_chart_values" value="nominal" checked onchange="reRenderNWChart()"> Nominal</label>
+            <label style="cursor:pointer;"><input type="radio" name="nw_chart_values" value="real" onchange="reRenderNWChart()"> Real (Today's $)</label>
+        </div>
         </div>
         <label style="font-size:12px; cursor:pointer; padding:6px 10px; background:#f0f4f8; border-radius:6px;"><input type="checkbox" id="nw_include_home" checked onchange="reRenderNWChart()" style="width:14px; margin-right:5px;"> Include Home Equity</label>
         </div>
@@ -641,7 +688,7 @@
                 <b style="color:#2c3e50;">Registered Accounts</b><br>
                 <b>RRSP Balance</b> — Current RRSP balance. Grows at your investment return rate. Fully taxable on withdrawal. Converts to RRIF at 71 with mandatory minimum draws.<br>
                 <b>Monthly RRSP</b> — Monthly RRSP contribution during working years. Inflation-adjusted annually.<br>
-                <b>RRSP Room (0=unlimited)</b> — Current available RRSP contribution room from CRA My Account. Set to 0 for unlimited. When set, contributions stop when room is exhausted. Verify via CRA My Account — room is not automatically calculated from income.<br>
+                <b>RRSP Room (0=unknown)</b> — Current available RRSP contribution room from CRA My Account. Set to 0 for unlimited. When set, contributions stop when room is exhausted. Verify via CRA My Account — room is not automatically calculated from income.<br>
                 <b>Monthly Spousal RRSP</b> — Monthly contribution to your spouse's RRSP using your own room. Goes into the spouse's RRSP balance for potential income splitting in early retirement (before age 65).<br>
                 <b>TFSA Balance</b> — Current TFSA balance. Grows and withdraws completely tax-free. Withdrawals restore room the following calendar year.<br>
                 <b>Monthly TFSA</b> — Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered.<br><br>
@@ -685,7 +732,8 @@
                 <b style="color:#2c3e50;">Gap Year &amp; Survivor</b><br>
                 <b>Gap Year Target Rate %</b> — When Spouse 2 retires before Spouse 1, draws S2's RRSP up to this effective tax rate during gap years, sweeping the net to TFSA. ~12–13%. Only active when meltdown is enabled.<br>
                 <b>CPP Pension Sharing</b> — Both spouses 60+ can pool their CPP income and split it 50/50 to reduce combined tax. Requires both to be receiving CPP. Check this if one spouse has significantly higher CPP than the other.<br>
-                <b>Enable GIS</b> — Guaranteed Income Supplement. Tax-free monthly benefit for low-income OAS recipients 65+. Clawed back 50 cents per dollar of other income. 2026 max: ~$1,086/mo single, ~$654/mo per person for couples. Shown as a yellow-orange bar in the income chart.
+                <b>Enable GIS</b> — Guaranteed Income Supplement. Tax-free monthly benefit for low-income OAS recipients 65+. Clawed back 50 cents per dollar of other income (including RRSP draws). 2026 max: ~$1,086/mo single, ~$654/mo per person for couples. Shown as a yellow-orange bar in the income chart.<br>
+                <b>Part-Time Income</b> — Annual taxable income (consulting, part-time work) earned by Spouse 1 during phased retirement. Reduces RRSP draws needed during those years. Set "From Age" to 0 to default to retire age. Set "To Age" to 0 for no end.
             </div>
         </details>
 
@@ -753,7 +801,8 @@
                 <b>Solve for Return %</b> — Finds the minimum post-retirement return needed (preserving your pre/post spread). Shows current vs minimum side by side with an Apply button to de-risk your portfolio. Includes 0.25% buffer.<br>
                 <b>Inflation Sensitivity</b> — Table showing final NW at inflation rates from 1% to 4%. Your current rate is highlighted with a ◀.<br>
                 <b>Return Sensitivity</b> — Table showing final NW at post-retirement returns from 1% to 6%, preserving the pre/post spread. Current rate highlighted.<br>
-                <b>🖨 Print Report</b> — Opens a clean printable summary with key stats, inputs, and a year-by-year retirement table. Includes a "Print / Save PDF" button.
+                <b>CPP Break-Even Age</b> — Shows the age at which deferring CPP past 65 starts to pay off cumulatively vs taking at 65. Covers all deferral ages from 60 to 70. Useful for deciding when to start CPP.<br>
+                <b>🔗 Share URL</b> — Encodes all current inputs into a URL and copies it to clipboard. Anyone opening that link gets your exact setup loaded automatically. Useful for sharing with a spouse or advisor.<br>
             </div>
         </details>
 
@@ -845,6 +894,68 @@ function dismissDisclaimer() {
     localStorage.setItem('disclaimer_dismissed', '1');
 }
 
+function resetDefaults() {
+    if (!confirm('Reset all inputs to defaults? This will clear your saved setup.')) return;
+    localStorage.removeItem('retirement_calc_v28');
+    location.reload();
+}
+
+function exportCSV() {
+    if (!lastRows || lastRows.length === 0) {
+        alert('Please run Recalculate Strategy first.');
+        return;
+    }
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const s2Active = document.getElementById('s2_active').checked;
+    const sysYear = parseInt(document.getElementById('sys_year').value) || 2026;
+    const s1Age = parseInt(document.getElementById('s1_age').value) || 50;
+
+    const headers = [
+        'Year', `${s1} Age`, `${s2} Age`, 'Stage',
+        'RRSP/RRIF', 'LIRA', 'TFSA', 'Non-Reg',
+        'CPP', 'OAS', 'GIS', 'Pension',
+        'Net Goal', 'RRSP Draw', 'TFSA Draw', 'Non-Reg Draw',
+        'Annual Tax', 'OAS Clawback', 'Pension Credit', 'RRIF Min',
+        'Net Worth'
+    ];
+
+    const rows = lastRows.map(d => {
+        const yr = sysYear + (d.a1 - s1Age);
+        const n = v => Math.round(v || 0);
+        return [
+            yr, d.a1, s2Active ? d.a2 : '',
+            d.stage,
+            n(d.r_rrsp + d.m_rrsp),
+            n((d.r_lira||0) + (d.m_lira||0)),
+            n(d.r_tfsa + d.m_tfsa),
+            n(d.totalNonReg),
+            n(d.r_cpp + d.m_cpp),
+            n(d.r_oas + d.m_oas),
+            n((d.r_gis||0) + (d.m_gis||0)),
+            n(d.r_pension + d.m_pension),
+            n(d.netGoalDisp),
+            n(d.rrspDrawAmt),
+            n(d.tfsaDrawAmt),
+            n(d.nonRegDrawAmt),
+            n(d.annualTax),
+            n(d.oasClawback),
+            n(d.pensionCredit||0),
+            n(d.rrifMinDisplay||0),
+            n(d.nw)
+        ].join(',');
+    });
+
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `retirement_projection_${s1.replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const btn = document.getElementById('dark_btn');
@@ -889,11 +1000,11 @@ function updateNames() {
     // Update h1 title based on active spouses
     const titleEl = document.querySelector('h1');
     if (s1Active && s2Active) {
-        titleEl.innerHTML = `<span id="title_s1">${s1}</span> & <span id="title_s2">${s2}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+        titleEl.innerHTML = `<span id="title_s1">${s1}</span> & <span id="title_s2">${s2}</span>: Retirement Calculator`;
     } else if (s1Active) {
-        titleEl.innerHTML = `<span id="title_s1">${s1}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+        titleEl.innerHTML = `<span id="title_s1">${s1}</span>: Retirement Calculator`;
     } else if (s2Active) {
-        titleEl.innerHTML = `<span id="title_s2">${s2}</span>: Retirement Calculator <span style="font-size:0.6em;color:#888;">V28</span>`;
+        titleEl.innerHTML = `<span id="title_s2">${s2}</span>: Retirement Calculator`;
     }
     document.title = 'Free Canadian Retirement Calculator';
 }
@@ -1319,6 +1430,9 @@ function projectYears(params, returnOverride) {
         tfsaRoomPerYr, tfsaRoomCurrentS1, tfsaRoomCurrentS2, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
         liraSmallUnder65, liraSmallOver65,
         cppSharing, gisEnabled, rrifStrategy, provHealthPremium,
+        withdrawalOrder, pensionSplitting,
+        parttimeIncome, parttimeFromAge, parttimeToAge,
+        otherIncome, otherIncomeFromAge, otherIncomeToAge,
         ls1_amt, ls1_age, ls1_rrsp_cap, ls2_amt, ls2_age, ls2_rrsp_cap,
         boostAge, s1_rrsp_boost, s1_tfsa_boost, s2_rrsp_boost, s2_tfsa_boost,
         homeValue, homeSellAge, homeRent, homeDownsizeAge, homeDownsizeProceeds,
@@ -1587,7 +1701,7 @@ function projectYears(params, returnOverride) {
 
         // Monthly contributions + compounding
         for (let mon = 0; mon < 12; mon++) {
-            if (s1Alive && a1 < s1_retire) {
+            if (s1Alive && a1 < s1_retire && a1 < 71) {
                 // Regular RRSP — capped by room if room is set
                 const s1RRSPContrib = r_rrsp_mo * inf_mult;
                 const s1RRSPActual = rrspRoomS1 > 0 ? Math.min(s1RRSPContrib, rrspRoomS1) : s1RRSPContrib;
@@ -1604,7 +1718,7 @@ function projectYears(params, returnOverride) {
                 r.nonreg += nonregAdd;
                 r.nonregCost += nonregAdd;
             }
-            if (s2Alive && a2 < s2_retire) {
+            if (s2Alive && a2 < s2_retire && a2 < 71) {
                 const s2RRSPContrib = m_rrsp_mo * inf_mult;
                 const s2RRSPActual = rrspRoomS2 > 0 ? Math.min(s2RRSPContrib, rrspRoomS2) : s2RRSPContrib;
                 const s2SpousalMo = (s2_spousal_rrsp || 0) * inf_mult;
@@ -1650,6 +1764,26 @@ function projectYears(params, returnOverride) {
             r_pension += s2_pension_amt * 12 * (s2_pension_indexed ? inf_mult : 1) * s2_pension_survivor;
         }
 
+        // ── Other taxable income (rental, US SS, foreign pension, etc.) ──
+        let otherIncomeAmt = 0;
+        if (otherIncome > 0) {
+            const fromAge = otherIncomeFromAge > 0 ? otherIncomeFromAge : 0;
+            const toAge = otherIncomeToAge > 0 ? otherIncomeToAge : Infinity;
+            if (a1 >= fromAge && a1 <= toAge) {
+                otherIncomeAmt = otherIncome * inf_mult;
+            }
+        }
+
+        // ── Part-time income (taxable, reduces RRSP draw needed) ──
+        let parttimeAmt = 0;
+        if (parttimeIncome > 0 && s1Alive) {
+            const fromAge = parttimeFromAge > 0 ? parttimeFromAge : s1_retire;
+            const toAge = parttimeToAge > 0 ? parttimeToAge : 0;
+            if (a1 >= fromAge && (toAge === 0 || a1 <= toAge)) {
+                parttimeAmt = parttimeIncome * inf_mult;
+            }
+        }
+
         let annualPensions = r_cpp + r_oas + m_cpp + m_oas + r_pension + m_pension;
 
         // ── CPP Pension Sharing ──
@@ -1662,28 +1796,11 @@ function projectYears(params, returnOverride) {
         }
 
         // ── GIS (Guaranteed Income Supplement) ──
-        // Tax-free. Reduces 50 cents per dollar of other income above zero.
-        // 2026 max: single ~$13,032/yr, couple ~$7,848/yr each. Indexed by inflation.
+        // Calculated AFTER solver — needs actual RRSP draw for income test.
+        // CRA: clawback on ALL income excluding OAS (CPP + RRSP/RRIF + pension + non-reg).
+        // Couples: uses COMBINED other income.
+        // 2026 max: ~$13,032/yr single, ~$7,848/yr each for couples. Indexed by inflation.
         let r_gis = 0, m_gis = 0;
-        if (gisEnabled) {
-            const maxGIS_single = 13032 * inf_mult;
-            const maxGIS_couple = 7848 * inf_mult;
-            const calcGIS = (age, otherIncome, isCouple) => {
-                if (age < 65) return 0;
-                const maxGIS = isCouple ? maxGIS_couple : maxGIS_single;
-                return Math.max(0, maxGIS - otherIncome * 0.5);
-            };
-            if (s1Alive && a1 >= 65) {
-                const s1OtherIncome = r_cpp + r_pension;
-                r_gis = calcGIS(a1, s1OtherIncome, s2Alive && a2 >= 65);
-            }
-            if (s2Alive && a2 >= 65) {
-                const s2OtherIncome = m_cpp + m_pension;
-                m_gis = calcGIS(a2, s2OtherIncome, s1Alive && a1 >= 65);
-            }
-            // Do NOT add GIS to annualPensions here — it's applied AFTER the solver
-            // so the solver correctly draws less RRSP when GIS covers part of the goal
-        }
 
         // ── Life stage ──
         const bothAlive = s1Alive && s2Alive;
@@ -1799,25 +1916,101 @@ function projectYears(params, returnOverride) {
                 }
             }
 
-            // ── Solve for needed RRSP draw (includes pensions in tax) ──
-            // Reduce netGoal by GIS since it provides tax-free income outside the solver
-            const netGoalForSolver = Math.max(0, netGoal - r_gis - m_gis);
+            // ── Solve for needed RRSP draw ──
+            // Reduce netGoal by part-time income and other income (both taxable)
             const result = solveRetirementDraw(
-                netGoalForSolver, r_cpp_tax, r_oas, m_cpp_tax, m_oas,
+                Math.max(0, netGoal - parttimeAmt * 0.75), r_cpp_tax, r_oas, m_cpp_tax, m_oas,
                 r_drawRatio, tax_a1, tax_a2, inf_mult,
-                minRRSPDraw, OAS_CLAWBACK, prov, singleFiler, r_pension, m_pension
+                minRRSPDraw, OAS_CLAWBACK, prov, singleFiler,
+                r_pension + parttimeAmt + otherIncomeAmt / Math.max(1,(s1Alive?1:0)+(s2Alive?1:0)),
+                m_pension + otherIncomeAmt / Math.max(1,(s1Alive?1:0)+(s2Alive?1:0))
             );
 
             rrspDrawAmt = result.rrspDraw;
             annualTax   = result.tax;
             oasClawback = result.oasClawback;
+            const originalSolverDraw = rrspDrawAmt; // capture before any overrides
+
+            // ── T1032 Pension Income Splitting (65+) ──
+            // Transfer up to 50% of eligible pension income (RRIF/pension) from higher to lower income spouse
+            // Optimizes split to minimize combined tax
+            if (pensionSplitting && s1Alive && s2Alive && a1 >= 65 && a2 >= 65 && !singleFiler) {
+                const r_eligible = rrspDrawAmt * r_drawRatio + r_pension; // RRIF draw + DB pension
+                const m_eligible = rrspDrawAmt * (1 - r_drawRatio) + m_pension;
+                const maxTransfer = Math.min(r_eligible, m_eligible) * 0.5;
+                if (maxTransfer > 500) {
+                    // Binary search for optimal transfer amount
+                    let bestTax = annualTax;
+                    let bestTransfer = 0;
+                    for (let transfer = 0; transfer <= maxTransfer; transfer += maxTransfer / 20) {
+                        // Transfer from S1 to S2 (positive) or S2 to S1 (negative)
+                        const r_adj_pension = r_pension - transfer;
+                        const m_adj_pension = m_pension + transfer;
+                        const testTax = calcCombinedTax(
+                            rrspDrawAmt, r_cpp_tax, r_oas, m_cpp_tax, m_oas,
+                            r_drawRatio, tax_a1, tax_a2, inf_mult, prov, false,
+                            r_adj_pension, m_adj_pension
+                        );
+                        if (testTax < bestTax) { bestTax = testTax; bestTransfer = transfer; }
+                    }
+                    // Also try transferring from S2 to S1
+                    for (let transfer = 0; transfer <= maxTransfer; transfer += maxTransfer / 20) {
+                        const r_adj_pension = r_pension + transfer;
+                        const m_adj_pension = m_pension - transfer;
+                        const testTax = calcCombinedTax(
+                            rrspDrawAmt, r_cpp_tax, r_oas, m_cpp_tax, m_oas,
+                            r_drawRatio, tax_a1, tax_a2, inf_mult, prov, false,
+                            r_adj_pension, m_adj_pension
+                        );
+                        if (testTax < bestTax) { bestTax = testTax; bestTransfer = -transfer; }
+                    }
+                    if (Math.abs(bestTax - annualTax) > 50) {
+                        annualTax = bestTax;
+                    }
+                }
+            }
 
             // Add GIS to annualPensions AFTER solver — tax-free cash flow
-            annualPensions += r_gis + m_gis;
+            // Income test uses ALL income excluding OAS: RRSP draws + CPP + pension + non-reg
+            if (gisEnabled) {
+                const maxGIS_single = 13032 * inf_mult;
+                const maxGIS_couple = 7848 * inf_mult;
+                const bothAge65 = s1Alive && a1 >= 65 && s2Alive && a2 >= 65;
+                const isCoupleGIS = bothAge65;
+
+                // Per-spouse share of RRSP and non-reg draws (used for income test)
+                const r_rrspShare = r_drawRatio * rrspDrawAmt;
+                const m_rrspShare = (1 - r_drawRatio) * rrspDrawAmt;
+                const nonRegShare = (nonRegDrawAmt || 0) / Math.max(1, (s1Alive?1:0)+(s2Alive?1:0));
+
+                if (isCoupleGIS) {
+                    // Couples: GIS based on COMBINED other income
+                    const combinedOther = r_rrspShare + r_cpp + r_pension + m_rrspShare + m_cpp + m_pension + nonRegShare * 2;
+                    const perPersonGIS = Math.max(0, maxGIS_couple - combinedOther * 0.5 / 2);
+                    r_gis = perPersonGIS;
+                    m_gis = perPersonGIS;
+                } else {
+                    if (s1Alive && a1 >= 65) {
+                        const s1Other = r_rrspShare + r_cpp + r_pension + nonRegShare;
+                        r_gis = Math.max(0, maxGIS_single - s1Other * 0.5);
+                    }
+                    if (s2Alive && a2 >= 65) {
+                        const s2Other = m_rrspShare + m_cpp + m_pension + nonRegShare;
+                        m_gis = Math.max(0, maxGIS_single - s2Other * 0.5);
+                    }
+                }
+            }
+            annualPensions += r_gis + m_gis + parttimeAmt + otherIncomeAmt;
 
             // RRIF Minimum-Only strategy: cap RRSP draw at minimum, cover rest from TFSA
             if (rrifStrategy === 'minimum' && rrspDrawAmt > minRRSPDraw && minRRSPDraw > 0) {
                 rrspDrawAmt = minRRSPDraw;
+                annualTax = calcCombinedTax(minRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
+            }
+
+            // TFSA First: draw TFSA before RRSP (only non-meltdown draw, RRIF min still enforced)
+            if (withdrawalOrder === 'tfsa_first' && !isMelt) {
+                rrspDrawAmt = minRRSPDraw; // only RRIF mandatory minimum from RRSP
                 annualTax = calcCombinedTax(minRRSPDraw, r_cpp_tax, r_oas, m_cpp_tax, m_oas, r_drawRatio, tax_a1, tax_a2, inf_mult, prov, singleFiler, r_pension, m_pension);
             }
 
@@ -1877,7 +2070,7 @@ function projectYears(params, returnOverride) {
             // ── Draw from accounts ──
             // Phase 1: RRSP draw (taxable)
             const availRRSP = r.rrsp + m.rrsp;
-            const solverRequestedDraw = rrspDrawAmt; // preserve solver's request for comparison
+            const solverRequestedDraw = originalSolverDraw; // original solver amount before overrides
             const actualRRSPDraw = Math.min(rrspDrawAmt, availRRSP);
             if (availRRSP > 0) {
                 if (equalDraw && r.rrsp > 0 && m.rrsp > 0) {
@@ -1911,41 +2104,82 @@ function projectYears(params, returnOverride) {
 
                 // Net from taxable sources
                 const netFromTaxable = actualRRSPDraw + annualPensions - annualTax - oasClawback;
-                // Remaining net needed from TFSA (1:1 since tax-free)
-                const tfsaNeeded = Math.max(0, netGoal - netFromTaxable);
-                const availTFSA = r.tfsa + m.tfsa;
-                tfsaDrawAmt = Math.min(tfsaNeeded, availTFSA);
-                if (availTFSA > 0) {
-                    const rat = r.tfsa / availTFSA;
-                    r_tfsaDraw = tfsaDrawAmt * rat;
-                    m_tfsaDraw = tfsaDrawAmt * (1 - rat);
-                    r.tfsa -= r_tfsaDraw;
-                    m.tfsa -= m_tfsaDraw;
-                }
-                tfsaAvailableRoomS1 += tfsaDrawAmt / 2; tfsaAvailableRoomS2 += tfsaDrawAmt / 2;
+                // Remaining net needed from TFSA/Non-Reg (1:1 since tax-free/low-tax)
+                const remainingGoal = Math.max(0, netGoal - netFromTaxable);
 
-                // Phase 3: Non-reg if still short
-                const remainingNet = tfsaNeeded - tfsaDrawAmt;
-                if (remainingNet > 0) {
+                if (withdrawalOrder === 'nonreg_first' && r.nonreg + m.nonreg > 0 && remainingGoal > 0) {
+                    // Non-Reg First: draw non-reg before TFSA
                     const totalNR = r.nonreg + m.nonreg;
                     const totalCost = r.nonregCost + m.nonregCost;
-                    nonRegDrawAmt = Math.min(remainingNet * 1.1, totalNR); // slight gross-up for cap gains
+                    nonRegDrawAmt = Math.min(remainingGoal * 1.1, totalNR);
                     if (totalNR > 0) {
                         const gainFrac = Math.max(0, (totalNR - totalCost) / totalNR);
                         const capGain = nonRegDrawAmt * gainFrac;
                         const taxableGain = capGain * (capGainsInclusion / 100);
                         nonRegCapGainsTax = getProvTax(taxableGain / 2, a1, inf_mult, prov) * 2;
-                        annualTax += nonRegCapGainsTax;
                         const withdrawFrac = nonRegDrawAmt / totalNR;
-                        const rat = r.nonreg / totalNR;
-                        r_nonregDraw = nonRegDrawAmt * rat;
-                        m_nonregDraw = nonRegDrawAmt * (1 - rat);
-                        r.nonreg -= r_nonregDraw;
-                        m.nonreg -= m_nonregDraw;
-                        r.nonregCost -= totalCost * withdrawFrac * rat;
-                        m.nonregCost -= totalCost * withdrawFrac * (1 - rat);
-                        r.nonregCost = Math.max(0, r.nonregCost);
-                        m.nonregCost = Math.max(0, m.nonregCost);
+                        r_nonregDraw = nonRegDrawAmt * (r.nonreg / totalNR);
+                        m_nonregDraw = nonRegDrawAmt * (m.nonreg / totalNR);
+                        r.nonreg -= r_nonregDraw; r.nonregCost -= r_nonregDraw * (1 - gainFrac);
+                        m.nonreg -= m_nonregDraw; m.nonregCost -= m_nonregDraw * (1 - gainFrac);
+                    }
+                    const afterNR = Math.max(0, remainingGoal - nonRegDrawAmt);
+                    const availTFSA = r.tfsa + m.tfsa;
+                    tfsaDrawAmt = Math.min(afterNR, availTFSA);
+                } else {
+                    // Default: TFSA before Non-Reg
+                    const tfsaNeeded = remainingGoal;
+                    const availTFSA = r.tfsa + m.tfsa;
+                    tfsaDrawAmt = Math.min(tfsaNeeded, availTFSA);
+                }
+
+                if (tfsaDrawAmt > 0) {
+                    const availTFSA2 = r.tfsa + m.tfsa;
+                    if (availTFSA2 > 0) {
+                        const rat = r.tfsa / availTFSA2;
+                        r_tfsaDraw = tfsaDrawAmt * rat;
+                        m_tfsaDraw = tfsaDrawAmt * (1 - rat);
+                        r.tfsa -= r_tfsaDraw;
+                        m.tfsa -= m_tfsaDraw;
+                    }
+                    tfsaAvailableRoomS1 += tfsaDrawAmt / 2; tfsaAvailableRoomS2 += tfsaDrawAmt / 2;
+                }
+
+                // Phase 3: Non-Reg if still short (default order) or TFSA after Non-Reg (nonreg_first)
+                if (withdrawalOrder !== 'nonreg_first') {
+                    const remainingNet3 = Math.max(0, remainingGoal - tfsaDrawAmt);
+                    if (remainingNet3 > 0) {
+                        const totalNR = r.nonreg + m.nonreg;
+                        const totalCost = r.nonregCost + m.nonregCost;
+                        nonRegDrawAmt = Math.min(remainingNet3 * 1.1, totalNR);
+                        if (totalNR > 0) {
+                            const gainFrac = Math.max(0, (totalNR - totalCost) / totalNR);
+                            const capGain = nonRegDrawAmt * gainFrac;
+                            nonRegCapGainsTax = getProvTax(capGain * (capGainsInclusion/100) / 2, a1, inf_mult, prov) * 2;
+                            annualTax += nonRegCapGainsTax;
+                            const rat = r.nonreg / totalNR;
+                            const withdrawFrac = nonRegDrawAmt / totalNR;
+                            r_nonregDraw = nonRegDrawAmt * rat;
+                            m_nonregDraw = nonRegDrawAmt * (1 - rat);
+                            r.nonreg -= r_nonregDraw; m.nonreg -= m_nonregDraw;
+                            r.nonregCost -= totalCost * withdrawFrac * rat;
+                            m.nonregCost -= totalCost * withdrawFrac * (1 - rat);
+                            r.nonregCost = Math.max(0, r.nonregCost);
+                            m.nonregCost = Math.max(0, m.nonregCost);
+                        }
+                    }
+                } else {
+                    // nonreg_first already handled above; draw TFSA for any remaining gap after non-reg
+                    const tfsaForGap = Math.max(0, remainingGoal - nonRegDrawAmt - tfsaDrawAmt);
+                    if (tfsaForGap > 0) {
+                        const avail = r.tfsa + m.tfsa;
+                        const extra = Math.min(tfsaForGap, avail);
+                        if (avail > 0) {
+                            const rat = r.tfsa / avail;
+                            r_tfsaDraw += extra * rat; m_tfsaDraw += extra * (1 - rat);
+                            r.tfsa -= extra * rat; m.tfsa -= extra * (1 - rat);
+                        }
+                        tfsaDrawAmt += extra;
                     }
                 }
 
@@ -2004,7 +2238,7 @@ function projectYears(params, returnOverride) {
             totalNonReg, nonRegCapGainsTax,
             annualPensions, oasClawback,
             totalCPP: r_cpp + m_cpp, totalOAS: r_oas + m_oas,
-            r_cpp, m_cpp, r_oas, m_oas, r_pension, m_pension, r_gis, m_gis,
+            r_cpp, m_cpp, r_oas, m_oas, r_pension, m_pension, r_gis, m_gis, parttimeAmt,
             rrspDrawAmt, tfsaDrawAmt, nonRegDrawAmt, yearShortfall,
             r_rrspDraw, m_rrspDraw, r_tfsaDraw, m_tfsaDraw, r_nonregDraw, m_nonregDraw,
             sweepToTFSA, sweepToNonReg,
@@ -2059,7 +2293,7 @@ function renderLedger(rows) {
             <th>${s1} LIRA</th><th>${s2} LIRA</th>
             <th>${s1} TFSA</th><th>${s2} TFSA</th>
             <th>Non-Reg</th>
-            <th>CPP/OAS</th><th>OAS Clawback</th>
+            <th>CPP/OAS</th><th>GIS</th><th>OAS Clawback</th>
             <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
             <th>Tax (%)</th><th>Pension Credit</th><th>RRIF Min</th>
             <th>Year-End NW</th>
@@ -2068,7 +2302,7 @@ function renderLedger(rows) {
         thead.innerHTML = `<tr>
             <th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>TFSA Total</th>
             <th>Non-Reg</th>
-            <th>CPP/OAS</th><th>OAS Clawback</th>
+            <th>CPP/OAS</th><th>GIS</th><th>OAS Clawback</th>
             <th>Net Spend</th><th>RRSP Draw</th><th>TFSA Draw</th>
             <th>Tax (%)</th><th>Pension Credit</th><th>RRIF Min</th>
             <th>Year-End NW</th>
@@ -2105,6 +2339,7 @@ function renderLedger(rows) {
         if (d.totalNonReg > 0) row.classList.add("has-nonreg");
 
         if (mode === 'split') {
+            const gisDisp = ((d.r_gis||0)+(d.m_gis||0)) > 0 ? `<span style="color:#c89f00;font-weight:bold">${fm((d.r_gis||0)+(d.m_gis||0), inf)}</span>` : "—";
             row.innerHTML = `
                 <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
                 <td>${d.stage}</td>
@@ -2116,6 +2351,7 @@ function renderLedger(rows) {
                 <td>${fm(d.m_tfsa, inf)}</td>
                 <td class="nonreg-col">${nonregDisp}</td>
                 <td>${fm(d.annualPensions, inf)}</td>
+                <td>${gisDisp}</td>
                 <td>${clawDisp}</td>
                 <td>${fm(d.netGoalDisp, inf)}</td>
                 <td>${fm(d.rrspDrawAmt, inf)}</td>
@@ -2128,6 +2364,7 @@ function renderLedger(rows) {
         } else {
             const totalRRSP = d.r_rrsp + d.m_rrsp;
             const totalTFSA = d.r_tfsa + d.m_tfsa;
+            const gisDisp = ((d.r_gis||0)+(d.m_gis||0)) > 0 ? `<span style="color:#c89f00;font-weight:bold">${fm((d.r_gis||0)+(d.m_gis||0), inf)}</span>` : "—";
             row.innerHTML = `
                 <td>${d.s1Alive ? d.a1 : "--"}/${d.s2Alive ? d.a2 : "--"}</td>
                 <td>${d.stage}</td>
@@ -2135,6 +2372,7 @@ function renderLedger(rows) {
                 <td>${fm(totalTFSA, inf)}</td>
                 <td class="nonreg-col">${nonregDisp}</td>
                 <td>${fm(d.annualPensions, inf)}</td>
+                <td>${gisDisp}</td>
                 <td>${clawDisp}</td>
                 <td>${fm(d.netGoalDisp, inf)}</td>
                 <td>${fm(d.rrspDrawAmt, inf)}</td>
@@ -2222,7 +2460,15 @@ function buildParams() {
         cppSharing: document.getElementById('cpp_sharing').checked,
         gisEnabled: document.getElementById('gis_enabled').checked,
         rrifStrategy: document.getElementById('rrif_strategy').value || 'needed',
+        withdrawalOrder: document.getElementById('withdrawal_order').value || 'rrsp_first',
         provHealthPremium: document.getElementById('prov_health_premium').checked,
+        pensionSplitting: document.getElementById('pension_splitting').checked,
+        otherIncome: v('other_income') || 0,
+        otherIncomeFromAge: parseInt(document.getElementById('other_income_from_age').value) || 0,
+        otherIncomeToAge: parseInt(document.getElementById('other_income_to_age').value) || 0,
+        parttimeIncome: v('parttime_income') || 0,
+        parttimeFromAge: parseInt(document.getElementById('parttime_from_age').value) || 0,
+        parttimeToAge: parseInt(document.getElementById('parttime_to_age').value) || 0,
         maxYrs: maxYrs,
         s1PlanAge: s1PlanAge, s2PlanAge: s2PlanAge,
         s1Active, s2Active,
@@ -2306,40 +2552,43 @@ function renderChart(rows) {
     }
 
     // Build bar data — include LIRA unlocks as distinct event
+    const incomeValuesMode = (document.querySelector('input[name="income_chart_values"]:checked') || {value:'nominal'}).value;
     const bars = retRows.map(d => {
-        const liraUnlock = d.liraUnlockAmt || 0;
-        const pensionIncome = (d.r_pension || 0) + (d.m_pension || 0);
-        const gisIncome = (d.r_gis || 0) + (d.m_gis || 0);
-        const gross = d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS + pensionIncome + gisIncome + liraUnlock;
-        const deductions = d.annualTax + d.oasClawback;
+        const deflate = incomeValuesMode === 'real' ? 1 / (d.inf_mult || 1) : 1;
+        const liraUnlock = (d.liraUnlockAmt || 0) * deflate;
+        const pensionIncome = ((d.r_pension || 0) + (d.m_pension || 0)) * deflate;
+        const gisIncome = ((d.r_gis || 0) + (d.m_gis || 0)) * deflate;
+        const gross = (d.rrspDrawAmt + d.tfsaDrawAmt + d.nonRegDrawAmt + d.totalCPP + d.totalOAS + (d.r_pension||0) + (d.m_pension||0) + (d.r_gis||0) + (d.m_gis||0) + (d.liraUnlockAmt||0)) * deflate;
+        const deductions = (d.annualTax + d.oasClawback) * deflate;
         const netIncome = Math.max(0, gross - deductions);
         const ratio = gross > 0 ? netIncome / gross : 0;
+        const netGoal = d.netGoalDisp * deflate;
 
         if (mode === 'split') {
             return {
                 age: d.a1,
-                r_rrsp: d.r_rrspDraw * ratio, m_rrsp: d.m_rrspDraw * ratio,
+                r_rrsp: d.r_rrspDraw * deflate * ratio, m_rrsp: d.m_rrspDraw * deflate * ratio,
                 r_lira: (liraUnlock / 2) * ratio, m_lira: (liraUnlock / 2) * ratio,
-                r_tfsa: d.r_tfsaDraw * ratio, m_tfsa: d.m_tfsaDraw * ratio,
-                r_cpp: (d.r_cpp + (d.r_pension||0)/2) * ratio, m_cpp: (d.m_cpp + (d.m_pension||0)/2) * ratio,
-                r_oas: d.r_oas * ratio, m_oas: d.m_oas * ratio,
-                r_gis: (d.r_gis || 0) * ratio, m_gis: (d.m_gis || 0) * ratio,
+                r_tfsa: d.r_tfsaDraw * deflate * ratio, m_tfsa: d.m_tfsaDraw * deflate * ratio,
+                r_cpp: (d.r_cpp + (d.r_pension||0)/2) * deflate * ratio, m_cpp: (d.m_cpp + (d.m_pension||0)/2) * deflate * ratio,
+                r_oas: d.r_oas * deflate * ratio, m_oas: d.m_oas * deflate * ratio,
+                r_gis: (d.r_gis || 0) * deflate * ratio, m_gis: (d.m_gis || 0) * deflate * ratio,
                 netIncome,
-                shortfall: Math.max(0, d.netGoalDisp - netIncome),
-                netGoal: d.netGoalDisp,
+                shortfall: Math.max(0, netGoal - netIncome),
+                netGoal,
                 _d: d, _tax: deductions, _gross: gross
             };
         } else {
             return {
                 age: d.a1,
-                rrsp: d.rrspDrawAmt * ratio, lira: liraUnlock * ratio,
-                tfsa: d.tfsaDrawAmt * ratio,
-                nonreg: d.nonRegDrawAmt * ratio,
-                cpp: (d.totalCPP + pensionIncome) * ratio, oas: d.totalOAS * ratio,
-                gis: gisIncome * ratio,
+                rrsp: d.rrspDrawAmt * deflate * ratio, lira: liraUnlock * ratio,
+                tfsa: d.tfsaDrawAmt * deflate * ratio,
+                nonreg: d.nonRegDrawAmt * deflate * ratio,
+                cpp: (d.totalCPP + (d.r_pension||0) + (d.m_pension||0)) * deflate * ratio, oas: d.totalOAS * deflate * ratio,
+                gis: ((d.r_gis||0) + (d.m_gis||0)) * deflate * ratio,
                 netIncome,
-                shortfall: Math.max(0, d.netGoalDisp - netIncome),
-                netGoal: d.netGoalDisp,
+                shortfall: Math.max(0, netGoal - netIncome),
+                netGoal,
                 _d: d, _tax: deductions, _gross: gross
             };
         }
@@ -2362,6 +2611,7 @@ function renderChart(rows) {
     // ── Y-axis grid ──
     ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 0.5;
     ctx.font = '10px Segoe UI, sans-serif'; ctx.fillStyle = '#888'; ctx.textAlign = 'right';
+    const yAxisLabel = incomeValuesMode === 'real' ? 'Real (Today\'s $)' : 'Nominal ($)';
     for (let i = 0; i <= 6; i++) {
         const val = (maxVal / 6) * i;
         const y = PAD_T + yScale(val);
@@ -2787,6 +3037,93 @@ function solveCPPOAS() {
     }, 50);
 }
 
+function solveCPPBreakeven() {
+    const base = buildParams();
+    if (!base) return;
+    const maxCPP = base.MAX_CPP;
+    const s1Name = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2Name = document.getElementById('s2_name').value || 'Spouse 2';
+
+    // For each start age (60–70), calculate cumulative CPP at each year of life
+    // and find the break-even age vs taking at 65
+    const ages = [60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70];
+    const factor = age => age <= 65 ? 1 - 0.006 * (65 - age) * 12 : 1 + 0.007 * (age - 65) * 12;
+
+    const results65 = [];
+    for (const startAge of ages) {
+        if (startAge === 65) continue;
+        const annual65 = maxCPP * base.s1_cpp_pct / 100 * factor(65);
+        const annualX  = maxCPP * base.s1_cpp_pct / 100 * factor(startAge);
+        // Find age where cumulative(startAge) = cumulative(65)
+        // If startAge < 65: taking early gives more total until breakeven
+        // cumulative(65) at age T = (T-65)*annual65 (if T>65, else 0)
+        // cumulative(startAge) at age T = (T-startAge)*annualX
+        // Breakeven: (T-65)*annual65 = (T-startAge)*annualX
+        // T*annual65 - 65*annual65 = T*annualX - startAge*annualX
+        // T*(annual65 - annualX) = 65*annual65 - startAge*annualX
+        // T = (65*annual65 - startAge*annualX) / (annual65 - annualX)
+        const diff = annualX - annual65;
+        if (Math.abs(diff) < 1) continue;
+        const T = (startAge * annualX - 65 * annual65) / diff;
+        results65.push({ startAge, annual: annualX, annual65, breakeven: Math.round(T * 10) / 10 });
+    }
+
+    let html = `<b>CPP Break-Even Analysis</b><br>
+    <span style="color:#888;font-size:10px;">Comparing each start age vs taking at 65. Based on ${s1Name}'s CPP (${(base.s1_cpp_pct||75)}% of max $${Math.round(maxCPP).toLocaleString()}/yr). Ignores inflation and investment returns on foregone CPP.</span><br><br>`;
+    html += `<table style="font-size:11px;border-collapse:collapse;">`;
+    html += `<tr style="background:#f5f5f5;"><th style="padding:4px 10px;">Start Age</th><th style="padding:4px 10px;text-align:right;">Annual CPP</th><th style="padding:4px 10px;text-align:right;">vs Age 65</th><th style="padding:4px 10px;text-align:right;">Break-Even Age</th><th style="padding:4px 10px;text-align:center;">Worthwhile if live past</th></tr>`;
+    for (const r of results65) {
+        const diff = r.annual - r.annual65;
+        const diffStr = `<span style="color:${diff>0?'#27ae60':'#e74c3c'}">${diff>0?'+':''}${formatMoney(Math.round(diff))}</span>`;
+        const be = r.breakeven;
+        const style = r.startAge === 65 ? 'font-weight:bold;' : '';
+        html += `<tr style="${style}"><td style="padding:4px 10px;text-align:center;">${r.startAge}</td>
+            <td style="padding:4px 10px;text-align:right;">${formatMoney(Math.round(r.annual))}</td>
+            <td style="padding:4px 10px;text-align:right;">${diffStr}</td>
+            <td style="padding:4px 10px;text-align:center;font-weight:bold;">${be < 60 ? 'Always ahead' : be > 95 ? 'Never catches up' : `Age ${be}`}</td>
+            <td style="padding:4px 10px;text-align:center;color:#888;font-size:10px;">${be < 60 ? '—' : be > 95 ? '—' : be < 82 ? '✓ Likely' : '⚠ Less likely'}</td>
+        </tr>`;
+    }
+    // Add age 65 row
+    const annual65 = maxCPP * base.s1_cpp_pct / 100 * factor(65);
+    html += `<tr style="background:#eaf4fb;font-weight:bold;"><td style="padding:4px 10px;text-align:center;">65 ◀ baseline</td>
+        <td style="padding:4px 10px;text-align:right;">${formatMoney(Math.round(annual65))}</td>
+        <td style="padding:4px 10px;text-align:right;">—</td><td colspan="2" style="padding:4px 10px;text-align:center;color:#888;">Reference point</td></tr>`;
+    html += `</table><br>
+    <span style="font-size:10px;color:#888;">Note: Does not account for time value of money or tax. Taking CPP early and investing the proceeds can shift break-even ages. Average Canadian life expectancy ~84.</span>`;
+
+    // Also show S2 if active
+    if (base.s2Active !== false && base.s2_cpp_pct > 0) {
+        const annual65_2 = maxCPP * base.s2_cpp_pct / 100 * factor(65);
+        const s2cpp70 = maxCPP * base.s2_cpp_pct / 100 * factor(70);
+        const be70_2 = Math.round(((70 * s2cpp70 - 65 * annual65_2) / (s2cpp70 - annual65_2)) * 10) / 10;
+        html += `<br><b>${s2Name}</b>: CPP at 65 = ${formatMoney(Math.round(annual65_2))}/yr, at 70 = ${formatMoney(Math.round(s2cpp70))}/yr. Break-even vs 65: <b>Age ${be70_2}</b>.`;
+    }
+
+    showSolverResult(html);
+}
+
+function shareURL() {
+    const fields = {};
+    document.querySelectorAll('input[id], select[id]').forEach(el => {
+        if (!el.id || el.id.startsWith('nw_') || el.id.startsWith('income_') || el.id.startsWith('mc_') || el.id.startsWith('sum_')) return;
+        if (el.type === 'checkbox') fields[el.id] = el.checked ? '1' : '0';
+        else if (el.value !== '' && el.value !== undefined) fields[el.id] = el.value;
+    });
+    const encoded = btoa(JSON.stringify(fields));
+    const url = `${location.origin}${location.pathname}?d=${encoded}`;
+    navigator.clipboard.writeText(url).then(() => {
+        showSolverResult(`<b>🔗 Share URL copied to clipboard!</b><br><br>
+            <span style="font-size:10px;color:#888;">Anyone with this link can open the calculator with your exact inputs.<br>
+            URL length: ${url.length.toLocaleString()} characters</span><br><br>
+            <input type="text" value="${url}" style="width:100%;font-size:9px;padding:4px;border:1px solid #ccc;border-radius:4px;" onclick="this.select()" readonly>`);
+    }).catch(() => {
+        // Fallback: show URL in result box for manual copy
+        showSolverResult(`<b>🔗 Share URL</b> (copy manually):<br><br>
+            <input type="text" value="${url}" style="width:100%;font-size:9px;padding:4px;border:1px solid #ccc;border-radius:4px;" onclick="this.select()" readonly>`);
+    });
+}
+
 function showInflationSensitivity() {
     const base = buildParams();
     if (!base) return;
@@ -2878,6 +3215,7 @@ function printReport() {
                          d.stage === 'No-Go'    ? 'background:#f5f5f5' :
                          d.stage === 'Gap'      ? 'background:#eaf6ff' : '';
         const fm = v => v > 0 ? '$' + Math.round(v).toLocaleString() : '—';
+        const gis = (d.r_gis||0) + (d.m_gis||0);
         ledgerRows += `<tr style="${rowStyle}">
             <td>${yr}</td>
             <td>${d.a1}${s2Active ? '/' + d.a2 : ''}</td>
@@ -2887,6 +3225,7 @@ function printReport() {
             <td>${fm(totalTFSA)}</td>
             <td>${fm(d.totalNonReg)}</td>
             <td>${fm(d.annualPensions)}</td>
+            <td>${gis > 0 ? fm(gis) : '—'}</td>
             <td>${d.netGoalDisp > 0 ? fm(d.netGoalDisp) : '—'}</td>
             <td>${d.rrspDrawAmt > 0 ? fm(d.rrspDrawAmt) : '—'}</td>
             <td>${d.tfsaDrawAmt > 0 ? fm(d.tfsaDrawAmt) : '—'}</td>
@@ -3019,7 +3358,7 @@ function printReport() {
     <table>
         <tr>
             <th>Year</th><th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>LIRA</th>
-            <th>TFSA</th><th>Non-Reg</th><th>Pensions</th><th>Net Goal</th>
+            <th>TFSA</th><th>Non-Reg</th><th>Pensions</th><th>GIS</th><th>Net Goal</th>
             <th>RRSP Draw</th><th>TFSA Draw</th><th>Tax</th><th>Net Worth</th>
         </tr>
         ${ledgerRows}
@@ -3158,6 +3497,8 @@ function renderNWChart(rows) {
 
     let stackOrder, colors, data;
 
+    const nwValuesMode = (document.querySelector('input[name="nw_chart_values"]:checked') || {value:'nominal'}).value;
+
     if (mode === 'split') {
         stackOrder = ['r_rrsp', 'm_rrsp', 'r_lira', 'm_lira', 'r_tfsa', 'm_tfsa', 'r_nonreg', 'm_nonreg'];
         if (includeHome) stackOrder.push('home');
@@ -3168,30 +3509,32 @@ function renderNWChart(rows) {
             r_nonreg: '#8e44ad', m_nonreg: '#c39bd3',
             home: '#8e6914'
         };
-        data = rows.map(d => ({
-            age: d.a1,
-            a2: d.a2,
-            s2Alive: d.s2Alive,
-            r_rrsp: Math.max(0, d.r_rrsp), m_rrsp: Math.max(0, d.m_rrsp),
-            r_lira: Math.max(0, d.r_lira || 0), m_lira: Math.max(0, d.m_lira || 0),
-            r_tfsa: Math.max(0, d.r_tfsa), m_tfsa: Math.max(0, d.m_tfsa),
-            r_nonreg: Math.max(0, d.totalNonReg / 2), m_nonreg: Math.max(0, d.totalNonReg / 2),
-            home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
-        }));
+        data = rows.map(d => {
+            const def = nwValuesMode === 'real' ? 1 / (d.inf_mult || 1) : 1;
+            return {
+                age: d.a1, a2: d.a2, s2Alive: d.s2Alive,
+                r_rrsp: Math.max(0, d.r_rrsp * def), m_rrsp: Math.max(0, d.m_rrsp * def),
+                r_lira: Math.max(0, (d.r_lira||0) * def), m_lira: Math.max(0, (d.m_lira||0) * def),
+                r_tfsa: Math.max(0, d.r_tfsa * def), m_tfsa: Math.max(0, d.m_tfsa * def),
+                r_nonreg: Math.max(0, d.totalNonReg / 2 * def), m_nonreg: Math.max(0, d.totalNonReg / 2 * def),
+                home: includeHome ? Math.max(0, (d.homeEquity||0) * def) : 0
+            };
+        });
     } else {
         stackOrder = ['rrsp', 'lira', 'tfsa', 'nonreg'];
         if (includeHome) stackOrder.push('home');
         colors = { rrsp: '#2980b9', lira: '#1a6b9a', tfsa: '#16a085', nonreg: '#8e44ad', home: '#8e6914' };
-        data = rows.map(d => ({
-            age: d.a1,
-            a2: d.a2,
-            s2Alive: d.s2Alive,
-            rrsp: Math.max(0, d.r_rrsp + d.m_rrsp),
-            lira: Math.max(0, (d.r_lira || 0) + (d.m_lira || 0)),
-            tfsa: Math.max(0, d.r_tfsa + d.m_tfsa),
-            nonreg: Math.max(0, d.totalNonReg),
-            home: includeHome ? Math.max(0, d.homeEquity || 0) : 0
-        }));
+        data = rows.map(d => {
+            const def = nwValuesMode === 'real' ? 1 / (d.inf_mult || 1) : 1;
+            return {
+                age: d.a1, a2: d.a2, s2Alive: d.s2Alive,
+                rrsp: Math.max(0, (d.r_rrsp + d.m_rrsp) * def),
+                lira: Math.max(0, ((d.r_lira||0) + (d.m_lira||0)) * def),
+                tfsa: Math.max(0, (d.r_tfsa + d.m_tfsa) * def),
+                nonreg: Math.max(0, d.totalNonReg * def),
+                home: includeHome ? Math.max(0, (d.homeEquity||0) * def) : 0
+            };
+        });
     }
 
     let maxVal = 0;
@@ -3972,6 +4315,154 @@ function updateDateDisplay() {
 }
 
 // ─── Persist ─────────────────────────────────────────────────────────────────
+// ─── Profile Management ──────────────────────────────────────────────────
+function captureInputs() {
+    const d = {};
+    document.querySelectorAll('input[id], select[id]').forEach(el => {
+        if (!el.id) return;
+        d[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return d;
+}
+
+function applyInputs(d) {
+    Object.keys(d).forEach(id => {
+        const e = document.getElementById(id);
+        if (e) { if (e.type === 'checkbox') e.checked = d[id]; else e.value = d[id]; }
+    });
+    initDollarFields(); updateNames(); updateDateDisplay(); toggleSpouse(1); toggleSpouse(2);
+}
+
+function saveProfile(slot) {
+    const name = prompt(`Name for Profile ${slot}:`, localStorage.getItem(`retirement_calc_v28_profile_${slot}_name`) || `Profile ${slot}`);
+    if (name === null) return;
+    const data = captureInputs();
+    localStorage.setItem(`retirement_calc_v28_profile_${slot}`, JSON.stringify(data));
+    localStorage.setItem(`retirement_calc_v28_profile_${slot}_name`, name);
+    renderProfiles();
+    document.getElementById('status_top').innerText = `✓ Saved to "${name}"`;
+    setTimeout(() => document.getElementById('status_top').innerText = '', 2500);
+}
+
+function loadProfile(slot) {
+    const raw = localStorage.getItem(`retirement_calc_v28_profile_${slot}`);
+    if (!raw) return;
+    const name = localStorage.getItem(`retirement_calc_v28_profile_${slot}_name`) || `Profile ${slot}`;
+    if (!confirm(`Load "${name}"? Unsaved changes will be lost.`)) return;
+    applyInputs(JSON.parse(raw));
+    calculate();
+    document.getElementById('status_top').innerText = `✓ Loaded "${name}"`;
+    setTimeout(() => document.getElementById('status_top').innerText = '', 2500);
+}
+
+function deleteProfile(slot) {
+    const name = localStorage.getItem(`retirement_calc_v28_profile_${slot}_name`) || `Profile ${slot}`;
+    if (!confirm(`Delete "${name}"?`)) return;
+    localStorage.removeItem(`retirement_calc_v28_profile_${slot}`);
+    localStorage.removeItem(`retirement_calc_v28_profile_${slot}_name`);
+    renderProfiles();
+}
+
+function renderProfiles() {
+    for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`profile_slot_${i}`);
+        if (!el) continue;
+        const raw = localStorage.getItem(`retirement_calc_v28_profile_${i}`);
+        const name = localStorage.getItem(`retirement_calc_v28_profile_${i}_name`) || `Profile ${i}`;
+        if (raw) {
+            el.innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;background:white;border:1px solid #ccd6dd;border-radius:5px;padding:3px 7px;">
+                <span style="color:#2c3e50;font-weight:bold;">${name}</span>
+                <button onclick="loadProfile(${i})" style="border:none;background:#27ae60;color:white;border-radius:3px;padding:1px 6px;cursor:pointer;font-size:10px;">Load</button>
+                <button onclick="saveProfile(${i})" style="border:none;background:#2980b9;color:white;border-radius:3px;padding:1px 6px;cursor:pointer;font-size:10px;">Save</button>
+                <button onclick="deleteProfile(${i})" style="border:none;background:#e74c3c;color:white;border-radius:3px;padding:1px 5px;cursor:pointer;font-size:10px;">✕</button>
+            </span>`;
+        } else {
+            el.innerHTML = `<button onclick="saveProfile(${i})" style="border:1px dashed #aaa;background:none;color:#888;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:10px;">+ Save as Profile ${i}</button>`;
+        }
+    }
+}
+
+// ─── Annuity Comparison ───────────────────────────────────────────────────
+function showAnnuityComparison() {
+    if (!lastRows || lastRows.length === 0) {
+        alert('Please run Recalculate Strategy first.');
+        return;
+    }
+    const params = buildParams();
+    if (!params) return;
+    const s1 = document.getElementById('s1_name').value || 'Spouse 1';
+    const s2 = document.getElementById('s2_name').value || 'Spouse 2';
+    const s2Active = document.getElementById('s2_active').checked;
+    const s1Retire = parseInt(document.getElementById('s1_retire').value) || 65;
+
+    // Find retirement row
+    const retRow = lastRows.find(r => r.isSomeoneRetired);
+    if (!retRow) { showSolverResult('<b>No retirement rows found.</b>'); return; }
+
+    const totalPortfolio = retRow.nw;
+    const rrspOnly = retRow.r_rrsp + retRow.m_rrsp + (retRow.r_lira||0) + (retRow.m_lira||0);
+    const allAssets = totalPortfolio;
+    const inflFactor = retRow.inf_mult || 1;
+    const goalAtRetire = (params.netGoalBase * inflFactor);
+
+    // 2026 approximate Canadian life annuity payout rates (annual % of purchase price)
+    // These are representative rates — actual rates vary by insurer and interest environment
+    const rates = {
+        singleMale65:    0.062,
+        singleFemale65:  0.057,
+        joint65:         0.050,
+        singleMale70:    0.073,
+        singleFemale70:  0.067,
+        joint70:         0.060,
+    };
+
+    const coupleType = s2Active ? 'joint' : (true ? 'singleMale' : 'singleFemale'); // simplified
+    const ageKey = s1Retire >= 68 ? '70' : '65';
+    const rateKey = coupleType + ageKey;
+    const payoutRate = rates[rateKey] || rates.joint65;
+
+    const annualAnnuity = allAssets * payoutRate;
+    const monthlyAnnuity = annualAnnuity / 12;
+
+    // How much portfolio needed to match spending goal via annuity
+    const portfolioNeededForGoal = goalAtRetire / payoutRate;
+
+    // CPP + OAS already covers some of the goal
+    const govtIncome = (retRow.r_cpp + retRow.r_oas + retRow.m_cpp + retRow.m_oas);
+    const remainingGoalAfterGovt = Math.max(0, goalAtRetire - govtIncome * 0.75); // rough net
+    const portfolioForRemainder = remainingGoalAfterGovt / payoutRate;
+
+    const fm = v => '$' + Math.round(v).toLocaleString();
+    const pct = v => (v * 100).toFixed(1) + '%';
+
+    const html = `<b>Annuity Comparison</b><br>
+    <span style="color:#888;font-size:10px;">At retirement age ${s1Retire} — approximate 2026 Canadian life annuity rates. Rates vary by insurer and interest rate environment. These are illustrative only.</span><br><br>
+
+    <table style="font-size:11px;border-collapse:collapse;width:100%;">
+    <tr style="background:#f5f5f5;"><th style="padding:5px 10px;text-align:left;">Scenario</th><th style="padding:5px 10px;text-align:right;">Amount</th></tr>
+    <tr><td style="padding:4px 10px;">Total portfolio at retirement</td><td style="padding:4px 10px;text-align:right;font-weight:bold;">${fm(allAssets)}</td></tr>
+    <tr style="background:#f9f9f9;"><td style="padding:4px 10px;">Annuity payout rate (${s2Active?'joint couple':'single'}, age ${s1Retire})</td><td style="padding:4px 10px;text-align:right;">${pct(payoutRate)}/yr</td></tr>
+    <tr><td style="padding:4px 10px;">Estimated annual annuity</td><td style="padding:4px 10px;text-align:right;color:#27ae60;font-weight:bold;">${fm(annualAnnuity)}/yr (${fm(monthlyAnnuity)}/mo)</td></tr>
+    <tr style="background:#f9f9f9;"><td style="padding:4px 10px;">Your net spending goal at retirement</td><td style="padding:4px 10px;text-align:right;">${fm(goalAtRetire)}/yr</td></tr>
+    <tr><td style="padding:4px 10px;">Portfolio needed to match goal via annuity</td><td style="padding:4px 10px;text-align:right;">${fm(portfolioNeededForGoal)}</td></tr>
+    <tr style="background:#f9f9f9;"><td style="padding:4px 10px;">After CPP/OAS (${fm(govtIncome)}/yr govt income), portfolio needed</td><td style="padding:4px 10px;text-align:right;font-weight:bold;">${fm(portfolioForRemainder)}</td></tr>
+    </table><br>
+
+    <div style="background:#eaf4fb;padding:8px 12px;border-radius:6px;font-size:10px;color:#2c3e50;margin-bottom:8px;">
+    <b>Drawdown vs Annuity:</b> Your portfolio drawdown strategy targets leaving <b>~${fm(lastRows[lastRows.length-1].nw)}</b> at end of plan (age ${lastRows[lastRows.length-1].a1}).
+    An annuity of ${fm(annualAnnuity)}/yr is <b>${annualAnnuity >= goalAtRetire ? 'above' : 'below'}</b> your spending goal of ${fm(goalAtRetire)}/yr.
+    ${annualAnnuity >= goalAtRetire ? '✓ Your portfolio is large enough to fund the goal via annuity.' : `You would need ${fm(portfolioNeededForGoal - allAssets)} more to fully fund the goal via annuity.`}
+    </div>
+    <div style="font-size:10px;color:#888;">
+    <b>Annuity pros:</b> Guaranteed income for life, no market risk, no management required.<br>
+    <b>Annuity cons:</b> No inflation protection (unless indexed), no estate value, locked in, no liquidity.<br>
+    <b>Drawdown pros:</b> Flexibility, estate value, can adjust to inflation, can leave legacy.<br>
+    <b>Note:</b> Rates shown are representative 2026 estimates. Consult an advisor for actual quotes from Sun Life, Manulife, Canada Life, etc.
+    </div>`;
+
+    showSolverResult(html);
+}
+
 function saveData() {
     const d = {};
     document.querySelectorAll('input').forEach(i => d[i.id] = i.type === 'checkbox' ? i.checked : i.value);
@@ -3991,10 +4482,33 @@ window.onload = () => {
         const btn = document.getElementById('dark_btn');
         if (btn) btn.textContent = '☀ Light';
     }
+    renderProfiles();
     if (localStorage.getItem('disclaimer_dismissed') === '1') {
         const d = document.getElementById('disclaimer_box');
         if (d) d.style.display = 'none';
     }
+    // Load from URL params if present (shared link)
+    const urlParams = new URLSearchParams(location.search);
+    const urlData = urlParams.get('d');
+    if (urlData) {
+        try {
+            const fields = JSON.parse(atob(urlData));
+            Object.keys(fields).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.type === 'checkbox') el.checked = fields[id] === '1';
+                    else el.value = fields[id];
+                }
+            });
+            initDollarFields();
+            updateNames();
+            updateDateDisplay();
+            toggleSpouse(1); toggleSpouse(2);
+            calculate();
+            return; // skip localStorage load
+        } catch(e) { console.warn('URL data parse error', e); }
+    }
+
     const s = localStorage.getItem('retirement_calc_v28');
     if (s) {
         const d = JSON.parse(s);
