@@ -119,7 +119,7 @@
         .stat-box.warn { background: #fff8e1; border-color: #ffe082; }
         .stat-box.danger { background: #fce4e4; border-color: #ef9a9a; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: var(--header-bg); color: white; padding: 8px; text-align: left; position: sticky; top: 0; font-size: 10px; }
+        th { background: var(--header-bg); color: white; padding: 8px; text-align: left; position: sticky; top: 0; z-index: 15; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         td { padding: 6px; border-bottom: 1px solid #edf2f7; }
         tr.working td { color: #95a5a6; font-style: italic; }
         tr.gap td { background-color: #e8f4fd !important; color: #2471a3; }
@@ -231,6 +231,7 @@
             <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_b" value="0"></div>
             <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_c" value="0" style="width:70px"></div>
             <div class="row"><label>RRSP Room (0=unknown) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>Annual RRSP Limit <span class="info-icon" data-tip="New RRSP room added each working year. CRA formula: 18% of prior year earned income, capped at the annual max ($33,810 for 2026). If your income is below ~$187,833, set this to 18% of your salary (e.g. $100K income = $18,000). Check your CRA Notice of Assessment for your exact figure. Set 0 for unlimited.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_annual_limit" value="33810" style="width:80px"></div>
             <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_spousal_rrsp" value="0" style="width:70px"></div>
             <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws tax-free. Withdrawals restore room next year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_b" value="0"></div>
             <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_c" value="0" style="width:70px"></div>
@@ -282,6 +283,7 @@
             <div class="row"><label>RRSP Balance <span class="info-icon" data-tip="Current RRSP balance. Grows at investment return. Fully taxable on withdrawal. Converts to RRIF at 71 with mandatory minimums.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_b" value="0"></div>
             <div class="row"><label>Monthly RRSP <span class="info-icon" data-tip="Monthly RRSP contribution during working years. Inflation-adjusted each year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_c" value="0" style="width:70px"></div>
             <div class="row"><label>RRSP Room (0=unknown) <span class="info-icon" data-tip="Current available RRSP contribution room from CRA My Account. Enter 0 for unlimited. Contributions stop when room is exhausted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_room" value="0" style="width:80px"></div>
+            <div class="row"><label>Annual RRSP Limit <span class="info-icon" data-tip="New RRSP room added each working year. CRA formula: 18% of prior year earned income, capped at the annual max ($33,810 for 2026). If your income is below ~$187,833, set this to 18% of your salary (e.g. $100K income = $18,000). Check your CRA Notice of Assessment for your exact figure. Set 0 for unlimited.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_rrsp_annual_limit" value="33810" style="width:80px"></div>
             <div class="row"><label>Monthly Spousal RRSP <span class="info-icon" data-tip="Monthly contribution to spouse's RRSP, drawn from your own RRSP room. Useful for income splitting before age 65. Goes into spouse's RRSP balance.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_spousal_rrsp" value="0" style="width:70px"></div>
             <div class="row"><label>TFSA Balance <span class="info-icon" data-tip="Tax-Free Savings Account. Grows and withdraws completely tax-free. Withdrawals restore contribution room the following calendar year.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_b" value="0"></div>
             <div class="row"><label>Monthly TFSA <span class="info-icon" data-tip="Monthly TFSA contribution during working years. Overflow beyond available room goes to non-registered automatically.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_tfsa_c" value="0" style="width:70px"></div>
@@ -496,9 +498,9 @@
             <label style="cursor:pointer;"><input type="radio" name="ledger_values" value="real" onchange="rerenderLedger()"> Real (Today's $)</label>
         </div>
     </div>
-    <div style="overflow-x:auto;">
-        <table id="ledger">
-            <thead id="ledger_head">
+    <div id="ledger_scroll" style="overflow-x:auto; overflow-y:visible;">
+        <table id="ledger" style="border-collapse:collapse;">
+            <thead id="ledger_head" style="position:sticky; top:0; z-index:20;">
                 <tr>
                     <th>Age</th><th>Stage</th><th>RRSP/RRIF</th><th>TFSA Total</th>
                     <th>Non-Reg</th>
@@ -877,7 +879,7 @@
 <script>
 // ─── Constants ───────────────────────────────────────────────────────────────
 // Base year: 2025 CRA values. Inflation indexing scales these forward.
-const DATA_2026 = { cpp: 18091.80, oas: 8907.72, cpp2: 3466, fedAgeAmt: 9028, liraSmallUnder65: 14920, liraSmallOver65: 29840 };
+const DATA_2026 = { cpp: 18091.80, oas: 8907.72, cpp2: 3466, fedAgeAmt: 9028, liraSmallUnder65: 14920, liraSmallOver65: 29840, rrspAnnualLimit: 33810 };
 const formatMoney = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString();
 const formatPct   = n => n.toFixed(1) + "%";
 let FED_AGE_AMT = 9028; // Updated from buildParams before each projection
@@ -1439,9 +1441,9 @@ function solveRetirementDraw(netGoal, r_cpp, r_oas, m_cpp, m_oas, r_drawRatio, a
 function projectYears(params, returnOverride) {
     const {
         s1_age, s1_retire, s1_rrsp, s1_lira, s1_lira_prov, s1_tfsa, s1_rrsp_c, s1_tfsa_c, s1_cpp_age, s1_cpp_pct, s1_oas_age, s1_cpp2_yrs,
-        s1_rrsp_room, s1_spousal_rrsp,
+        s1_rrsp_room, s1_spousal_rrsp, s1_rrsp_annual_limit,
         s2_age, s2_retire, s2_rrsp, s2_lira, s2_lira_prov, s2_tfsa, s2_rrsp_c, s2_tfsa_c, s2_cpp_age, s2_cpp_pct, s2_oas_age, s2_cpp2_yrs,
-        s2_rrsp_room, s2_spousal_rrsp,
+        s2_rrsp_room, s2_spousal_rrsp, s2_rrsp_annual_limit,
         s1_nonreg, s2_nonreg,
         infl, rPre, rPost, isMelt, equalDraw, smoothTax, meltAge, MAX_CPP, MAX_CPP2, MAX_OAS, OAS_CLAWBACK,
         s1_pension_amt, s1_pension_age, s1_pension_indexed, s1_pension_survivor,
@@ -1488,6 +1490,8 @@ function projectYears(params, returnOverride) {
     let tfsaAvailableRoomS2 = tfsaRoomCurrentS2 || 0;
     let rrspRoomS1 = s1_rrsp_room || 0; // 0 = unlimited
     let rrspRoomS2 = s2_rrsp_room || 0;
+    const trackRoomS1 = s1_rrsp_room > 0; // true = room is being tracked (not unlimited)
+    const trackRoomS2 = s2_rrsp_room > 0;
     // Helper: combined room (for backward compat with code that uses tfsaAvailableRoom)
     const getTFSARoom = () => tfsaAvailableRoomS1 + tfsaAvailableRoomS2;
     const setTFSARoom = (amt) => {
@@ -1721,17 +1725,25 @@ function projectYears(params, returnOverride) {
         const m_tfsa_mo  = s2_tfsa_c + (useBoosted ? s2_tfsa_boost : 0);
 
         // Monthly contributions + compounding
+        // Accrue annual RRSP room once per year before the monthly contribution loop
+        if (s1Alive && a1 < s1_retire && a1 < 71 && trackRoomS1 && s1_rrsp_annual_limit > 0) {
+            rrspRoomS1 += s1_rrsp_annual_limit;
+        }
+        if (s2Alive && a2 < s2_retire && a2 < 71 && trackRoomS2 && s2_rrsp_annual_limit > 0) {
+            rrspRoomS2 += s2_rrsp_annual_limit;
+        }
+
         for (let mon = 0; mon < 12; mon++) {
             if (s1Alive && a1 < s1_retire && a1 < 71) {
-                // Regular RRSP — capped by room if room is set
+                // Regular RRSP — capped by room if room is being tracked
                 const s1RRSPContrib = r_rrsp_mo * inf_mult;
-                const s1RRSPActual = rrspRoomS1 > 0 ? Math.min(s1RRSPContrib, rrspRoomS1) : s1RRSPContrib;
+                const s1RRSPActual = trackRoomS1 ? Math.min(s1RRSPContrib, Math.max(0, rrspRoomS1)) : s1RRSPContrib;
                 // Spousal RRSP — goes into S2's RRSP, drawn from S1's room
                 const s1SpousalMo = (s1_spousal_rrsp || 0) * inf_mult;
-                const s1SpousalActual = rrspRoomS1 > 0 ? Math.min(s1SpousalMo, Math.max(0, rrspRoomS1 - s1RRSPActual)) : s1SpousalMo;
+                const s1SpousalActual = trackRoomS1 ? Math.min(s1SpousalMo, Math.max(0, rrspRoomS1 - s1RRSPActual)) : s1SpousalMo;
                 r.rrsp += s1RRSPActual;
                 m.rrsp += s1SpousalActual; // spousal goes to S2's RRSP
-                if (rrspRoomS1 > 0) rrspRoomS1 = Math.max(0, rrspRoomS1 - s1RRSPActual - s1SpousalActual);
+                if (trackRoomS1) rrspRoomS1 = Math.max(0, rrspRoomS1 - s1RRSPActual - s1SpousalActual);
                 const tfsaAdd = Math.min(r_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS1));
                 const nonregAdd = (r_tfsa_mo * inf_mult) - tfsaAdd;
                 r.tfsa += tfsaAdd;
@@ -1741,12 +1753,12 @@ function projectYears(params, returnOverride) {
             }
             if (s2Alive && a2 < s2_retire && a2 < 71) {
                 const s2RRSPContrib = m_rrsp_mo * inf_mult;
-                const s2RRSPActual = rrspRoomS2 > 0 ? Math.min(s2RRSPContrib, rrspRoomS2) : s2RRSPContrib;
+                const s2RRSPActual = trackRoomS2 ? Math.min(s2RRSPContrib, Math.max(0, rrspRoomS2)) : s2RRSPContrib;
                 const s2SpousalMo = (s2_spousal_rrsp || 0) * inf_mult;
-                const s2SpousalActual = rrspRoomS2 > 0 ? Math.min(s2SpousalMo, Math.max(0, rrspRoomS2 - s2RRSPActual)) : s2SpousalMo;
+                const s2SpousalActual = trackRoomS2 ? Math.min(s2SpousalMo, Math.max(0, rrspRoomS2 - s2RRSPActual)) : s2SpousalMo;
                 m.rrsp += s2RRSPActual;
                 r.rrsp += s2SpousalActual; // spousal goes to S1's RRSP
-                if (rrspRoomS2 > 0) rrspRoomS2 = Math.max(0, rrspRoomS2 - s2RRSPActual - s2SpousalActual);
+                if (trackRoomS2) rrspRoomS2 = Math.max(0, rrspRoomS2 - s2RRSPActual - s2SpousalActual);
                 const tfsaAdd = Math.min(m_tfsa_mo * inf_mult, Math.max(0, tfsaAvailableRoomS2));
                 const nonregAdd = (m_tfsa_mo * inf_mult) - tfsaAdd;
                 m.tfsa += tfsaAdd;
@@ -1957,11 +1969,16 @@ function projectYears(params, returnOverride) {
             // Minimum RRSP draw = larger of RRIF min and meltdown floor
             let minRRSPDraw = Math.max(rrifMin, meltdownFloor);
 
-            // Draw ratio: 50/50 when equal draw enabled and both have balance, else by balance proportion
+            // Draw ratio: 50/50 when equal draw enabled and BOTH accounts have
+            // meaningful balance to cover their share. Switch to proportional
+            // when one account is nearly depleted — this ensures tax is calculated
+            // on the actual income split, not a fictitious 50/50.
             const totalRRSP = r.rrsp + m.rrsp;
-            const r_drawRatio = (!s1Alive) ? 0          // S1 dead — all RRSP on S2
-                : (!s2Alive) ? 1                         // S2 dead — all RRSP on S1
-                : (equalDraw && r.rrsp > 0 && m.rrsp > 0) ? 0.5
+            const bothCanCoverHalf = equalDraw && r.rrsp > 1000 && m.rrsp > 1000
+                && m.rrsp > totalRRSP * 0.05 && r.rrsp > totalRRSP * 0.05;
+            const r_drawRatio = (!s1Alive) ? 0
+                : (!s2Alive) ? 1
+                : bothCanCoverHalf ? 0.5
                 : (totalRRSP > 0 ? r.rrsp / totalRRSP : 0.5);
 
             // For tax purposes: survivor uses only their own age, no splitting
@@ -2350,7 +2367,10 @@ function getLedgerMode() {
 }
 
 function rerenderLedger() {
-    if (lastRows) renderLedger(lastRows);
+    if (lastRows) {
+        renderLedger(lastRows);
+        setTimeout(() => { if (window._rebuildStickyHeader) window._rebuildStickyHeader(); }, 50);
+    }
 }
 
 function renderLedger(rows) {
@@ -2468,6 +2488,7 @@ function renderLedger(rows) {
             `;
         }
     }
+    setTimeout(() => { if (window._rebuildStickyHeader) window._rebuildStickyHeader(); }, 50);
     return peak;
 }
 
@@ -2496,6 +2517,7 @@ function buildParams() {
         s1_rrsp_c: s1Active ? v('s1_rrsp_c') : 0,
         s1_tfsa_c: s1Active ? v('s1_tfsa_c') : 0,
         s1_rrsp_room: s1Active ? v('s1_rrsp_room') : 0,
+        s1_rrsp_annual_limit: s1Active ? (v('s1_rrsp_annual_limit') || 0) : 0,
         s1_spousal_rrsp: s1Active ? v('s1_spousal_rrsp') : 0,
         s1_oas_age: Math.min(70, Math.max(65, v('s1_oas_age'))),
         s1_cpp_pct: s1Active ? v('s1_cpp_pct') : 0,
@@ -2508,6 +2530,7 @@ function buildParams() {
         s2_rrsp_c: s2Active ? v('s2_rrsp_c') : 0,
         s2_tfsa_c: s2Active ? v('s2_tfsa_c') : 0,
         s2_rrsp_room: s2Active ? v('s2_rrsp_room') : 0,
+        s2_rrsp_annual_limit: s2Active ? (v('s2_rrsp_annual_limit') || 0) : 0,
         s2_spousal_rrsp: s2Active ? v('s2_spousal_rrsp') : 0,
         s2_oas_age: Math.min(70, Math.max(65, v('s2_oas_age'))),
         s2_cpp_pct: s2Active ? v('s2_cpp_pct') : 0,
@@ -4146,6 +4169,81 @@ function renderActionPlan(rows) {
     }
 }
 
+
+
+// ── Sticky ledger header ───────────────────────────────────────────────────
+(function() {
+    let sticky = null, stickyInner = null;
+
+    function rebuild() {
+        if (sticky) { sticky.remove(); sticky = null; }
+        const table = document.getElementById('ledger');
+        const thead = document.getElementById('ledger_head');
+        if (!table || !thead || !thead.querySelector('th')) return;
+
+        const scroller = document.getElementById('ledger_scroll');
+        const scrollerRect = scroller.getBoundingClientRect();
+
+        // Measure column widths from the first tbody row (most accurate)
+        const firstRow = table.querySelector('tbody tr');
+        const cells = firstRow ? firstRow.querySelectorAll('td') : thead.querySelectorAll('th');
+        const widths = Array.from(cells).map(c => c.offsetWidth);
+        const totalW = widths.reduce((a, b) => a + b, 0);
+
+        // Outer clip div — same position/width as the scroll container
+        sticky = document.createElement('div');
+        sticky.id = 'ledger_sticky_wrap';
+        sticky.style.cssText = `display:none;position:fixed;top:0;left:${scrollerRect.left}px;` +
+            `width:${scrollerRect.width}px;overflow:hidden;z-index:100;pointer-events:none;` +
+            `box-shadow:0 2px 5px rgba(0,0,0,0.2);`;
+
+        // Inner table — full width, shifts with horizontal scroll
+        const t = document.createElement('table');
+        t.style.cssText = `border-collapse:collapse;table-layout:fixed;width:${totalW}px;`;
+        const cg = document.createElement('colgroup');
+        widths.forEach(w => { const c = document.createElement('col'); c.style.width = w + 'px'; cg.appendChild(c); });
+        t.appendChild(cg);
+        t.appendChild(thead.cloneNode(true));
+        sticky.appendChild(t);
+        stickyInner = t;
+        document.body.appendChild(sticky);
+
+        // Sync horizontal scroll
+        scroller.addEventListener('scroll', syncScroll);
+        syncScroll();
+    }
+
+    function syncScroll() {
+        if (stickyInner) stickyInner.style.transform = `translateX(-${document.getElementById('ledger_scroll')?.scrollLeft || 0}px)`;
+        update();
+    }
+
+    function update() {
+        if (!sticky) return;
+        const table = document.getElementById('ledger');
+        const thead = document.getElementById('ledger_head');
+        if (!table || !thead) return;
+        const r = table.getBoundingClientRect();
+        const scroller = document.getElementById('ledger_scroll');
+        const sr = scroller.getBoundingClientRect();
+        sticky.style.left = sr.left + 'px';
+        sticky.style.width = sr.width + 'px';
+        if (r.top < 0 && r.bottom > thead.offsetHeight) {
+            sticky.style.display = 'block';
+        } else {
+            sticky.style.display = 'none';
+        }
+    }
+
+    // Exposed for rerenderLedger
+    window._rebuildStickyHeader = rebuild;
+
+    window.addEventListener('scroll', update);
+    window.addEventListener('resize', () => { rebuild(); });
+    // Build once table is populated
+    document.addEventListener('ledger_rendered', rebuild);
+})();
+
 function makeAgeStr(row, params, s1Name, s2Name) {
     const s2Active = params.s2Active !== false;
     if (!s2Active) return `${s1Name} ${row.a1}`;
@@ -4420,6 +4518,11 @@ function syncRates() {
         document.getElementById('oas_max_val').value = formatDollarValue(DATA_2026.oas);
         document.getElementById('cpp2_max_val').value = formatDollarValue(DATA_2026.cpp2);
         document.getElementById('fed_age_amt').value = formatDollarValue(DATA_2026.fedAgeAmt);
+        // Update annual RRSP limits for both spouses
+        ['s1_rrsp_annual_limit','s2_rrsp_annual_limit'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = formatDollarValue(DATA_2026.rrspAnnualLimit);
+        });
         document.getElementById('lira_small_under65').value = formatDollarValue(DATA_2026.liraSmallUnder65);
         document.getElementById('lira_small_over65').value = formatDollarValue(DATA_2026.liraSmallOver65);
     } else {
