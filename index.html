@@ -370,7 +370,7 @@
             <h2>Benefits & Market</h2>
             <fieldset class="group"><legend>Tax Jurisdiction</legend>
             <div class="row"><label>Province <span class="info-icon" data-tip="Sets provincial tax brackets, personal amount, age credit, and pension credit. Required before calculating. Quebec not supported.">i</span></label>
-                <select id="province" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px;">
+                <select id="province" style="padding:4px; border:1px solid #ccd6dd; border-radius:4px;" onchange="document.getElementById('prov_health_premium').checked = ['ON','BC'].includes(this.value);">
                     <option value="" selected>— Select Province —</option>
                     <option value="AB">AB</option>
                     <option value="BC">BC</option>
@@ -419,12 +419,12 @@
             <p class="note">Value grows annually by your inflation rate.</p>
             <fieldset class="group"><legend>Optional</legend>
             <b style="font-size:11px;">Option A — Sell</b>
-            <div class="row"><label>Sell at S1 Age <span class="info-icon" data-tip="Age (S1) when you sell the home. Full inflation-adjusted value injected into investments (TFSA → RRSP → Non-Reg). Set 0 to disable.">i</span></label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Sell at <span class="s1_name_disp">S1</span> Age <span class="info-icon" data-tip="Age (S1) when you sell the home. Full inflation-adjusted value injected into investments (TFSA → RRSP → Non-Reg). Set 0 to disable.">i</span></label><input type="number" id="home_sell_age" value="0" style="width:45px"></div>
             <div class="row"><label>Annual Rent (today's $) <span class="info-icon" data-tip="Ongoing rent cost after selling, in today's dollars. Added on top of your spending goal each year from the sell date, inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="home_rent" value="0"></div>
             <p class="note">Full home value added as lump sum. Annual rent added to spending goal from sell age onward.</p>
             <hr style="margin:10px 0; border:none; border-top:1px solid #eee;">
             <b style="font-size:11px;">Option B — Downsize</b>
-            <div class="row"><label>Downsize at S1 Age <span class="info-icon" data-tip="Age (S1) when you downsize. Net proceeds injected into investments. Remaining home value continues growing on the NW chart.">i</span></label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
+            <div class="row"><label>Downsize at <span class="s1_name_disp">S1</span> Age <span class="info-icon" data-tip="Age (S1) when you downsize. Net proceeds injected into investments. Remaining home value continues growing on the NW chart.">i</span></label><input type="number" id="home_downsize_age" value="0" style="width:45px"></div>
             <div class="row"><label>Net Proceeds <span class="info-icon" data-tip="Cash pocketed from downsize (old home sale price minus new home cost), in today's dollars. Allocated: TFSA → RRSP → Non-Reg.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="home_downsize_proceeds" value="0"></div>
             <p class="note">Net proceeds (old minus new home) added as lump sum. No rent — still owning.</p>
             </fieldset>
@@ -443,7 +443,7 @@
         </div>
         <div class="card">
             <h2>Contribution Boost (Optional)</h2>
-            <div class="row"><label>At S1's Age <span class="info-icon" data-tip="Both spouses' boost contributions activate at this age. Useful for mortgage payoff, kids moving out, or a salary increase.">i</span></label><input type="number" id="boost_age" value="0" style="width:45px"></div>
+            <div class="row"><label>At <span class="s1_name_disp">S1</span>'s Age <span class="info-icon" data-tip="Both spouses' boost contributions activate at this age. Useful for mortgage payoff, kids moving out, or a salary increase.">i</span></label><input type="number" id="boost_age" value="0" style="width:45px"></div>
             <fieldset class="group"><legend class="s1_name_disp">Spouse 1</legend>
             <div class="row"><label>RRSP Boost <span class="info-icon" data-tip="Additional monthly RRSP on top of base contribution, starting at the boost age. Inflation-adjusted.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_rrsp_boost" value="0" style="width:70px"></div>
             <div class="row"><label>TFSA Boost <span class="info-icon" data-tip="Additional monthly TFSA on top of base contribution, starting at the boost age. Overflow goes to non-reg.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_tfsa_boost" value="0" style="width:70px"></div>
@@ -667,16 +667,16 @@
                     <th>Year</th>
                     <th>Ages</th>
                     <th>Stage</th>
-                    <th id="plan_s1_rrsp_h">S1 RRSP</th>
-                    <th id="plan_s2_rrsp_h">S2 RRSP</th>
-                    <th id="plan_s1_tfsa_h">S1 TFSA</th>
-                    <th id="plan_s2_tfsa_h">S2 TFSA</th>
-                    <th id="plan_s1_nr_h">S1 Non-Reg</th>
-                    <th id="plan_s2_nr_h">S2 Non-Reg</th>
-                    <th id="plan_s1_cpp_h">S1 CPP</th>
-                    <th id="plan_s2_cpp_h">S2 CPP</th>
-                    <th id="plan_s1_oas_h">S1 OAS</th>
-                    <th id="plan_s2_oas_h">S2 OAS</th>
+                    <th id="plan_s1_rrsp_h"><span class="s1_name_disp">S1</span> RRSP</th>
+                    <th id="plan_s2_rrsp_h"><span class="s2_name_disp">S2</span> RRSP</th>
+                    <th id="plan_s1_tfsa_h"><span class="s1_name_disp">S1</span> TFSA</th>
+                    <th id="plan_s2_tfsa_h"><span class="s2_name_disp">S2</span> TFSA</th>
+                    <th id="plan_s1_nr_h"><span class="s1_name_disp">S1</span> Non-Reg</th>
+                    <th id="plan_s2_nr_h"><span class="s2_name_disp">S2</span> Non-Reg</th>
+                    <th id="plan_s1_cpp_h"><span class="s1_name_disp">S1</span> CPP</th>
+                    <th id="plan_s2_cpp_h"><span class="s2_name_disp">S2</span> CPP</th>
+                    <th id="plan_s1_oas_h"><span class="s1_name_disp">S1</span> OAS</th>
+                    <th id="plan_s2_oas_h"><span class="s2_name_disp">S2</span> OAS</th>
                     <th>Total Tax</th>
                     <th>Net Spend</th>
                     <th>→ TFSA</th>
@@ -3884,8 +3884,8 @@ function renderComparison() {
         `<th style="padding:6px 10px;text-align:right;">Difference</th></tr>`;
 
     html += row('Province', a.province, b.province, fn, true);
-    html += row('Spouse 1 Retires', a.s1Retire, b.s1Retire, fn, false);
-    html += row('Spouse 2 Retires', a.s2Retire, b.s2Retire, fn, false);
+    html += row((document.getElementById('s1_name').value||'Spouse 1')+' Retires', a.s1Retire, b.s1Retire, fn, false);
+    html += row((document.getElementById('s2_name').value||'Spouse 2')+' Retires', a.s2Retire, b.s2Retire, fn, false);
     html += row('Target Net Goal', a.netGoal, b.netGoal, fm, true);
     html += row('Pre-Retirement Peak', a.preRetireNW, b.preRetireNW, fm, true);
     html += row('Peak Net Worth', a.peakNW, b.peakNW, fm, true);
@@ -4020,7 +4020,7 @@ function renderCompareNWChart(a, b) {
     }
     ctx.fillStyle = '#888';
     ctx.font = '11px Segoe UI, sans-serif';
-    ctx.fillText('Age (Spouse 1)', PAD_L + plotW / 2, PAD_T + plotH + 38);
+    ctx.fillText('Age (' + (document.getElementById('s1_name').value || 'Spouse 1') + ')', PAD_L + plotW / 2, PAD_T + plotH + 38);
 
     // ── Tooltip ──
     canvas.onmousemove = function(e) {
