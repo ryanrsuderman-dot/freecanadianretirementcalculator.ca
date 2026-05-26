@@ -260,10 +260,29 @@
             <div class="row"><label>Non-Reg Balance <span class="info-icon" data-tip="Non-registered investment account. No contribution limits. Withdrawals trigger capital gains tax on growth at the Cap Gains Inclusion % rate.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_nonreg_b" value="0"></div>
             </fieldset>
             <fieldset class="group"><legend>Employer Pension</legend>
-            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_amt" value="0" style="width:80px">
+                <button type="button" onclick="toggleDBEstimator('s1')" style="margin-left:6px;padding:2px 8px;font-size:10px;background:#8e44ad;color:white;border:none;border-radius:4px;cursor:pointer;">DB Estimator</button>
+            </div>
+            <div id="s1_db_panel" style="display:none;background:#f8f0ff;border:1px solid #c39bd3;border-radius:6px;padding:10px;margin:6px 0;font-size:11px;">
+                <b style="color:#6c3483;">DB Pension Estimator</b><br>
+                <span style="color:#888;font-size:10px;">Formula: Years of Service × Accrual Rate × Average Salary</span>
+                <div class="row" style="margin-top:6px;"><label>Years of Service</label><input type="number" id="s1_db_years" value="25" style="width:50px" oninput="calcDB('s1')"></div>
+                <div class="row"><label>Avg. Annual Salary (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s1_db_salary" value="80000" style="width:80px" oninput="calcDB('s1')"></div>
+                <div class="row"><label>Accrual Rate % <span class="info-icon" data-tip="Most Canadian DB plans: 2% (teachers, nurses, municipal). Some plans: 1.5% or 1.75%. Check your plan booklet.">i</span></label><input type="number" id="s1_db_rate" value="2.0" step="0.1" style="width:50px" oninput="calcDB('s1')"></div>
+                <div style="margin:8px 0;padding:6px;background:#e8d5f5;border-radius:4px;">
+                    Estimated pension: <b id="s1_db_result" style="color:#6c3483;">$0/mo</b>
+                </div>
+                <b style="color:#6c3483;">Bridge Benefit</b> <span class="info-icon" data-tip="Many DB plans pay an extra 'bridge' amount from retirement until CPP starts (usually age 65), to top up income before government benefits kick in. Common in teachers, OPSEU, and municipal plans.">i</span><br>
+                <span style="color:#888;font-size:10px;">Extra monthly amount paid until CPP starts</span>
+                <div class="row" style="margin-top:4px;"><label>Bridge Amount ($/mo)</label><input type="text" inputmode="decimal" class="dollar" id="s1_db_bridge_amt" value="0" style="width:70px"></div>
+                <div class="row"><label>Bridge Ends at Age</label><input type="number" id="s1_db_bridge_age" value="65" style="width:45px"></div>
+                <button type="button" onclick="applyDB('s1')" style="margin-top:8px;padding:4px 14px;font-size:11px;background:#6c3483;color:white;border:none;border-radius:4px;cursor:pointer;width:100%;">Apply to Pension Fields</button>
+            </div>
             <div class="row"><label>Pension Start Age</label><input type="number" id="s1_pension_age" value="65" style="width:45px"></div>
             <div class="row"><label>Indexed to Inflation <span class="info-icon" data-tip="Check for government/public sector pensions that increase with inflation. Uncheck for fixed private sector pensions — these lose real value over time.">i</span></label><input type="checkbox" id="s1_pension_indexed" checked style="width:20px"></div>
             <div class="row"><label>Survivor % <span class="info-icon" data-tip="% of pension paid to surviving spouse. Common values: 60% or 100%. Check your plan documents. Set 0 if no survivor benefit.">i</span></label><input type="number" id="s1_pension_survivor" value="60" style="width:45px"></div>
+            <div class="row"><label>Bridge Benefit ($/mo) <span class="info-icon" data-tip="Extra monthly pension paid from pension start until Bridge End Age (usually CPP age). Common in public sector DB plans. Drops to $0 at bridge end age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s1_pension_bridge_amt" value="0" style="width:70px"></div>
+            <div class="row"><label>Bridge End Age</label><input type="number" id="s1_pension_bridge_age" value="65" style="width:45px"></div>
             </fieldset>
             </div>
         </div>
@@ -312,10 +331,29 @@
             <div class="row"><label>Non-Reg Balance <span class="info-icon" data-tip="Non-registered investment account. No contribution limits. Withdrawals trigger capital gains tax on growth at the Cap Gains Inclusion % rate.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_nonreg_b" value="0"></div>
             </fieldset>
             <fieldset class="group"><legend>Employer Pension</legend>
-            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px"></div>
+            <div class="row"><label>Monthly (today's $) <span class="info-icon" data-tip="Monthly DB or employer pension in today's dollars. Fully taxable. Eligible for pension income credit at any age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_amt" value="0" style="width:80px">
+                <button type="button" onclick="toggleDBEstimator('s2')" style="margin-left:6px;padding:2px 8px;font-size:10px;background:#8e44ad;color:white;border:none;border-radius:4px;cursor:pointer;">DB Estimator</button>
+            </div>
+            <div id="s2_db_panel" style="display:none;background:#f8f0ff;border:1px solid #c39bd3;border-radius:6px;padding:10px;margin:6px 0;font-size:11px;">
+                <b style="color:#6c3483;">DB Pension Estimator</b><br>
+                <span style="color:#888;font-size:10px;">Formula: Years of Service × Accrual Rate × Average Salary</span>
+                <div class="row" style="margin-top:6px;"><label>Years of Service</label><input type="number" id="s2_db_years" value="25" style="width:50px" oninput="calcDB('s2')"></div>
+                <div class="row"><label>Avg. Annual Salary (today's $)</label><input type="text" inputmode="decimal" class="dollar" id="s2_db_salary" value="80000" style="width:80px" oninput="calcDB('s2')"></div>
+                <div class="row"><label>Accrual Rate % <span class="info-icon" data-tip="Most Canadian DB plans: 2% (teachers, nurses, municipal). Some plans: 1.5% or 1.75%. Check your plan booklet.">i</span></label><input type="number" id="s2_db_rate" value="2.0" step="0.1" style="width:50px" oninput="calcDB('s2')"></div>
+                <div style="margin:8px 0;padding:6px;background:#e8d5f5;border-radius:4px;">
+                    Estimated pension: <b id="s2_db_result" style="color:#6c3483;">$0/mo</b>
+                </div>
+                <b style="color:#6c3483;">Bridge Benefit</b> <span class="info-icon" data-tip="Many DB plans pay an extra 'bridge' amount from retirement until CPP starts (usually age 65), to top up income before government benefits kick in. Common in teachers, OPSEU, and municipal plans.">i</span><br>
+                <span style="color:#888;font-size:10px;">Extra monthly amount paid until CPP starts</span>
+                <div class="row" style="margin-top:4px;"><label>Bridge Amount ($/mo)</label><input type="text" inputmode="decimal" class="dollar" id="s2_db_bridge_amt" value="0" style="width:70px"></div>
+                <div class="row"><label>Bridge Ends at Age</label><input type="number" id="s2_db_bridge_age" value="65" style="width:45px"></div>
+                <button type="button" onclick="applyDB('s2')" style="margin-top:8px;padding:4px 14px;font-size:11px;background:#6c3483;color:white;border:none;border-radius:4px;cursor:pointer;width:100%;">Apply to Pension Fields</button>
+            </div>
             <div class="row"><label>Pension Start Age</label><input type="number" id="s2_pension_age" value="65" style="width:45px"></div>
             <div class="row"><label>Indexed to Inflation <span class="info-icon" data-tip="Check for government/public sector pensions that increase with inflation. Uncheck for fixed private sector pensions — these lose real value over time.">i</span></label><input type="checkbox" id="s2_pension_indexed" checked style="width:20px"></div>
             <div class="row"><label>Survivor % <span class="info-icon" data-tip="% of pension paid to surviving spouse. Common values: 60% or 100%. Check your plan documents. Set 0 if no survivor benefit.">i</span></label><input type="number" id="s2_pension_survivor" value="60" style="width:45px"></div>
+            <div class="row"><label>Bridge Benefit ($/mo) <span class="info-icon" data-tip="Extra monthly pension paid from pension start until Bridge End Age (usually CPP age). Common in public sector DB plans. Drops to $0 at bridge end age.">i</span></label><input type="text" inputmode="decimal" class="dollar" id="s2_pension_bridge_amt" value="0" style="width:70px"></div>
+            <div class="row"><label>Bridge End Age</label><input type="number" id="s2_pension_bridge_age" value="65" style="width:45px"></div>
             </fieldset>
             </div>
         </div>
@@ -1447,7 +1485,9 @@ function projectYears(params, returnOverride) {
         s1_nonreg, s2_nonreg,
         infl, rPre, rPost, isMelt, equalDraw, smoothTax, meltAge, MAX_CPP, MAX_CPP2, MAX_OAS, OAS_CLAWBACK,
         s1_pension_amt, s1_pension_age, s1_pension_indexed, s1_pension_survivor,
+        s1_pension_bridge_amt = 0, s1_pension_bridge_age = 65,
         s2_pension_amt, s2_pension_age, s2_pension_indexed, s2_pension_survivor,
+        s2_pension_bridge_amt = 0, s2_pension_bridge_age = 65,
         slowAge, slowPct, noAge, noPct, netGoalBase, maxYrs,
         tfsaRoomPerYr, tfsaRoomCurrentS1, tfsaRoomCurrentS2, capGainsInclusion, tfsaBracketMax, gapTargetRate, survivorPct,
         liraSmallUnder65, liraSmallOver65,
@@ -1785,9 +1825,16 @@ function projectYears(params, returnOverride) {
         let r_pension = 0, m_pension = 0;
         if (s1Alive && s1_pension_amt > 0 && a1 >= s1_pension_age) {
             r_pension = s1_pension_amt * 12 * (s1_pension_indexed ? inf_mult : 1);
+            // Bridge benefit: extra amount from pension start until bridge end age
+            if (s1_pension_bridge_amt > 0 && a1 < s1_pension_bridge_age) {
+                r_pension += s1_pension_bridge_amt * 12 * (s1_pension_indexed ? inf_mult : 1);
+            }
         }
         if (s2Alive && s2_pension_amt > 0 && a2 >= s2_pension_age) {
             m_pension = s2_pension_amt * 12 * (s2_pension_indexed ? inf_mult : 1);
+            if (s2_pension_bridge_amt > 0 && a2 < s2_pension_bridge_age) {
+                m_pension += s2_pension_bridge_amt * 12 * (s2_pension_indexed ? inf_mult : 1);
+            }
         }
         // Survivor pension: when one spouse dies, surviving spouse gets survivor %
         if (!s1Alive && s2Alive && s1_pension_amt > 0 && a2 >= s1_pension_age) {
@@ -2548,10 +2595,14 @@ function buildParams() {
         s1_pension_age: v('s1_pension_age') || 65,
         s1_pension_indexed: document.getElementById('s1_pension_indexed').checked,
         s1_pension_survivor: (parseFloat(document.getElementById('s1_pension_survivor').value) || 0) / 100,
+        s1_pension_bridge_amt: v('s1_pension_bridge_amt'),
+        s1_pension_bridge_age: v('s1_pension_bridge_age') || 65,
         s2_pension_amt: v('s2_pension_amt'),
         s2_pension_age: v('s2_pension_age') || 65,
         s2_pension_indexed: document.getElementById('s2_pension_indexed').checked,
         s2_pension_survivor: (parseFloat(document.getElementById('s2_pension_survivor').value) || 0) / 100,
+        s2_pension_bridge_amt: v('s2_pension_bridge_amt'),
+        s2_pension_bridge_age: v('s2_pension_bridge_age') || 65,
         slowAge: v('slow_age'), slowPct: v('slow_pct') / 100,
         noAge: v('no_age'), noPct: v('no_pct') / 100,
         netGoalBase: v('goal_go'),
@@ -4243,6 +4294,35 @@ function renderActionPlan(rows) {
     // Build once table is populated
     document.addEventListener('ledger_rendered', rebuild);
 })();
+
+function toggleDBEstimator(sp) {
+    const panel = document.getElementById(sp + '_db_panel');
+    if (panel) { panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; calcDB(sp); }
+}
+
+function calcDB(sp) {
+    const years  = parseFloat(document.getElementById(sp + '_db_years').value)  || 0;
+    const salary = parseFloat(document.getElementById(sp + '_db_salary').value.replace(/[^0-9.]/g, '')) || 0;
+    const rate   = parseFloat(document.getElementById(sp + '_db_rate').value)   || 0;
+    const annual = years * (rate / 100) * salary;
+    const monthly = annual / 12;
+    const el = document.getElementById(sp + '_db_result');
+    if (el) el.textContent = '$' + Math.round(monthly).toLocaleString() + '/mo  ($' + Math.round(annual).toLocaleString() + '/yr)';
+    return monthly;
+}
+
+function applyDB(sp) {
+    const monthly = calcDB(sp);
+    const amtEl = document.getElementById(sp + '_pension_amt');
+    if (amtEl) { amtEl.value = Math.round(monthly).toLocaleString(); amtEl.dispatchEvent(new Event('change')); }
+    const bridgeAmt = document.getElementById(sp + '_db_bridge_amt').value.replace(/[^0-9.]/g, '');
+    const bridgeAge = document.getElementById(sp + '_db_bridge_age').value;
+    const bAmtEl = document.getElementById(sp + '_pension_bridge_amt');
+    const bAgeEl = document.getElementById(sp + '_pension_bridge_age');
+    if (bAmtEl && bridgeAmt) { bAmtEl.value = Math.round(parseFloat(bridgeAmt)).toLocaleString(); }
+    if (bAgeEl && bridgeAge) bAgeEl.value = bridgeAge;
+    document.getElementById(sp + '_db_panel').style.display = 'none';
+}
 
 function makeAgeStr(row, params, s1Name, s2Name) {
     const s2Active = params.s2Active !== false;
